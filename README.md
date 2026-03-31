@@ -6,7 +6,7 @@
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-A spec-driven workflow for Claude Code. Three skills take a feature from idea to verified archive: define, plan, verify.
+Spec-driven workflow for Claude Code: from idea to product requirements to executable plan.
 
 **Zero runtime dependencies** — pure Markdown skills, no build step.
 
@@ -34,14 +34,15 @@ Open Claude Code in any project and start using:
 
 ### 3. CLI Reference
 
-| Command                    | Description                                    |
-| -------------------------- | ---------------------------------------------- |
-| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
-| `tracerkit init <path>`    | Install skills to a specific project directory |
-| `tracerkit update`         | Refresh to latest version, skip modified files |
-| `tracerkit update --force` | Replace modified files with latest versions    |
-| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
-| `tracerkit --version`      | Print version                                  |
+| Command                        | Description                                    |
+| ------------------------------ | ---------------------------------------------- |
+| `tracerkit init`               | Install skills to `~/.claude/skills/`          |
+| `tracerkit init <path>`        | Install skills to a specific project directory |
+| `tracerkit update`             | Refresh to latest version, skip modified files |
+| `tracerkit update --force`     | Replace modified files with latest versions    |
+| `tracerkit update --overwrite` | Alias for `--force` (avoids npx flag conflict) |
+| `tracerkit uninstall`          | Remove TracerKit skills, keep user artifacts   |
+| `tracerkit --version`          | Print version                                  |
 
 All commands default to the home directory. Pass a path or use `--global` explicitly to target `~/`.
 

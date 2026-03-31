@@ -82,6 +82,20 @@ describe('CLI', () => {
     expect(output.some((l) => l.includes('--force'))).toBe(false);
   });
 
+  it('passes --overwrite to update command', () => {
+    copyTemplates(tmp.get());
+    writeFileSync(
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+      'user modified',
+    );
+    const output = run(['update', '--overwrite', tmp.get()]);
+
+    expect(output.some((l) => l.includes('✓') && l.includes('tk:prd'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('--force'))).toBe(false);
+  });
+
   it('routes "uninstall <path>" to uninstall command', () => {
     copyTemplates(tmp.get());
     const output = run(['uninstall', tmp.get()]);

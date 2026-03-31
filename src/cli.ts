@@ -14,6 +14,7 @@ const USAGE = [
   '',
   'Options:',
   '  --force           Replace modified files with latest versions',
+  '  --overwrite       Alias for --force (avoids npx flag conflict)',
   '  --global          Target home directory instead of current directory',
   '  --version, -v     Print version',
 ];
@@ -43,8 +44,10 @@ export function run(args: string[]): string[] {
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {
-      const force = rest.includes('--force');
-      const targetArgs = rest.filter((a) => a !== '--force');
+      const force = rest.includes('--force') || rest.includes('--overwrite');
+      const targetArgs = rest.filter(
+        (a) => a !== '--force' && a !== '--overwrite',
+      );
       const output = update(resolveTarget(targetArgs), { force });
       output.push('', `Updated to tracerkit/${__VERSION__}`);
       output.push(
