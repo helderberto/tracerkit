@@ -184,6 +184,21 @@ AI coding assistants are powerful but unpredictable when requirements live only 
 
 TracerKit brings **predictability without ceremony** — a lightweight specification layer that ensures human and AI align on requirements _before_ implementation begins.
 
+### Tracer bullets — the core idea
+
+Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". You finish one layer before touching the next. Nothing works end-to-end until everything is done.
+
+TracerKit plans differently. Every phase is a **vertical slice** — a thin but complete path through every layer of the stack (schema → service → API → UI → tests). Each phase is demoable on its own. Think of it as firing a tracer bullet through the entire system to light up the path before committing to full implementation.
+
+Why this matters for AI-assisted development:
+
+- **Early feedback** — each slice produces a working feature you can test and show, not just a checked-off task
+- **Reduced risk** — integration problems surface in phase 1, not at the end
+- **Natural checkpoints** — each phase is a safe point to pause, switch sessions, or change direction
+- **Context-friendly** — AI assistants work better with small, well-scoped phases than with large horizontal layers
+
+The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) — TracerKit applies it as a first-class planning model for AI workflows.
+
 ### The problem with unstructured AI coding
 
 - Requirements live in ephemeral chat messages
