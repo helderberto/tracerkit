@@ -19,11 +19,12 @@
   "bin": {
     "tracerkit": "./bin/cli.js"
   },
+  "imports": {
+    "#src/*.js": "./src/*.ts"
+  },
   "files": [
     "bin",
-    "skills",
-    "agents",
-    "docs",
+    "src",
     "templates"
   ],
   "engines": {

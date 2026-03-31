@@ -1,2 +1,1 @@
-export { init } from './commands/init.js';
-export { update } from './commands/update.js';
+export { init } from '#src/commands/init.js';
