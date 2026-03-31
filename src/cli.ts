@@ -1,4 +1,5 @@
 import { init } from '#src/commands/init.js';
+import { update } from '#src/commands/update.js';
 
 const USAGE = [
   'Usage: tracerkit <command>',
@@ -15,6 +16,8 @@ export function run(args: string[], cwd: string): string[] {
   switch (command) {
     case 'init':
       return init(cwd);
+    case 'update':
+      return update(cwd);
     default:
       return USAGE;
   }

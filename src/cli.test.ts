@@ -1,6 +1,7 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { run } from '#src/cli.js';
+import { copyTemplates } from '#src/templates.js';
 import { useTmpDir } from '#src/test-setup.js';
 
 describe('CLI', () => {
@@ -25,5 +26,12 @@ describe('CLI', () => {
     const output = run([], tmp.get());
 
     expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
+
+  it('routes "update" to update command', () => {
+    copyTemplates(tmp.get());
+    const output = run(['update'], tmp.get());
+
+    expect(output.some((l) => l.startsWith('✓'))).toBe(true);
   });
 });
