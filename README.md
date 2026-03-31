@@ -8,8 +8,6 @@ A spec-driven workflow for Claude Code. Three skills take a feature from idea to
 
 ### 1. Install TracerKit
 
-**Requires Node.js 24.0.0 or higher.**
-
 ```bash
 npx tracerkit init
 ```
