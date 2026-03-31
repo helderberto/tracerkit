@@ -63,19 +63,19 @@ The three-step workflow that takes a feature from idea to verified archive.
 
 Interactive interview to define a feature. Explores the codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
-**Output:** `prds/<slug>.md`
+**Output:** `.tracerkit/prds/<slug>.md`
 
 #### `/tk:plan <slug>` — Create an implementation plan
 
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices** — each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
-**Output:** `plans/<slug>.md`
+**Output:** `.tracerkit/plans/<slug>.md`
 
 #### `/tk:verify <slug>` — Verify and archive
 
-Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict. On PASS, automatically archives the PRD and plan to `archive/<slug>/`.
+Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict. On PASS, automatically archives the PRD and plan to `.tracerkit/archives/<slug>/`.
 
-**Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
+**Output:** Verdict block in `.tracerkit/plans/<slug>.md` — on PASS: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
 
 ### Helper skills
 
@@ -83,7 +83,7 @@ Useful but optional — this category will grow over time.
 
 #### `/tk:status` — Workflow dashboard
 
-Scans `prds/` and prints a table of all features grouped by status (`in_progress`, `created`, `done`), with age, latest verdict, and blocker/suggestion counts. Read-only — no files are modified.
+Scans `.tracerkit/prds/` and prints a table of all features grouped by status (`in_progress`, `created`, `done`), with age, latest verdict, and blocker/suggestion counts. Read-only — no files are modified.
 
 ## Examples
 
@@ -97,14 +97,14 @@ AI:  Starting PRD interview...
      ? Should it detect system preference or manual toggle only?
      ? Which components need theming?
      ...
-     ✓ Written prds/dark-mode-support.md
+     ✓ Written .tracerkit/prds/dark-mode-support.md
 
 You: /tk:plan dark-mode-support
 AI:  Reading PRD...
      ✓ Phase 1 — CSS variables + ThemeProvider (schema → context → tests)
      ✓ Phase 2 — Toggle component + localStorage (UI → persistence → tests)
      ✓ Phase 3 — System preference detection (media query → sync → tests)
-     Written plans/dark-mode-support.md
+     Written .tracerkit/plans/dark-mode-support.md
 
 You: # implement each phase with Claude...
 
@@ -112,7 +112,7 @@ You: /tk:verify dark-mode-support
 AI:  Verifying against plan...
      ✓ All done-when conditions met
      ✓ Tests passing
-     PASS — archived to archive/dark-mode-support/
+     PASS — archived to .tracerkit/archives/dark-mode-support/
 ```
 
 </details>
@@ -122,14 +122,14 @@ AI:  Verifying against plan...
 
 ```
 You: /tk:prd update dark mode to detect system preference
-AI:  Found existing prds/dark-mode-support.md
+AI:  Found existing .tracerkit/prds/dark-mode-support.md
      ? Start fresh or revise the existing PRD?
      ...
-     ✓ Updated prds/dark-mode-support.md
+     ✓ Updated .tracerkit/prds/dark-mode-support.md
 
 You: /tk:plan dark-mode-support
 AI:  Reading updated PRD...
-     ✓ Regenerated plans/dark-mode-support.md with new scope
+     ✓ Regenerated .tracerkit/plans/dark-mode-support.md with new scope
 ```
 
 </details>
@@ -150,7 +150,7 @@ You: /tk:verify dark-mode-support
 AI:  Verifying against plan...
      ✓ All done-when conditions met
      ✓ Tests passing
-     PASS — archived to archive/dark-mode-support/
+     PASS — archived to .tracerkit/archives/dark-mode-support/
 ```
 
 </details>
@@ -185,6 +185,25 @@ AI:  Feature Status Dashboard
 | `tracerkit --help`         | Show help message                              |
 
 All commands default to the home directory. Pass a path to target a specific project.
+
+<details>
+<summary>Configuration</summary>
+
+Artifacts are stored under `.tracerkit/` by default. To customize paths, create `.tracerkit/config.json`:
+
+```json
+{
+  "paths": {
+    "prds": ".tracerkit/prds",
+    "plans": ".tracerkit/plans",
+    "archives": ".tracerkit/archives"
+  }
+}
+```
+
+Any missing key falls back to its default. The file is optional — without it, all defaults apply. After changing config, run `tracerkit update` to regenerate skills with the new paths.
+
+</details>
 
 <details>
 <summary>Metadata Lifecycle</summary>
