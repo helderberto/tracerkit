@@ -24,8 +24,7 @@ describe('copyTemplates', () => {
     expect(result.copied).toContain('skills/prd/SKILL.md');
     expect(result.copied).toContain('skills/plan/SKILL.md');
     expect(result.copied).toContain('skills/verify/SKILL.md');
-    expect(result.copied).toContain('skills/archive/SKILL.md');
-    expect(result.copied).toHaveLength(5);
+    expect(result.copied).toHaveLength(4);
   });
 
   it('preserves file contents', () => {
