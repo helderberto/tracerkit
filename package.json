@@ -36,7 +36,8 @@
     "templates"
   ],
   "engines": {
-    "node": ">=18.0.0"
+    "node": ">=22.0.0",
+    "npm": ">=10.0.0"
   },
   "scripts": {
     "build": "vite build",
@@ -61,9 +62,6 @@
     "*.{json,md}": [
       "prettier --write"
     ]
-  },
-  "overrides": {
-    "lodash-es": "4.17.21"
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
