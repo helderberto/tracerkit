@@ -11,6 +11,7 @@
 <img src="./tracerkit.png" alt="TracerKit" width="640" />
 
 <br />
+<br />
 
 Spec-driven workflow for Claude Code: from idea to product requirements to executable plan.
 
