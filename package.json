@@ -24,12 +24,12 @@
   },
   "keywords": [
     "claude-code",
-    "plugin",
-    "workflow",
+    "ai-workflow",
     "spec-driven",
-    "ai",
     "tracer-bullet",
-    "prd"
+    "developer-tools",
+    "markdown",
+    "plugin"
   ],
   "files": [
     "bin",
