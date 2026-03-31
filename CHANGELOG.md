@@ -1,3 +1,9 @@
+# [1.2.0](https://github.com/helderberto/tracerkit/compare/v1.1.0...v1.2.0) (2026-03-31)
+
+### Features
+
+- default to cwd, add --global flag and --version ([55678fb](https://github.com/helderberto/tracerkit/commit/55678fb746a0f798bc869ace1c7efc8e4495c604))
+
 # [1.1.0](https://github.com/helderberto/tracerkit/compare/v1.0.1...v1.1.0) (2026-03-31)
 
 ### Features
