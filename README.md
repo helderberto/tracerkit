@@ -6,6 +6,9 @@ A spec-driven workflow plugin for Claude Code. Four commands take a feature from
 
 ## Development Flow
 
+<details>
+<summary>Flow diagram</summary>
+
 ```
                          +------------------+
                          |   Idea / Issue   |
@@ -49,9 +52,117 @@ A spec-driven workflow plugin for Claude Code. Four commands take a feature from
                   /tk:verify
 ```
 
+</details>
+
+### Examples
+
+<details>
+<summary>New feature from scratch</summary>
+
+```bash
+# 1. Define the feature — interactive interview, explores your codebase
+/tk:prd add dark mode support
+
+# 2. Break the PRD into phased vertical slices
+/tk:plan dark-mode-support
+
+# 3. Implement each phase from the plan
+#    (work through phases with Claude)
+
+# 4. Verify implementation against the plan's done-when criteria
+/tk:verify dark-mode-support
+
+# 5. On PASS, archive the artifacts
+/tk:archive dark-mode-support
+```
+
+</details>
+
+<details>
+<summary>Iterating on an accepted PRD</summary>
+
+PRDs are living documents — refine them any time before or during implementation.
+
+```bash
+# Original PRD exists at prds/dark-mode-support.md
+# Scope changed: now need system-preference detection
+
+# Re-run the PRD skill — it detects the existing file and asks
+# whether to start fresh or revise
+/tk:prd update dark mode to detect system preference
+
+# Regenerate the plan from the updated PRD
+/tk:plan dark-mode-support
+
+# Continue implementation from the new plan
+```
+
+</details>
+
+<details>
+<summary>Bug fix with lightweight spec</summary>
+
+```bash
+# Even small fixes benefit from a quick PRD to capture root cause
+/tk:prd fix: login form submits twice on slow networks
+
+# Plan is usually a single phase for bug fixes
+/tk:plan fix-login-double-submit
+
+# Fix, verify, archive
+/tk:verify fix-login-double-submit
+/tk:archive fix-login-double-submit
+```
+
+</details>
+
+<details>
+<summary>Verify → fix → re-verify loop</summary>
+
+```bash
+# First verification attempt
+/tk:verify dark-mode-support
+# → NEEDS_WORK: missing toggle persistence, 2 failing tests
+
+# Fix the blockers listed in the verdict
+# ...
+
+# Re-verify — previous verdict is replaced
+/tk:verify dark-mode-support
+# → PASS
+
+/tk:archive dark-mode-support
+```
+
+</details>
+
 ## Installation
 
-Copy (or symlink) the `.claude-plugin/` and `skills/` directories into your project root. Claude Code discovers the plugin automatically via `.claude-plugin/plugin.json`.
+### From the official marketplace (recommended)
+
+```shell
+/plugin install tk@claude-plugins-official
+```
+
+Then run `/reload-plugins` to activate. Skills are available as `/tk:prd`, `/tk:plan`, `/tk:verify`, and `/tk:archive`.
+
+### Manual (for development)
+
+Clone the repo and load it directly:
+
+```bash
+git clone https://github.com/helderberto/tracerkit.git
+claude --plugin-dir ./tracerkit
+```
+
+Or symlink into an existing project:
+
+```bash
+ln -s /path/to/tracerkit/.claude-plugin .claude-plugin
+ln -s /path/to/tracerkit/skills skills
+```
+
+Claude Code discovers the plugin automatically via `.claude-plugin/plugin.json`.
 
 ## Skills
 
