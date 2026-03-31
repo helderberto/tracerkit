@@ -19,15 +19,29 @@ TracerKit brings **predictability without ceremony** — a lightweight specifica
 
 ### How existing approaches compare
 
-|                         | No specs             | Standalone skills                  | OpenSpec                                   | TracerKit                                                                     |
-| ----------------------- | -------------------- | ---------------------------------- | ------------------------------------------ | ----------------------------------------------------------------------------- |
-| **Spec creation**       | Chat-only            | `/write-a-prd` generates a PRD     | `/opsx:propose` generates proposal + specs | `/tk:prd` — interactive interview + codebase exploration + deep module design |
-| **Planning**            | Ad-hoc               | `/prd-to-plan` creates task list   | Design + tasks generated together          | `/tk:plan` — tracer-bullet vertical slices, each phase demoable end-to-end    |
-| **Verification**        | Manual testing       | None built-in                      | Manual                                     | `/tk:verify` — automated read-only review with PASS/NEEDS_WORK verdicts       |
-| **Archival**            | None                 | None                               | `/opsx:archive` folder move                | `/tk:archive` — verdict-gated (requires PASS to archive)                      |
-| **Artifact connection** | None                 | PRD and plan are independent files | Linked via change folder                   | PRD -> Plan -> Verdict chain; plan references source PRD                      |
-| **Iteration model**     | Rewrite from scratch | Re-run skill manually              | Fluid — edit any artifact                  | Verify/fix loop — re-run `/tk:verify` until PASS                              |
-| **Tool support**        | Any                  | Claude Code                        | 20+ AI assistants                          | Claude Code plugin                                                            |
+|                           | [Spec Kit](https://github.com/github/spec-kit)    | [Kiro](https://kiro.dev/)               | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                                                      |
+| ------------------------- | ------------------------------------------------- | --------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
+| **What it is**            | CLI toolkit + extensions ecosystem                | Agentic IDE (VS Code fork)              | Slash-command framework                            | Claude Code plugin (pure Markdown)                             |
+| **Setup**                 | Python (`uv tool install`)                        | Dedicated IDE install                   | Copy slash commands                                | Copy 2 directories                                             |
+| **Phases**                | 5 (constitution, specify, plan, tasks, implement) | 3 (requirements, design, tasks)         | 3 (propose, apply, archive)                        | 4 (prd, plan, verify, archive)                                 |
+| **Artifacts per feature** | 4 files (constitution, spec, plan, tasks)         | EARS requirements + design + tasks      | proposal + specs + design + tasks                  | 2 files (PRD, plan)                                            |
+| **Planning model**        | Task lists with completion tracking               | Sequenced tasks with dependency mapping | Task lists in change folder                        | Tracer-bullet vertical slices — each phase demoable end-to-end |
+| **Verification**          | Human-in-the-loop at phase gates                  | Diff approval workflow                  | Manual                                             | Built-in `/tk:verify` with PASS/NEEDS_WORK verdicts            |
+| **Archival**              | Not built-in                                      | Not built-in                            | Folder move                                        | Verdict-gated — requires PASS to archive                       |
+| **Tool lock-in**          | Any AI assistant (20+)                            | Kiro IDE only (Claude models)           | Any AI assistant (20+)                             | Claude Code only                                               |
+| **Runtime deps**          | Python + uv                                       | Proprietary IDE                         | None                                               | None                                                           |
+| **Extensions/plugins**    | 40+ community extensions                          | Agent hooks, MCP integration            | None                                               | None (yet)                                                     |
+| **Complexity**            | High — full methodology                           | High — full IDE                         | Low                                                | Low                                                            |
+
+### Where TracerKit fits
+
+**Spec Kit** is a full methodology with a CLI, extensions ecosystem, and 5-phase workflow. It's thorough but heavyweight — you need Python, `uv`, and buy into a structured process with constitution files and phase gates.
+
+**Kiro** is the most integrated option — a dedicated IDE with built-in specs, agent hooks, and autonomous execution. The tradeoff is vendor lock-in: you must use their IDE and their supported models.
+
+**OpenSpec** is the closest in philosophy — lightweight, slash-command based, fluid iteration. It targets breadth (20+ AI assistants) over depth.
+
+**TracerKit** chooses depth over breadth. By targeting Claude Code exclusively, it can leverage native plugin discovery, subagents for read-only verification, and the skill system directly. The tradeoff is clear: it only works with Claude Code, but within that context it provides the simplest setup (copy 2 dirs), fewest artifacts (2 files per feature), and the only built-in automated verification step.
 
 ### What TracerKit adds over standalone `/write-a-prd` + `/prd-to-plan`
 
