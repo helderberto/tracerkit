@@ -34,15 +34,14 @@ Open Claude Code in any project and start using:
 
 ### 3. CLI Reference
 
-| Command                        | Description                                    |
-| ------------------------------ | ---------------------------------------------- |
-| `tracerkit init`               | Install skills to `~/.claude/skills/`          |
-| `tracerkit init <path>`        | Install skills to a specific project directory |
-| `tracerkit update`             | Refresh to latest version, skip modified files |
-| `tracerkit update --force`     | Replace modified files with latest versions    |
-| `tracerkit update --overwrite` | Alias for `--force` (avoids npx flag conflict) |
-| `tracerkit uninstall`          | Remove TracerKit skills, keep user artifacts   |
-| `tracerkit --version`          | Print version                                  |
+| Command                    | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
+| `tracerkit init <path>`    | Install skills to a specific project directory |
+| `tracerkit update`         | Refresh to latest version, skip modified files |
+| `tracerkit update --force` | Replace modified files with latest versions    |
+| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
+| `tracerkit --version`      | Print version                                  |
 
 All commands default to the home directory. Pass a path or use `--global` explicitly to target `~/`.
 

@@ -8,13 +8,12 @@ const USAGE = [
   'Usage: tracerkit <command> [path]',
   '',
   'Commands:',
-  '  init [path]       Install skills (default: current directory)',
+  '  init [path]       Install skills (default: home directory)',
   '  update [path]     Refresh files from latest version, skip modified files',
   '  uninstall [path]  Remove TracerKit skills, keep user artifacts',
   '',
   'Options:',
   '  --force           Replace modified files with latest versions',
-  '  --overwrite       Alias for --force (avoids npx flag conflict)',
   '  --global          Target home directory instead of current directory',
   '  --version, -v     Print version',
 ];
@@ -29,7 +28,7 @@ export function resolveTarget(args: string[]): string {
 
   if (hasGlobal) return homedir();
   if (pathArg) return resolve(pathArg);
-  return process.cwd();
+  return homedir();
 }
 
 export function run(args: string[]): string[] {
@@ -44,10 +43,8 @@ export function run(args: string[]): string[] {
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {
-      const force = rest.includes('--force') || rest.includes('--overwrite');
-      const targetArgs = rest.filter(
-        (a) => a !== '--force' && a !== '--overwrite',
-      );
+      const force = rest.includes('--force');
+      const targetArgs = rest.filter((a) => a !== '--force');
       const output = update(resolveTarget(targetArgs), { force });
       output.push('', `Updated to tracerkit/${__VERSION__}`);
       output.push(

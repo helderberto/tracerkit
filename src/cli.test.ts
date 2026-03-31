@@ -6,8 +6,8 @@ import { copyTemplates } from './templates.ts';
 import { useTmpDir } from './test-setup.ts';
 
 describe('resolveTarget', () => {
-  it('defaults to cwd when no args', () => {
-    expect(resolveTarget([])).toBe(process.cwd());
+  it('defaults to homedir when no args', () => {
+    expect(resolveTarget([])).toBe(homedir());
   });
 
   it('returns homedir for --global', () => {
@@ -75,20 +75,6 @@ describe('CLI', () => {
       'user modified',
     );
     const output = run(['update', '--force', tmp.get()]);
-
-    expect(output.some((l) => l.includes('✓') && l.includes('tk:prd'))).toBe(
-      true,
-    );
-    expect(output.some((l) => l.includes('--force'))).toBe(false);
-  });
-
-  it('passes --overwrite to update command', () => {
-    copyTemplates(tmp.get());
-    writeFileSync(
-      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
-      'user modified',
-    );
-    const output = run(['update', '--overwrite', tmp.get()]);
 
     expect(output.some((l) => l.includes('✓') && l.includes('tk:prd'))).toBe(
       true,
