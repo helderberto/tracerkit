@@ -62,6 +62,9 @@
       "prettier --write"
     ]
   },
+  "overrides": {
+    "lodash-es": "4.17.21"
+  },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
     "@commitlint/config-conventional": "20.5.0",
