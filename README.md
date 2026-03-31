@@ -209,10 +209,6 @@ TracerKit trades breadth (Claude Code only) for depth — native skill discovery
 
 </details>
 
-## Author
-
-**Helder Burato Berto** — [github.com/helderberto](https://github.com/helderberto)
-
 ## License
 
-MIT
+[MIT License](LICENSE) © [helderberto](https://helderberto.com)
