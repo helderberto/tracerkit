@@ -8,7 +8,9 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 ### Added
 
-- CLI `init` command with template engine to scaffold plugin files into a project
+- CLI `init`, `update`, and `uninstall` commands for project lifecycle management
+- `update` command with content-hash diffing — overwrites unchanged, skips modified, adds missing
+- `uninstall` command — removes `.claude-plugin/` and `skills/`, leaves user artifacts
 - `/tk:prd` skill — interactive interview to define a feature, writes `prds/<slug>.md`
 - `/tk:plan` skill — breaks a PRD into phased tracer-bullet vertical slices, writes `plans/<slug>.md`
 - `/tk:verify` skill — read-only review that stamps PASS or NEEDS_WORK, auto-archives on PASS
@@ -16,7 +18,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 - Comparison table in README (Spec Kit, Kiro, OpenSpec, TracerKit)
 - Collapsible usage examples in README (new feature, PRD iteration, bug fix, verify loop)
 - ESLint, Prettier, Husky, and commitlint configuration
-- Test suite for CLI init, template engine
+- Test suite for CLI commands, template engine, and diffing
 
 ### Fixed
 

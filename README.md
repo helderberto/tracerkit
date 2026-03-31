@@ -116,7 +116,20 @@ PRDs are living documents — refine them any time before or during implementati
 
 ## Installation
 
-### From the official marketplace (recommended)
+### Via npx (recommended)
+
+```bash
+npx tracerkit init
+```
+
+This scaffolds `.claude-plugin/` and `skills/` into your project. Claude Code discovers the plugin automatically.
+
+```bash
+npx tracerkit update    # refresh to latest, skip modified files
+npx tracerkit uninstall # remove TracerKit, keep prds/plans/archive
+```
+
+### From the official marketplace
 
 ```shell
 /plugin install tk@claude-plugins-official
