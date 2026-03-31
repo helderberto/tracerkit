@@ -6,57 +6,49 @@ A spec-driven workflow for Claude Code. Three skills take a feature from idea to
 
 ## Get Started
 
-### Install per-project (recommended)
-
-Skills are scoped to a single project. Team members get them automatically via git.
+### 1. Install TracerKit
 
 ```bash
-cd your-project
 npx tracerkit init
 ```
 
-This copies skills into `.claude/skills/` — Claude Code discovers them automatically.
+Skills are installed globally to `~/.claude/skills/` — available in every project, no per-project setup needed.
+
+### 2. Use the skills
+
+Open Claude Code in any project and start using:
 
 ```bash
-npx tracerkit update    # refresh to latest, skip modified files
-npx tracerkit uninstall # remove TracerKit skills, keep prds/plans/archive
+/tk:prd add dark mode support     # define the feature
+/tk:plan dark-mode-support        # break into vertical slices
+/tk:verify dark-mode-support      # verify and archive
+```
+
+### 3. Manage your installation
+
+```bash
+npx tracerkit update              # refresh to latest, skip modified files
+npx tracerkit uninstall           # remove TracerKit skills
 ```
 
 <details>
-<summary>Install globally</summary>
+<summary>Install per-project instead</summary>
 
-Skills are available in every project on your machine.
+To scope skills to a single project (team members get them via git):
 
 ```bash
-npm install -g tracerkit
-tracerkit init --global
+npx tracerkit init .              # install to .claude/skills/ in current dir
+npx tracerkit init /path/to/proj  # or specify a path
 ```
 
-Or manually with symlinks:
+Per-project commands:
 
 ```bash
-git clone https://github.com/helderberto/tracerkit.git
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd ~/.claude/skills/tk:prd
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan ~/.claude/skills/tk:plan
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify ~/.claude/skills/tk:verify
+npx tracerkit update .
+npx tracerkit uninstall .
 ```
 
 </details>
-
-### Use the skills
-
-```bash
-# Define the feature — interactive interview, explores your codebase
-/tk:prd add dark mode support
-
-# Break the PRD into phased vertical slices
-/tk:plan dark-mode-support
-
-# Implement each phase (work through phases with Claude)
-
-# Verify — auto-archives on PASS
-/tk:verify dark-mode-support
-```
 
 ## Development Flow
 
