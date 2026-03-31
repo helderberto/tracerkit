@@ -1,11 +1,11 @@
 ---
-description: Compare implementation against plan, emit BLOCKERS/SUGGESTIONS and a PASS or NEEDS_WORK verdict. Auto-archives on PASS. Use after implementing a plan.
+description: Compare implementation against plan, emit BLOCKERS/SUGGESTIONS and a ✅ PASS or 🚧 NEEDS_WORK verdict. Auto-archives on ✅ PASS. Use after implementing a plan.
 argument-hint: '[slug]'
 ---
 
 # Verify Implementation
 
-Compare current implementation against a plan, stamp a verdict, and archive on PASS.
+Compare current implementation against a plan, stamp a verdict, and archive on ✅ PASS.
 
 ## Pre-loaded context
 
@@ -38,13 +38,13 @@ Use a **read-only subagent** (no file writes, no edits) to:
 
 Collect findings into two categories:
 
-- **BLOCKERS** — done-when conditions not met, missing functionality, failing tests, broken contracts. These prevent a PASS.
-- **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent a PASS.
+- **BLOCKERS** — done-when conditions not met, missing functionality, failing tests, broken contracts. These prevent a ✅ PASS.
+- **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent a ✅ PASS.
 
 ### 4. Determine verdict
 
-- **PASS** — zero BLOCKERS
-- **NEEDS_WORK** — one or more BLOCKERS
+- **✅ PASS** — zero BLOCKERS
+- **🚧 NEEDS_WORK** — one or more BLOCKERS
 
 ### 5. Report to user
 
@@ -53,7 +53,7 @@ Print the verdict report:
 ```
 ## Verification: <slug>
 
-### Verdict: PASS | NEEDS_WORK
+### Verdict: ✅ PASS | 🚧 NEEDS_WORK
 
 ### BLOCKERS
 - (list or "None")
@@ -71,7 +71,7 @@ Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
 
 ## Verdict
 
-- **Result**: PASS | NEEDS_WORK
+- **Result**: ✅ PASS | 🚧 NEEDS_WORK
 - **Date**: YYYY-MM-DD
 - **BLOCKERS**: (count)
 - **SUGGESTIONS**: (count)
@@ -79,9 +79,9 @@ Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
 
 If a previous verdict block exists, replace it with the new one.
 
-### 7. On PASS — update PRD status and archive
+### 7. On ✅ PASS — update PRD status and archive
 
-If the verdict is **PASS**:
+If the verdict is **✅ PASS**:
 
 **First**, update the YAML frontmatter in `{{paths.prds}}/<slug>.md`:
 
@@ -110,17 +110,17 @@ If the verdict is **PASS**:
 
 If `{{paths.archives}}/<slug>/` already exists, warn and ask whether to overwrite.
 
-### 8. On NEEDS_WORK
+### 8. On 🚧 NEEDS_WORK
 
 Tell the user: fix the listed blockers, then re-run `/tk:verify <slug>`.
 
 ## Rules
 
 - The review subagent must be **read-only** — it must not create, edit, or delete any files
-- The only file writes this skill makes are: the verdict block in the plan, and the archive move on PASS
+- The only file writes this skill makes are: the verdict block in the plan, and the archive move on ✅ PASS
 - Never modify the source PRD (except moving it to archive)
 - Never modify implementation code — only observe and report
-- If the PRD file is missing but the plan has a PASS verdict, warn but proceed with archiving the plan only
+- If the PRD file is missing but the plan has a ✅ PASS verdict, warn but proceed with archiving the plan only
 
 ## Error Handling
 

@@ -1,0 +1,13 @@
+# CLI Reference
+
+| Command                    | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
+| `tracerkit init <path>`    | Install skills to a specific project directory |
+| `tracerkit update`         | Refresh to latest version, skip modified files |
+| `tracerkit update --force` | Replace modified files with latest versions    |
+| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
+| `tracerkit --version`      | Print version                                  |
+| `tracerkit --help`         | Show help message                              |
+
+All commands default to the home directory. Pass a path to target a specific project.

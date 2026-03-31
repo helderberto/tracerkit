@@ -24,7 +24,7 @@ For each file `{{paths.prds}}/<slug>.md`:
 
 For each slug, check if `{{paths.plans}}/<slug>.md` exists. If it does, find the last `## Verdict` block and extract:
 
-- **Result**: PASS or NEEDS_WORK
+- **Result**: ✅ PASS or 🚧 NEEDS_WORK
 - **BLOCKERS**: count
 - **SUGGESTIONS**: count
 
