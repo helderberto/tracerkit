@@ -1,3 +1,24 @@
+# 1.0.0 (2026-03-31)
+
+### Bug Fixes
+
+- handle missing argument in prd skill, fix stale /tk:propose ref ([41aa31d](https://github.com/helderberto/tracerkit/commit/41aa31d42b4c857bb4faae1c9422843cffae8fc3))
+- pin lodash-es to 4.17.21, workaround broken 4.18.0 ([a62fefd](https://github.com/helderberto/tracerkit/commit/a62fefd0ffd56a7e147a1ccec2d18054610642b1))
+- remove stale archive skill reference from template test ([df5812e](https://github.com/helderberto/tracerkit/commit/df5812ef60fa2856c00025d70ac761bb31aef238))
+- upgrade semantic-release to v25, center README header ([be5b736](https://github.com/helderberto/tracerkit/commit/be5b736ee0e3bb5b14dae592145d1363d9fc41b3))
+
+### Features
+
+- add --global flag to init, restructure README installation section ([b57baeb](https://github.com/helderberto/tracerkit/commit/b57baebacfb27e4cb3db3ca8ba958ff45515c2c5))
+- add CLI init command with template engine ([49a52c8](https://github.com/helderberto/tracerkit/commit/49a52c8b9160ef78fb3cdbc3b32e733c261a0a39))
+- add CLI source stubs ([149aba7](https://github.com/helderberto/tracerkit/commit/149aba7dc70d029163393b4b7ada906664407576))
+- add tk-propose and tk-plan skills ([7ddc228](https://github.com/helderberto/tracerkit/commit/7ddc228e77f5742318d04f98b26240936d51f159))
+- add tk-verify and tk-archive skills ([8cad8b6](https://github.com/helderberto/tracerkit/commit/8cad8b61d0a6840a6c87d214386753926ce968d9))
+- add uninstall command ([851c52d](https://github.com/helderberto/tracerkit/commit/851c52d1fe3e62a4b7656eaa2e32dd1d81aea90b))
+- add update command with smart diffing ([5ae4453](https://github.com/helderberto/tracerkit/commit/5ae4453e5f9800e92eefe47e1fac3b799058d50d))
+- add vite build, lower engine to node 18+ ([0b28e79](https://github.com/helderberto/tracerkit/commit/0b28e7953f227af8c6e02937ec26f950530c29dc))
+- default init to global install, accept optional path for per-project ([5c2a810](https://github.com/helderberto/tracerkit/commit/5c2a810c719f6d21992feed673872d52d829c098))
+
 # Changelog
 
 All notable changes to this project will be documented in this file.
