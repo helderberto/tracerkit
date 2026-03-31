@@ -1,6 +1,6 @@
 # TracerKit
 
-A spec-driven workflow plugin for Claude Code. Four commands take a feature from idea to verified archive: define, plan, build, verify.
+A spec-driven workflow plugin for Claude Code. Three commands take a feature from idea to verified archive: define, plan, verify.
 
 **Zero runtime dependencies** — pure Markdown skills, no build step.
 
@@ -39,7 +39,7 @@ A spec-driven workflow plugin for Claude Code. Four commands take a feature from
                                   v
                        +----------+----------+
                        |  /tk:verify <slug>  |
-                       |  Read-only review   |
+                       |  Review + archive   |
                        +----------+----------+
                                   |
                          +--------+--------+
@@ -47,8 +47,8 @@ A spec-driven workflow plugin for Claude Code. Four commands take a feature from
                     NEEDS_WORK           PASS
                          |                 |
                          v                 v
-                  Fix blockers    /tk:archive <slug>
-                  then re-run     Move to archive/
+                  Fix blockers      Auto-archived
+                  then re-run       to archive/
                   /tk:verify
 ```
 
@@ -69,11 +69,8 @@ A spec-driven workflow plugin for Claude Code. Four commands take a feature from
 # 3. Implement each phase from the plan
 #    (work through phases with Claude)
 
-# 4. Verify implementation against the plan's done-when criteria
+# 4. Verify — auto-archives on PASS
 /tk:verify dark-mode-support
-
-# 5. On PASS, archive the artifacts
-/tk:archive dark-mode-support
 ```
 
 </details>
@@ -109,9 +106,8 @@ PRDs are living documents — refine them any time before or during implementati
 # Plan is usually a single phase for bug fixes
 /tk:plan fix-login-double-submit
 
-# Fix, verify, archive
+# Fix, verify (auto-archives on PASS)
 /tk:verify fix-login-double-submit
-/tk:archive fix-login-double-submit
 ```
 
 </details>
@@ -129,9 +125,7 @@ PRDs are living documents — refine them any time before or during implementati
 
 # Re-verify — previous verdict is replaced
 /tk:verify dark-mode-support
-# → PASS
-
-/tk:archive dark-mode-support
+# → PASS — auto-archived to archive/dark-mode-support/
 ```
 
 </details>
@@ -144,7 +138,7 @@ PRDs are living documents — refine them any time before or during implementati
 /plugin install tk@claude-plugins-official
 ```
 
-Then run `/reload-plugins` to activate. Skills are available as `/tk:prd`, `/tk:plan`, `/tk:verify`, and `/tk:archive`.
+Then run `/reload-plugins` to activate. Skills are available as `/tk:prd`, `/tk:plan`, and `/tk:verify`.
 
 ### Manual (for development)
 
@@ -178,17 +172,11 @@ Reads a PRD and breaks it into phased **tracer-bullet vertical slices** — each
 
 **Output:** `plans/<slug>.md`
 
-### `/tk:verify <slug>` — Verify implementation
+### `/tk:verify <slug>` — Verify and archive
 
-Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict.
+Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict. On PASS, automatically archives the PRD and plan to `archive/<slug>/`.
 
-**Output:** Verdict block appended to `plans/<slug>.md`
-
-### `/tk:archive <slug>` — Archive completed work
-
-Moves a PASS-verified PRD and plan to `archive/<slug>/` with a closing timestamp. Refuses to archive without a passing verdict.
-
-**Output:** `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
+**Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
 
 ## Why TracerKit?
 
@@ -205,19 +193,16 @@ TracerKit brings **predictability without ceremony** — a lightweight specifica
 
 ### How existing approaches compare
 
-|                           | [Spec Kit](https://github.com/github/spec-kit)    | [Kiro](https://kiro.dev/)               | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                                                      |
-| ------------------------- | ------------------------------------------------- | --------------------------------------- | -------------------------------------------------- | -------------------------------------------------------------- |
-| **What it is**            | CLI toolkit + extensions ecosystem                | Agentic IDE (VS Code fork)              | Slash-command framework                            | Claude Code plugin (pure Markdown)                             |
-| **Setup**                 | Python (`uv tool install`)                        | Dedicated IDE install                   | Copy slash commands                                | Copy 2 directories                                             |
-| **Phases**                | 5 (constitution, specify, plan, tasks, implement) | 3 (requirements, design, tasks)         | 3 (propose, apply, archive)                        | 4 (prd, plan, verify, archive)                                 |
-| **Artifacts per feature** | 4 files (constitution, spec, plan, tasks)         | EARS requirements + design + tasks      | proposal + specs + design + tasks                  | 2 files (PRD, plan)                                            |
-| **Planning model**        | Task lists with completion tracking               | Sequenced tasks with dependency mapping | Task lists in change folder                        | Tracer-bullet vertical slices — each phase demoable end-to-end |
-| **Verification**          | Human-in-the-loop at phase gates                  | Diff approval workflow                  | Manual                                             | Built-in `/tk:verify` with PASS/NEEDS_WORK verdicts            |
-| **Archival**              | Not built-in                                      | Not built-in                            | Folder move                                        | Verdict-gated — requires PASS to archive                       |
-| **Tool lock-in**          | Any AI assistant (20+)                            | Kiro IDE only (Claude models)           | Any AI assistant (20+)                             | Claude Code only                                               |
-| **Runtime deps**          | Python + uv                                       | Proprietary IDE                         | None                                               | None                                                           |
-| **Extensions/plugins**    | 40+ community extensions                          | Agent hooks, MCP integration            | None                                               | None (yet)                                                     |
-| **Complexity**            | High — full methodology                           | High — full IDE                         | Low                                                | Low                                                            |
+|                  | [Spec Kit](https://github.com/github/spec-kit) | [Kiro](https://kiro.dev/)  | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                          |
+| ---------------- | ---------------------------------------------- | -------------------------- | -------------------------------------------------- | ---------------------------------- |
+| **What it is**   | CLI toolkit + extensions                       | Agentic IDE (VS Code fork) | Slash-command framework                            | Claude Code plugin (pure Markdown) |
+| **Setup**        | Python + uv                                    | Dedicated IDE              | Copy slash commands                                | `/plugin install`                  |
+| **Phases**       | 5                                              | 3                          | 3                                                  | 3 (prd, plan, verify)              |
+| **Artifacts**    | 4 files                                        | 3+ files                   | 4+ files                                           | 2 files (PRD, plan)                |
+| **Verification** | Manual phase gates                             | Diff approval              | Manual                                             | Automated PASS/NEEDS_WORK          |
+| **Tool lock-in** | Any AI assistant                               | Kiro IDE only              | Any AI assistant                                   | Claude Code only                   |
+| **Runtime deps** | Python + uv                                    | Proprietary IDE            | None                                               | None                               |
+| **Complexity**   | High                                           | High                       | Low                                                | Low                                |
 
 ### Where TracerKit fits
 
