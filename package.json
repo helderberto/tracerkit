@@ -1,0 +1,67 @@
+{
+  "name": "tracerkit",
+  "version": "0.1.0",
+  "description": "Stack-agnostic spec-driven workflow for AI coding assistants",
+  "license": "MIT",
+  "author": {
+    "name": "helderberto",
+    "url": "https://github.com/helderberto"
+  },
+  "homepage": "https://github.com/helderberto/tracerkit",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/helderberto/tracerkit.git"
+  },
+  "bugs": {
+    "url": "https://github.com/helderberto/tracerkit/issues"
+  },
+  "type": "module",
+  "bin": {
+    "tracerkit": "./bin/cli.js"
+  },
+  "files": [
+    "bin",
+    "skills",
+    "agents",
+    "docs",
+    "templates"
+  ],
+  "engines": {
+    "node": ">=24.0.0",
+    "npm": ">=11.0.0"
+  },
+  "scripts": {
+    "build": "tsc",
+    "dev": "tsc --watch",
+    "test": "vitest",
+    "test:run": "vitest run",
+    "lint": "eslint src",
+    "lint:fix": "eslint src --fix",
+    "format": "prettier --write .",
+    "format:check": "prettier --check .",
+    "typecheck": "tsc --noEmit",
+    "prepare": "husky"
+  },
+  "lint-staged": {
+    "*.{ts,js}": [
+      "eslint --fix",
+      "prettier --write"
+    ],
+    "*.{json,md}": [
+      "prettier --write"
+    ]
+  },
+  "devDependencies": {
+    "@commitlint/cli": "20.5.0",
+    "@commitlint/config-conventional": "20.5.0",
+    "@types/node": "^22.0.0",
+    "eslint": "^9.0.0",
+    "eslint-config-prettier": "10.1.8",
+    "husky": "9.1.7",
+    "lint-staged": "16.4.0",
+    "prettier": "3.8.1",
+    "typescript": "^5.0.0",
+    "typescript-eslint": "8.58.0",
+    "vitest": "^3.0.0"
+  }
+}
