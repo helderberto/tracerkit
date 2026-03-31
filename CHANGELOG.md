@@ -1,3 +1,5 @@
+## [1.3.13](https://github.com/helderberto/tracerkit/compare/v1.3.12...v1.3.13) (2026-03-31)
+
 ## [1.3.12](https://github.com/helderberto/tracerkit/compare/v1.3.11...v1.3.12) (2026-03-31)
 
 ## [1.3.11](https://github.com/helderberto/tracerkit/compare/v1.3.10...v1.3.11) (2026-03-31)
