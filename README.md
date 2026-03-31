@@ -54,7 +54,7 @@ A spec-driven workflow plugin for Claude Code. Three commands take a feature fro
 
 </details>
 
-### Examples
+## Examples
 
 <details>
 <summary>New feature from scratch</summary>
@@ -92,22 +92,6 @@ PRDs are living documents — refine them any time before or during implementati
 /tk:plan dark-mode-support
 
 # Continue implementation from the new plan
-```
-
-</details>
-
-<details>
-<summary>Bug fix with lightweight spec</summary>
-
-```bash
-# Even small fixes benefit from a quick PRD to capture root cause
-/tk:prd fix: login form submits twice on slow networks
-
-# Plan is usually a single phase for bug fixes
-/tk:plan fix-login-double-submit
-
-# Fix, verify (auto-archives on PASS)
-/tk:verify fix-login-double-submit
 ```
 
 </details>
@@ -180,15 +164,9 @@ Read-only review that compares the codebase against the plan's done-when conditi
 
 ## Why TracerKit?
 
-AI coding assistants are powerful but unpredictable when requirements live only in chat history. Without shared artifacts, sessions drift, scope creeps, and context gets lost between conversations.
+Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". Nothing works end-to-end until everything is done. And without shared artifacts, AI coding sessions drift, scope creeps, and context gets lost between conversations.
 
-TracerKit brings **predictability without ceremony** — a lightweight specification layer that ensures human and AI align on requirements _before_ implementation begins.
-
-### Tracer bullets — the core idea
-
-Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". You finish one layer before touching the next. Nothing works end-to-end until everything is done.
-
-TracerKit plans differently. Every phase is a **vertical slice** — a thin but complete path through every layer of the stack (schema → service → API → UI → tests). Each phase is demoable on its own. Think of it as firing a tracer bullet through the entire system to light up the path before committing to full implementation.
+TracerKit uses **tracer-bullet vertical slices** instead. Every phase is a **vertical slice** — a thin but complete path through every layer of the stack (schema → service → API → UI → tests). Each phase is demoable on its own. Think of it as firing a tracer bullet through the entire system to light up the path before committing to full implementation.
 
 Why this matters for AI-assisted development:
 
