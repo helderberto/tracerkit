@@ -1,3 +1,9 @@
+# [1.3.0](https://github.com/helderberto/tracerkit/compare/v1.2.1...v1.3.0) (2026-03-31)
+
+### Features
+
+- add --force flag to update, hint when files skipped ([b12a0e5](https://github.com/helderberto/tracerkit/commit/b12a0e55c768bec5952304a4597bf79b0cdcc639))
+
 ## [1.2.1](https://github.com/helderberto/tracerkit/compare/v1.2.0...v1.2.1) (2026-03-31)
 
 # [1.2.0](https://github.com/helderberto/tracerkit/compare/v1.1.0...v1.2.0) (2026-03-31)
