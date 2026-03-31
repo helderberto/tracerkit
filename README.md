@@ -30,28 +30,28 @@ Open Claude Code in any project and start using:
 /tk:verify dark-mode-support      # verify and archive
 ```
 
-### 3. Manage your installation
+### 3. CLI Reference
 
-```bash
-npx tracerkit update              # refresh to latest, skip modified files
-npx tracerkit uninstall           # remove TracerKit skills
-```
+| Command                    | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
+| `tracerkit init <path>`    | Install skills to a specific project directory |
+| `tracerkit update`         | Refresh to latest version, skip modified files |
+| `tracerkit update --force` | Replace modified files with latest versions    |
+| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
+| `tracerkit --version`      | Print version                                  |
+
+All commands default to the home directory. Pass a path or use `--global` explicitly to target `~/`.
 
 <details>
-<summary>Install per-project instead</summary>
+<summary>Per-project usage</summary>
 
 To scope skills to a single project (team members get them via git):
 
 ```bash
 npx tracerkit init .              # install to .claude/skills/ in current dir
-npx tracerkit init /path/to/proj  # or specify a path
-```
-
-Per-project commands:
-
-```bash
-npx tracerkit update .
-npx tracerkit uninstall .
+npx tracerkit update .            # update project-scoped skills
+npx tracerkit uninstall .         # remove project-scoped skills
 ```
 
 </details>
