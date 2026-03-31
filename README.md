@@ -2,11 +2,15 @@
 
 # TracerKit
 
-<img src="./tracerkit.png" alt="TracerKit" width="100%" />
-
 [![CI](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml/badge.svg)](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+
+<br />
+
+<img src="./tracerkit.png" alt="TracerKit" width="640" />
+
+<br />
 
 Spec-driven workflow for Claude Code: from idea to product requirements to executable plan.
 
