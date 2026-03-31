@@ -68,7 +68,9 @@ describe('CLI', () => {
     const output = run(['update', tmp.get()]);
 
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
-    expect(output.some((l) => l.includes('Updated to tracerkit/'))).toBe(true);
+    expect(
+      output.some((l) => l.includes('Updated to the latest TracerKit.')),
+    ).toBe(true);
     expect(output.some((l) => l.includes('restart your session'))).toBe(true);
   });
 

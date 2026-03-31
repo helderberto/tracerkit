@@ -45,7 +45,7 @@ export function run(args: string[]): string[] {
       const force = rest.includes('--force');
       const targetArgs = rest.filter((a) => a !== '--force');
       const output = update(resolveTarget(targetArgs), { force });
-      output.push('', `Updated to tracerkit/${__VERSION__}`);
+      output.push('', 'Updated to the latest TracerKit.');
       output.push(
         'If using Claude Code, restart your session to load changes.',
       );
