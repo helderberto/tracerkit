@@ -1,3 +1,9 @@
+## [1.3.14](https://github.com/helderberto/tracerkit/compare/v1.3.13...v1.3.14) (2026-03-31)
+
+### Bug Fixes
+
+- remove hardcoded version from update success message ([b2f75fc](https://github.com/helderberto/tracerkit/commit/b2f75fc1a34814114ad1d5189deb9e1fc03c7229))
+
 ## [1.3.13](https://github.com/helderberto/tracerkit/compare/v1.3.12...v1.3.13) (2026-03-31)
 
 ## [1.3.12](https://github.com/helderberto/tracerkit/compare/v1.3.11...v1.3.12) (2026-03-31)
