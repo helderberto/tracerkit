@@ -278,6 +278,10 @@ PRDs are living documents — refine them any time before or during implementati
 5. [Conventional Commits](https://www.conventionalcommits.org/) (enforced by commitlint)
 6. Open a PR against `main`
 
+## Support
+
+For support, please [open a GitHub issue](https://github.com/helderberto/tracerkit/issues). We welcome bug reports, feature requests, and questions.
+
 ## License
 
 [MIT License](LICENSE) © [helderberto](https://helderberto.com)
