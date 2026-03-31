@@ -186,8 +186,7 @@ AI:  Feature Status Dashboard
 
 All commands default to the home directory. Pass a path to target a specific project.
 
-<details>
-<summary>Configuration</summary>
+## Configuration
 
 Artifacts are stored under `.tracerkit/` by default. To customize paths, create `.tracerkit/config.json`:
 
@@ -203,10 +202,7 @@ Artifacts are stored under `.tracerkit/` by default. To customize paths, create 
 
 Any missing key falls back to its default. The file is optional — without it, all defaults apply. After changing config, run `tracerkit update` to regenerate skills with the new paths.
 
-</details>
-
-<details>
-<summary>Metadata Lifecycle</summary>
+## Metadata Lifecycle
 
 Each PRD carries YAML frontmatter that tracks its position in the workflow. The skills update it automatically — you never need to edit it by hand.
 
@@ -257,10 +253,7 @@ completed: 2025-06-20T09:00:00Z
 
 </details>
 
-</details>
-
-<details>
-<summary>Compared to</summary>
+## Compared to
 
 **vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub) — Thorough but heavyweight. 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
 
@@ -282,8 +275,6 @@ completed: 2025-06-20T09:00:00Z
 | **Verification** | Manual gates     | Diff approval              | Manual                  | Automated PASS/NEEDS_WORK          |
 | **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                   |
 | **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                               |
-
-</details>
 
 </details>
 
