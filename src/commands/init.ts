@@ -1,16 +1,13 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { copyTemplates } from '#src/templates.js';
+import { copyTemplates, SKILL_NAMES } from '../templates.ts';
 
 export function init(cwd: string): string[] {
-  const pluginDir = join(cwd, '.claude-plugin');
-  const skillsDir = join(cwd, 'skills');
-
-  if (existsSync(pluginDir)) {
-    throw new Error('.claude-plugin/ already exists — aborting');
-  }
-  if (existsSync(skillsDir)) {
-    throw new Error('skills/ already exists — aborting');
+  for (const name of SKILL_NAMES) {
+    const dir = join(cwd, '.claude', 'skills', name);
+    if (existsSync(dir)) {
+      throw new Error(`.claude/skills/${name}/ already exists — aborting`);
+    }
   }
 
   const { copied } = copyTemplates(cwd);

@@ -22,9 +22,6 @@
   "bin": {
     "tracerkit": "./bin/cli.js"
   },
-  "imports": {
-    "#src/*.js": "./src/*.ts"
-  },
   "keywords": [
     "claude-code",
     "plugin",

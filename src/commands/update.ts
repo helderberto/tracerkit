@@ -1,9 +1,12 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { copyTemplates, diffTemplates } from '#src/templates.js';
+import { copyTemplates, diffTemplates, SKILL_NAMES } from '../templates.ts';
 
 export function update(cwd: string): string[] {
-  if (!existsSync(join(cwd, '.claude-plugin'))) {
+  const hasAny = SKILL_NAMES.some((name) =>
+    existsSync(join(cwd, '.claude', 'skills', name)),
+  );
+  if (!hasAny) {
     throw new Error('TracerKit not initialized — run `tracerkit init` first');
   }
 

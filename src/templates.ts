@@ -9,6 +9,8 @@ import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
+export const SKILL_NAMES = ['tk:prd', 'tk:plan', 'tk:verify'] as const;
+
 export interface CopyResult {
   copied: string[];
 }

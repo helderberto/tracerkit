@@ -10,28 +10,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/), and this
 
 - CLI `init`, `update`, and `uninstall` commands for project lifecycle management
 - `update` command with content-hash diffing — overwrites unchanged, skips modified, adds missing
-- `uninstall` command — removes `.claude-plugin/` and `skills/`, leaves user artifacts
+- `uninstall` command — removes TracerKit skills from `.claude/skills/`, leaves user artifacts
 - `/tk:prd` skill — interactive interview to define a feature, writes `prds/<slug>.md`
 - `/tk:plan` skill — breaks a PRD into phased tracer-bullet vertical slices, writes `plans/<slug>.md`
 - `/tk:verify` skill — read-only review that stamps PASS or NEEDS_WORK, auto-archives on PASS
-- Plugin manifest (`.claude-plugin/plugin.json`) for Claude Code discovery
 - Comparison table in README (Spec Kit, Kiro, OpenSpec, TracerKit)
-- Collapsible usage examples in README (new feature, PRD iteration, bug fix, verify loop)
+- Collapsible usage examples in README (new feature, PRD iteration, verify loop)
 - ESLint, Prettier, Husky, and commitlint configuration
 - Test suite for CLI commands, template engine, and diffing
 
-### Fixed
+### Changed
 
-- Missing argument handling in PRD skill
-- Stale `/tk:propose` references after skill was removed
+- Skills install to `.claude/skills/tk:{prd,plan,verify}/` instead of `.claude-plugin/` + `skills/` — matches Claude Code native discovery
+- Removed `.claude-plugin/plugin.json` — not needed for CLI-based installation
+- Simplified workflow from 4 steps to 3 (prd → plan → verify)
+- Replaced `#src/` import aliases with relative `.ts` imports
 
 ### Removed
 
 - `/tk:archive` skill — merged into `/tk:verify` (auto-archives on PASS)
-
-### Changed
-
-- Moved `.claude-plugin/` and `skills/` into `templates/` directory (symlinked at root)
-- Restructured skills to match Claude Code plugin format
-- Simplified workflow from 4 steps to 3 (prd → plan → verify)
-- Simplified workflow — dropped `planning.md` and `.tracerkit/changes/` in favor of `prds/` + `plans/`
+- `.claude-plugin/` plugin manifest — CLI installs directly to `.claude/skills/`

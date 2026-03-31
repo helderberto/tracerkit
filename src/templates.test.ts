@@ -1,18 +1,7 @@
-import { readFileSync, readdirSync, writeFileSync, rmSync } from 'node:fs';
+import { readFileSync, writeFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { copyTemplates, diffTemplates } from '#src/templates.js';
-import { useTmpDir } from '#src/test-setup.js';
-
-function listFiles(dir: string, prefix = ''): string[] {
-  const entries = readdirSync(dir, { withFileTypes: true });
-  const files: string[] = [];
-  for (const e of entries) {
-    const rel = prefix ? `${prefix}/${e.name}` : e.name;
-    if (e.isDirectory()) files.push(...listFiles(join(dir, e.name), rel));
-    else files.push(rel);
-  }
-  return files.sort();
-}
+import { copyTemplates, diffTemplates } from './templates.ts';
+import { useTmpDir } from './test-setup.ts';
 
 describe('copyTemplates', () => {
   const tmp = useTmpDir();
@@ -20,29 +9,29 @@ describe('copyTemplates', () => {
   it('copies all template files into target directory', () => {
     const result = copyTemplates(tmp.get());
 
-    expect(result.copied).toContain('.claude-plugin/plugin.json');
-    expect(result.copied).toContain('skills/prd/SKILL.md');
-    expect(result.copied).toContain('skills/plan/SKILL.md');
-    expect(result.copied).toContain('skills/verify/SKILL.md');
-    expect(result.copied).toHaveLength(4);
+    expect(result.copied).toContain('.claude/skills/tk:prd/SKILL.md');
+    expect(result.copied).toContain('.claude/skills/tk:plan/SKILL.md');
+    expect(result.copied).toContain('.claude/skills/tk:verify/SKILL.md');
+    expect(result.copied).toHaveLength(3);
   });
 
   it('preserves file contents', () => {
     copyTemplates(tmp.get());
 
     const content = readFileSync(
-      join(tmp.get(), '.claude-plugin/plugin.json'),
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'utf8',
     );
-    expect(content).toContain('"name": "tk"');
+    expect(content).toContain('# PRD Writing');
   });
 
   it('creates nested directories as needed', () => {
     copyTemplates(tmp.get());
 
-    const files = listFiles(tmp.get());
-    expect(files).toContain('.claude-plugin/plugin.json');
-    expect(files).toContain('skills/prd/SKILL.md');
+    expect(
+      readFileSync(join(tmp.get(), '.claude/skills/tk:plan/SKILL.md'), 'utf8')
+        .length,
+    ).toBeGreaterThan(0);
   });
 });
 
@@ -53,25 +42,25 @@ describe('diffTemplates', () => {
     copyTemplates(tmp.get());
 
     const result = diffTemplates(tmp.get());
-    expect(result.unchanged.length).toBeGreaterThan(0);
+    expect(result.unchanged).toHaveLength(3);
     expect(result.modified).toHaveLength(0);
     expect(result.missing).toHaveLength(0);
   });
 
   it('detects modified files', () => {
     copyTemplates(tmp.get());
-    writeFileSync(join(tmp.get(), '.claude-plugin/plugin.json'), 'changed');
+    writeFileSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'), 'changed');
 
     const result = diffTemplates(tmp.get());
-    expect(result.modified).toContain('.claude-plugin/plugin.json');
-    expect(result.unchanged).not.toContain('.claude-plugin/plugin.json');
+    expect(result.modified).toContain('.claude/skills/tk:prd/SKILL.md');
+    expect(result.unchanged).not.toContain('.claude/skills/tk:prd/SKILL.md');
   });
 
   it('detects missing files', () => {
     copyTemplates(tmp.get());
-    rmSync(join(tmp.get(), 'skills/prd/SKILL.md'));
+    rmSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'));
 
     const result = diffTemplates(tmp.get());
-    expect(result.missing).toContain('skills/prd/SKILL.md');
+    expect(result.missing).toContain('.claude/skills/tk:prd/SKILL.md');
   });
 });

@@ -1,8 +1,8 @@
 import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
-import { uninstall } from '#src/commands/uninstall.js';
-import { copyTemplates } from '#src/templates.js';
-import { useTmpDir } from '#src/test-setup.js';
+import { uninstall } from './uninstall.ts';
+import { copyTemplates } from '../templates.ts';
+import { useTmpDir } from '../test-setup.ts';
 
 describe('uninstall', () => {
   const tmp = useTmpDir();
@@ -11,13 +11,14 @@ describe('uninstall', () => {
     expect(() => uninstall(tmp.get())).toThrow(/not initialized/);
   });
 
-  it('removes .claude-plugin/ and skills/', () => {
+  it('removes all tk skill directories', () => {
     copyTemplates(tmp.get());
 
     uninstall(tmp.get());
 
-    expect(existsSync(join(tmp.get(), '.claude-plugin'))).toBe(false);
-    expect(existsSync(join(tmp.get(), 'skills'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:plan'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:verify'))).toBe(false);
   });
 
   it('leaves prds/, plans/, and archive/ untouched', () => {
@@ -39,10 +40,13 @@ describe('uninstall', () => {
 
     const output = uninstall(tmp.get());
 
-    expect(
-      output.some((l) => l.includes('✗') && l.includes('.claude-plugin/')),
-    ).toBe(true);
-    expect(output.some((l) => l.includes('✗') && l.includes('skills/'))).toBe(
+    expect(output.some((l) => l.includes('✗') && l.includes('tk:prd'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('✗') && l.includes('tk:plan'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('✗') && l.includes('tk:verify'))).toBe(
       true,
     );
   });

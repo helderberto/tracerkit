@@ -1,9 +1,0 @@
-{
-  "name": "tk",
-  "description": "Structured workflow loop for AI-assisted changes: propose, plan, verify, archive",
-  "version": "0.1.0",
-  "author": {
-    "name": "Helder Burato Berto",
-    "email": "helder.burato@gmail.com"
-  }
-}

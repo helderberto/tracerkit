@@ -1,3 +1,4 @@
-export { init } from '#src/commands/init.js';
-export { update } from '#src/commands/update.js';
-export { uninstall } from '#src/commands/uninstall.js';
+export { init } from './commands/init.ts';
+export { update } from './commands/update.ts';
+export { uninstall } from './commands/uninstall.ts';
+export { SKILL_NAMES } from './templates.ts';

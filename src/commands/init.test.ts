@@ -1,7 +1,7 @@
 import { mkdirSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { init } from '#src/commands/init.js';
-import { useTmpDir } from '#src/test-setup.js';
+import { init } from './init.ts';
+import { useTmpDir } from '../test-setup.ts';
 
 describe('init', () => {
   const tmp = useTmpDir();
@@ -9,23 +9,32 @@ describe('init', () => {
   it('copies all template files into a fresh directory', () => {
     const output = init(tmp.get());
 
-    expect(existsSync(join(tmp.get(), '.claude-plugin/plugin.json'))).toBe(
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'))).toBe(
       true,
     );
-    expect(existsSync(join(tmp.get(), 'skills/prd/SKILL.md'))).toBe(true);
-    expect(output).toContain('✓ .claude-plugin/plugin.json');
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:plan/SKILL.md'))).toBe(
+      true,
+    );
+    expect(
+      existsSync(join(tmp.get(), '.claude/skills/tk:verify/SKILL.md')),
+    ).toBe(true);
+    expect(output).toContain('✓ .claude/skills/tk:prd/SKILL.md');
   });
 
-  it('aborts if .claude-plugin/ already exists', () => {
-    mkdirSync(join(tmp.get(), '.claude-plugin'));
+  it('aborts if any tk skill already exists', () => {
+    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
+      recursive: true,
+    });
 
     expect(() => init(tmp.get())).toThrow(/already exists/);
   });
 
-  it('aborts if skills/ already exists', () => {
-    mkdirSync(join(tmp.get(), 'skills'));
+  it('preserves existing .claude/ contents', () => {
+    mkdirSync(join(tmp.get(), '.claude'), { recursive: true });
 
-    expect(() => init(tmp.get())).toThrow(/already exists/);
+    const output = init(tmp.get());
+
+    expect(output.length).toBe(3);
   });
 
   it('reports each copied file with check prefix', () => {

@@ -1,5 +1,5 @@
 ---
-description: Create a PRD through user interview, codebase exploration, and module design, saved to prds/. Use when starting a new feature or change before /tk:propose.
+description: Create a PRD through user interview, codebase exploration, and module design, saved to prds/. Use when starting a new feature or change.
 argument-hint: <idea>
 disable-model-invocation: true
 ---

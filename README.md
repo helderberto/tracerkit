@@ -1,8 +1,40 @@
 # TracerKit
 
-A spec-driven workflow plugin for Claude Code. Three commands take a feature from idea to verified archive: define, plan, verify.
+A spec-driven workflow for Claude Code. Three skills take a feature from idea to verified archive: define, plan, verify.
 
 **Zero runtime dependencies** — pure Markdown skills, no build step.
+
+## Get Started
+
+### 1. Install TracerKit CLI
+
+```bash
+npx tracerkit init
+```
+
+This scaffolds skills into `.claude/skills/` in your project. Claude Code discovers them automatically.
+
+### 2. Use the skills
+
+```bash
+# Define the feature — interactive interview, explores your codebase
+/tk:prd add dark mode support
+
+# Break the PRD into phased vertical slices
+/tk:plan dark-mode-support
+
+# Implement each phase (work through phases with Claude)
+
+# Verify — auto-archives on PASS
+/tk:verify dark-mode-support
+```
+
+### 3. Manage your installation
+
+```bash
+npx tracerkit update    # refresh to latest, skip modified files
+npx tracerkit uninstall # remove TracerKit skills, keep prds/plans/archive
+```
 
 ## Development Flow
 
@@ -57,25 +89,6 @@ A spec-driven workflow plugin for Claude Code. Three commands take a feature fro
 ## Examples
 
 <details>
-<summary>New feature from scratch</summary>
-
-```bash
-# 1. Define the feature — interactive interview, explores your codebase
-/tk:prd add dark mode support
-
-# 2. Break the PRD into phased vertical slices
-/tk:plan dark-mode-support
-
-# 3. Implement each phase from the plan
-#    (work through phases with Claude)
-
-# 4. Verify — auto-archives on PASS
-/tk:verify dark-mode-support
-```
-
-</details>
-
-<details>
 <summary>Iterating on an accepted PRD</summary>
 
 PRDs are living documents — refine them any time before or during implementation.
@@ -114,47 +127,6 @@ PRDs are living documents — refine them any time before or during implementati
 
 </details>
 
-## Installation
-
-### Via npx (recommended)
-
-```bash
-npx tracerkit init
-```
-
-This scaffolds `.claude-plugin/` and `skills/` into your project. Claude Code discovers the plugin automatically.
-
-```bash
-npx tracerkit update    # refresh to latest, skip modified files
-npx tracerkit uninstall # remove TracerKit, keep prds/plans/archive
-```
-
-### From the official marketplace
-
-```shell
-/plugin install tk@claude-plugins-official
-```
-
-Then run `/reload-plugins` to activate. Skills are available as `/tk:prd`, `/tk:plan`, and `/tk:verify`.
-
-### Manual (for development)
-
-Clone the repo and load it directly:
-
-```bash
-git clone https://github.com/helderberto/tracerkit.git
-claude --plugin-dir ./tracerkit
-```
-
-Or symlink into an existing project:
-
-```bash
-ln -s /path/to/tracerkit/.claude-plugin .claude-plugin
-ln -s /path/to/tracerkit/skills skills
-```
-
-Claude Code discovers the plugin automatically via `.claude-plugin/plugin.json`.
-
 ## Skills
 
 ### `/tk:prd <idea>` — Write a PRD
@@ -175,6 +147,25 @@ Read-only review that compares the codebase against the plan's done-when conditi
 
 **Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
 
+## Manual Installation
+
+For development or if you prefer symlinks:
+
+```bash
+git clone https://github.com/helderberto/tracerkit.git
+
+# Per-project:
+mkdir -p .claude/skills
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd .claude/skills/tk:prd
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan .claude/skills/tk:plan
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify .claude/skills/tk:verify
+
+# Or global (available in all projects):
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd ~/.claude/skills/tk:prd
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan ~/.claude/skills/tk:plan
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify ~/.claude/skills/tk:verify
+```
+
 ## Why TracerKit?
 
 Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". Nothing works end-to-end until everything is done. And without shared artifacts, AI coding sessions drift, scope creeps, and context gets lost between conversations.
@@ -194,8 +185,8 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 
 |                  | [Spec Kit](https://github.com/github/spec-kit) | [Kiro](https://kiro.dev/)  | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                          |
 | ---------------- | ---------------------------------------------- | -------------------------- | -------------------------------------------------- | ---------------------------------- |
-| **What it is**   | CLI toolkit + extensions                       | Agentic IDE (VS Code fork) | Slash-command framework                            | Claude Code plugin (pure Markdown) |
-| **Setup**        | Python + uv                                    | Dedicated IDE              | Copy slash commands                                | `/plugin install`                  |
+| **What it is**   | CLI toolkit + extensions                       | Agentic IDE (VS Code fork) | Slash-command framework                            | Claude Code skills (pure Markdown) |
+| **Setup**        | Python + uv                                    | Dedicated IDE              | Copy slash commands                                | `npx tracerkit init`               |
 | **Phases**       | 5                                              | 3                          | 3                                                  | 3 (prd, plan, verify)              |
 | **Artifacts**    | 4 files                                        | 3+ files                   | 4+ files                                           | 2 files (PRD, plan)                |
 | **Verification** | Manual phase gates                             | Diff approval              | Manual                                             | Automated PASS/NEEDS_WORK          |
@@ -203,7 +194,7 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 | **Runtime deps** | Python + uv                                    | Proprietary IDE            | None                                               | None                               |
 | **Complexity**   | High                                           | High                       | Low                                                | Low                                |
 
-TracerKit trades breadth (Claude Code only) for depth — native plugin discovery, subagents for read-only verification, and the simplest setup with fewest artifacts.
+TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for read-only verification, and the simplest setup with fewest artifacts.
 
 ## Contributing
 

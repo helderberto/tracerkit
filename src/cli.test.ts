@@ -1,8 +1,8 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { run } from '#src/cli.js';
-import { copyTemplates } from '#src/templates.js';
-import { useTmpDir } from '#src/test-setup.js';
+import { run } from './cli.ts';
+import { copyTemplates } from './templates.ts';
+import { useTmpDir } from './test-setup.ts';
 
 describe('CLI', () => {
   const tmp = useTmpDir();
@@ -10,10 +10,10 @@ describe('CLI', () => {
   it('routes "init" to init command', () => {
     const output = run(['init'], tmp.get());
 
-    expect(existsSync(join(tmp.get(), '.claude-plugin/plugin.json'))).toBe(
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'))).toBe(
       true,
     );
-    expect(output.some((l) => l.includes('plugin.json'))).toBe(true);
+    expect(output.some((l) => l.includes('tk:prd'))).toBe(true);
   });
 
   it('prints usage for unknown command', () => {
@@ -39,7 +39,7 @@ describe('CLI', () => {
     copyTemplates(tmp.get());
     const output = run(['uninstall'], tmp.get());
 
-    expect(existsSync(join(tmp.get(), '.claude-plugin'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);
     expect(output.some((l) => l.includes('✗'))).toBe(true);
   });
 });

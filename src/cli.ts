@@ -1,12 +1,12 @@
-import { init } from '#src/commands/init.js';
-import { update } from '#src/commands/update.js';
-import { uninstall } from '#src/commands/uninstall.js';
+import { init } from './commands/init.ts';
+import { update } from './commands/update.ts';
+import { uninstall } from './commands/uninstall.ts';
 
 const USAGE = [
   'Usage: tracerkit <command>',
   '',
   'Commands:',
-  '  init        Scaffold .claude-plugin/ and skills/ into current project',
+  '  init        Scaffold skills into .claude/skills/ in current project',
   '  update      Refresh files from latest version, skip modified files',
   '  uninstall   Remove TracerKit files, keep user artifacts',
 ];
