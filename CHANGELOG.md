@@ -1,3 +1,9 @@
+## [1.3.5](https://github.com/helderberto/tracerkit/compare/v1.3.4...v1.3.5) (2026-03-31)
+
+### Bug Fixes
+
+- remove --global flag, add --help, add logo to README ([40c698c](https://github.com/helderberto/tracerkit/commit/40c698c0b39e36598c1eb2a00df3554743befb80))
+
 ## [1.3.4](https://github.com/helderberto/tracerkit/compare/v1.3.3...v1.3.4) (2026-03-31)
 
 ### Bug Fixes
