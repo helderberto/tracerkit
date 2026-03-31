@@ -8,30 +8,29 @@ const USAGE = [
   'Usage: tracerkit <command> [path]',
   '',
   'Commands:',
-  '  init [path]       Install skills (default: home directory)',
-  '  update [path]     Refresh files from latest version, skip modified files',
-  '  uninstall [path]  Remove TracerKit skills, keep user artifacts',
+  '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
+  '  update [path]     Refresh unchanged files from latest version, skip modified',
+  '  uninstall [path]  Remove TracerKit skill directories, keep prds/ and plans/',
   '',
   'Options:',
-  '  --force           Replace modified files with latest versions',
-  '  --global          Target home directory instead of current directory',
+  '  --force           Overwrite modified files during update',
+  '  --help, -h        Show this help message',
   '  --version, -v     Print version',
+  '',
+  'All commands default to the home directory when no path is given.',
 ];
 
 export function resolveTarget(args: string[]): string {
-  const hasGlobal = args.includes('--global');
   const pathArg = args.find((a) => !a.startsWith('-'));
-
-  if (hasGlobal && pathArg) {
-    throw new Error('Cannot use --global with a path argument');
-  }
-
-  if (hasGlobal) return homedir();
   if (pathArg) return resolve(pathArg);
   return homedir();
 }
 
 export function run(args: string[]): string[] {
+  if (args.includes('--help') || args.includes('-h')) {
+    return USAGE;
+  }
+
   if (args.includes('--version') || args.includes('-v')) {
     return [`tracerkit/${__VERSION__}`];
   }

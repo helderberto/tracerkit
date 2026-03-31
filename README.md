@@ -2,6 +2,8 @@
 
 # TracerKit
 
+<img src="./tracerkit.png" alt="TracerKit" width="100%" />
+
 [![CI](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml/badge.svg)](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml)
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
@@ -42,8 +44,9 @@ Open Claude Code in any project and start using:
 | `tracerkit update --force` | Replace modified files with latest versions    |
 | `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
 | `tracerkit --version`      | Print version                                  |
+| `tracerkit --help`         | Show help message                              |
 
-All commands default to the home directory. Pass a path or use `--global` explicitly to target `~/`.
+All commands default to the home directory. Pass a path to target a specific project.
 
 <details>
 <summary>Per-project usage</summary>

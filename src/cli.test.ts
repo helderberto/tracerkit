@@ -10,22 +10,12 @@ describe('resolveTarget', () => {
     expect(resolveTarget([])).toBe(homedir());
   });
 
-  it('returns homedir for --global', () => {
-    expect(resolveTarget(['--global'])).toBe(homedir());
-  });
-
   it('resolves a path argument', () => {
     expect(resolveTarget(['/some/path'])).toBe('/some/path');
   });
 
   it('resolves a relative path argument', () => {
     expect(resolveTarget(['./foo'])).toBe(resolve('./foo'));
-  });
-
-  it('throws when --global and path are combined', () => {
-    expect(() => resolveTarget(['--global', '/some/path'])).toThrow(
-      /Cannot use --global with a path argument/,
-    );
   });
 });
 
@@ -53,10 +43,16 @@ describe('CLI', () => {
     expect(output.some((l) => l.includes('Usage'))).toBe(true);
   });
 
-  it('shows --global in usage', () => {
-    const output = run([]);
+  it('prints help for --help', () => {
+    const output = run(['--help']);
 
-    expect(output.some((l) => l.includes('--global'))).toBe(true);
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
+
+  it('prints help for -h', () => {
+    const output = run(['-h']);
+
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
   });
 
   it('routes "update <path>" to update command', () => {
@@ -100,11 +96,5 @@ describe('CLI', () => {
     const output = run(['-v']);
 
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
-  });
-
-  it('errors when --global combined with path', () => {
-    expect(() => run(['init', '--global', tmp.get()])).toThrow(
-      /Cannot use --global with a path argument/,
-    );
   });
 });
