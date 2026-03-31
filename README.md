@@ -1,5 +1,7 @@
 # TracerKit
 
+[![CI](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml/badge.svg)](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml)
+
 A spec-driven workflow for Claude Code. Three skills take a feature from idea to verified archive: define, plan, verify.
 
 **Zero runtime dependencies** — pure Markdown skills, no build step.
