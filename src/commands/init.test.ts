@@ -32,6 +32,14 @@ describe('init', () => {
     expect(() => init(tmp.get())).toThrow(/already exists/);
   });
 
+  it('aborts naming the specific skill that already exists', () => {
+    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:verify'), {
+      recursive: true,
+    });
+
+    expect(() => init(tmp.get())).toThrow(/tk:verify/);
+  });
+
   it('preserves existing .claude/ contents', () => {
     mkdirSync(join(tmp.get(), '.claude'), { recursive: true });
 

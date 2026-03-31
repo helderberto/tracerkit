@@ -17,6 +17,14 @@ describe('resolveTarget', () => {
   it('resolves a relative path argument', () => {
     expect(resolveTarget(['./foo'])).toBe(resolve('./foo'));
   });
+
+  it('ignores flag arguments and picks the path', () => {
+    expect(resolveTarget(['--force', '/some/path'])).toBe('/some/path');
+  });
+
+  it('defaults to homedir when only flags are present', () => {
+    expect(resolveTarget(['--force', '--verbose'])).toBe(homedir());
+  });
 });
 
 describe('CLI', () => {
@@ -88,6 +96,18 @@ describe('CLI', () => {
 
   it('prints version for --version', () => {
     const output = run(['--version']);
+
+    expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
+  });
+
+  it('prioritizes --help over commands', () => {
+    const output = run(['init', '--help']);
+
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
+
+  it('prioritizes --version over commands', () => {
+    const output = run(['init', '--version']);
 
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
   });

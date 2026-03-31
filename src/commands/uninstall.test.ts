@@ -36,6 +36,19 @@ describe('uninstall', () => {
     }
   });
 
+  it('removes only installed skills when partially installed', () => {
+    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
+      recursive: true,
+    });
+    writeFileSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'), 'content');
+
+    const output = uninstall(tmp.get());
+
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);
+    expect(output).toHaveLength(1);
+    expect(output[0]).toContain('tk:prd');
+  });
+
   it('reports removed directories', () => {
     copyTemplates(tmp.get());
 

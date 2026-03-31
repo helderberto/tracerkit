@@ -26,6 +26,16 @@ describe('copyTemplates', () => {
     expect(content).toContain('# PRD Writing');
   });
 
+  it('copies only specified files when only filter is provided', () => {
+    const result = copyTemplates(tmp.get(), ['.claude/skills/tk:prd/SKILL.md']);
+
+    expect(result.copied).toEqual(['.claude/skills/tk:prd/SKILL.md']);
+    expect(
+      readFileSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'), 'utf8')
+        .length,
+    ).toBeGreaterThan(0);
+  });
+
   it('creates nested directories as needed', () => {
     copyTemplates(tmp.get());
 
@@ -38,6 +48,14 @@ describe('copyTemplates', () => {
 
 describe('diffTemplates', () => {
   const tmp = useTmpDir();
+
+  it('reports all files as missing on empty target', () => {
+    const result = diffTemplates(tmp.get());
+
+    expect(result.missing).toHaveLength(4);
+    expect(result.unchanged).toHaveLength(0);
+    expect(result.modified).toHaveLength(0);
+  });
 
   it('reports all unchanged when files match templates', () => {
     copyTemplates(tmp.get());
