@@ -72,18 +72,9 @@ Read-only review that compares the codebase against the plan's done-when conditi
 
 ## Why TracerKit?
 
-Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". Nothing works end-to-end until everything is done. And without shared artifacts, AI coding sessions drift, scope creeps, and context gets lost between conversations.
+Most planning tools produce horizontal task lists — nothing works until everything is done. TracerKit uses **tracer-bullet vertical slices** instead: each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small well-scoped phases instead of sprawling layers.
 
-TracerKit uses **tracer-bullet vertical slices** instead. Every phase is a **vertical slice** — a thin but complete path through every layer of the stack (schema → service → API → UI → tests). Each phase is demoable on its own. Think of it as firing a tracer bullet through the entire system to light up the path before committing to full implementation.
-
-Why this matters for AI-assisted development:
-
-- **Early feedback** — each slice produces a working feature you can test and show, not just a checked-off task
-- **Reduced risk** — integration problems surface in phase 1, not at the end
-- **Natural checkpoints** — each phase is a safe point to pause, switch sessions, or change direction
-- **Context-friendly** — AI assistants work better with small, well-scoped phases than with large horizontal layers
-
-The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) — TracerKit applies it as a first-class planning model for AI workflows.
+The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/).
 
 ### Compared to
 
