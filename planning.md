@@ -50,8 +50,7 @@ tracerkit/
   docs/                 → code-principles, testing, git, a11y
   templates/
     CLAUDE.md.hbs       → base template (stack detection later)
-  src/                  → CLI source (TypeScript)
-  test/
+  src/                  → CLI source (TypeScript) + co-located tests (*.test.ts)
   package.json
   tsconfig.json
   README.md
