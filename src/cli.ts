@@ -1,5 +1,6 @@
 import { init } from '#src/commands/init.js';
 import { update } from '#src/commands/update.js';
+import { uninstall } from '#src/commands/uninstall.js';
 
 const USAGE = [
   'Usage: tracerkit <command>',
@@ -18,6 +19,8 @@ export function run(args: string[], cwd: string): string[] {
       return init(cwd);
     case 'update':
       return update(cwd);
+    case 'uninstall':
+      return uninstall(cwd);
     default:
       return USAGE;
   }

@@ -34,4 +34,12 @@ describe('CLI', () => {
 
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
   });
+
+  it('routes "uninstall" to uninstall command', () => {
+    copyTemplates(tmp.get());
+    const output = run(['uninstall'], tmp.get());
+
+    expect(existsSync(join(tmp.get(), '.claude-plugin'))).toBe(false);
+    expect(output.some((l) => l.includes('✗'))).toBe(true);
+  });
 });
