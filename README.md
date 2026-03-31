@@ -6,15 +6,41 @@ A spec-driven workflow for Claude Code. Three skills take a feature from idea to
 
 ## Get Started
 
-### 1. Install TracerKit CLI
+### Install per-project (recommended)
+
+Skills are scoped to a single project. Team members get them automatically via git.
 
 ```bash
+cd your-project
 npx tracerkit init
 ```
 
-This scaffolds skills into `.claude/skills/` in your project. Claude Code discovers them automatically.
+This copies skills into `.claude/skills/` — Claude Code discovers them automatically.
 
-### 2. Use the skills
+```bash
+npx tracerkit update    # refresh to latest, skip modified files
+npx tracerkit uninstall # remove TracerKit skills, keep prds/plans/archive
+```
+
+### Install globally
+
+Skills are available in every project on your machine.
+
+```bash
+npm install -g tracerkit
+tracerkit init --global
+```
+
+Or manually with symlinks:
+
+```bash
+git clone https://github.com/helderberto/tracerkit.git
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd ~/.claude/skills/tk:prd
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan ~/.claude/skills/tk:plan
+ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify ~/.claude/skills/tk:verify
+```
+
+### Use the skills
 
 ```bash
 # Define the feature — interactive interview, explores your codebase
@@ -27,13 +53,6 @@ This scaffolds skills into `.claude/skills/` in your project. Claude Code discov
 
 # Verify — auto-archives on PASS
 /tk:verify dark-mode-support
-```
-
-### 3. Manage your installation
-
-```bash
-npx tracerkit update    # refresh to latest, skip modified files
-npx tracerkit uninstall # remove TracerKit skills, keep prds/plans/archive
 ```
 
 ## Development Flow
@@ -146,25 +165,6 @@ Reads a PRD and breaks it into phased **tracer-bullet vertical slices** — each
 Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict. On PASS, automatically archives the PRD and plan to `archive/<slug>/`.
 
 **Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
-
-## Manual Installation
-
-For development or if you prefer symlinks:
-
-```bash
-git clone https://github.com/helderberto/tracerkit.git
-
-# Per-project:
-mkdir -p .claude/skills
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd .claude/skills/tk:prd
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan .claude/skills/tk:plan
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify .claude/skills/tk:verify
-
-# Or global (available in all projects):
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd ~/.claude/skills/tk:prd
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan ~/.claude/skills/tk:plan
-ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify ~/.claude/skills/tk:verify
-```
 
 ## Why TracerKit?
 
