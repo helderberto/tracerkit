@@ -1,3 +1,9 @@
+## [1.3.3](https://github.com/helderberto/tracerkit/compare/v1.3.2...v1.3.3) (2026-03-31)
+
+### Bug Fixes
+
+- add --overwrite alias to avoid npx --force flag conflict ([35ee50f](https://github.com/helderberto/tracerkit/commit/35ee50f33fecb6f45b3a636f9ddd5bd8d6e6c345))
+
 ## [1.3.2](https://github.com/helderberto/tracerkit/compare/v1.3.1...v1.3.2) (2026-03-31)
 
 ## [1.3.1](https://github.com/helderberto/tracerkit/compare/v1.3.0...v1.3.1) (2026-03-31)
