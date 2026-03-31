@@ -1,3 +1,9 @@
+## [1.3.8](https://github.com/helderberto/tracerkit/compare/v1.3.7...v1.3.8) (2026-03-31)
+
+### Bug Fixes
+
+- chmod +x dist/bin.js after build ([56fee81](https://github.com/helderberto/tracerkit/commit/56fee8186f51f1f3e5210d026bff08eddea8415e))
+
 ## [1.3.7](https://github.com/helderberto/tracerkit/compare/v1.3.6...v1.3.7) (2026-03-31)
 
 ## [1.3.6](https://github.com/helderberto/tracerkit/compare/v1.3.5...v1.3.6) (2026-03-31)
