@@ -1,8 +1,17 @@
-import { resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { dirname, resolve } from 'node:path';
+import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import { init } from './commands/init.ts';
 import { update } from './commands/update.ts';
 import { uninstall } from './commands/uninstall.ts';
+
+const { version } = JSON.parse(
+  readFileSync(
+    resolve(dirname(fileURLToPath(import.meta.url)), '..', 'package.json'),
+    'utf8',
+  ),
+);
 
 const USAGE = [
   'Usage: tracerkit <command> [path]',
@@ -32,7 +41,7 @@ export function run(args: string[]): string[] {
   }
 
   if (args.includes('--version') || args.includes('-v')) {
-    return [`tracerkit/${__VERSION__}`];
+    return [`tracerkit/${version}`];
   }
 
   const command = args[0];
