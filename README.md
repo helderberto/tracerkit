@@ -199,14 +199,7 @@ Why this matters for AI-assisted development:
 
 The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/) — TracerKit applies it as a first-class planning model for AI workflows.
 
-### The problem with unstructured AI coding
-
-- Requirements live in ephemeral chat messages
-- No way to verify "done" against a shared spec
-- Context resets between sessions; previous decisions are lost
-- Scope creeps because nothing defines boundaries
-
-### How existing approaches compare
+### Compared to
 
 |                  | [Spec Kit](https://github.com/github/spec-kit) | [Kiro](https://kiro.dev/)  | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                          |
 | ---------------- | ---------------------------------------------- | -------------------------- | -------------------------------------------------- | ---------------------------------- |
@@ -219,47 +212,15 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 | **Runtime deps** | Python + uv                                    | Proprietary IDE            | None                                               | None                               |
 | **Complexity**   | High                                           | High                       | Low                                                | Low                                |
 
-### Where TracerKit fits
-
-**Spec Kit** is a full methodology with a CLI, extensions ecosystem, and 5-phase workflow. Thorough but heavyweight — requires Python, `uv`, and a structured process with constitution files and phase gates.
-
-**Kiro** is the most integrated option — a dedicated IDE with built-in specs, agent hooks, and autonomous execution. The tradeoff is vendor lock-in: their IDE, their supported models.
-
-**OpenSpec** is the closest in philosophy — lightweight, slash-command based, fluid iteration. It targets breadth (20+ AI assistants) over depth.
-
-**TracerKit** chooses depth over breadth. By targeting Claude Code exclusively, it leverages native plugin discovery, subagents for read-only verification, and the skill system directly. The tradeoff: it only works with Claude Code. Within that context it provides the simplest setup (copy 2 dirs), fewest artifacts (2 files per feature), and the only built-in automated verification step.
-
-### Principles
-
-Inspired by [OpenSpec](https://github.com/Fission-AI/OpenSpec)'s philosophy:
-
-- **Agreement before code** — specs establish shared expectations; implementation follows
-- **Fluid, not rigid** — any artifact can be refined at any point; no strict phase gates
-- **Built for brownfield** — designed for existing codebases, not just greenfield projects
-- **Easy, not complex** — minimal overhead; pure Markdown, zero config
-- **Iterative, not waterfall** — continuous refinement through verify/fix cycles
-
-## Scripts
-
-```bash
-npm run build          # Compile TypeScript
-npm run dev            # Watch mode
-npm run test           # Run tests (vitest watch)
-npm run test:run       # Run tests once
-npm run lint           # Lint src/
-npm run lint:fix       # Lint + auto-fix
-npm run format         # Format with Prettier
-npm run format:check   # Check formatting
-npm run typecheck      # Type-check without emitting
-```
+TracerKit trades breadth (Claude Code only) for depth — native plugin discovery, subagents for read-only verification, and the simplest setup with fewest artifacts.
 
 ## Contributing
 
 1. Fork the repo and create a feature branch
 2. Use TracerKit itself to plan your change (`/tk:prd` + `/tk:plan`)
 3. Implement following the plan phases
-4. Run `npm run lint:fix && npm run test:run && npm run typecheck` before committing
-5. Commits follow [Conventional Commits](https://www.conventionalcommits.org/) (enforced by commitlint)
+4. `npm run lint:fix && npm run test:run && npm run typecheck`
+5. [Conventional Commits](https://www.conventionalcommits.org/) (enforced by commitlint)
 6. Open a PR against `main`
 
 ## Author
