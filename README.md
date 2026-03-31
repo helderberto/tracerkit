@@ -22,7 +22,8 @@ npx tracerkit update    # refresh to latest, skip modified files
 npx tracerkit uninstall # remove TracerKit skills, keep prds/plans/archive
 ```
 
-### Install globally
+<details>
+<summary>Install globally</summary>
 
 Skills are available in every project on your machine.
 
@@ -39,6 +40,8 @@ ln -s /path/to/tracerkit/templates/.claude/skills/tk:prd ~/.claude/skills/tk:prd
 ln -s /path/to/tracerkit/templates/.claude/skills/tk:plan ~/.claude/skills/tk:plan
 ln -s /path/to/tracerkit/templates/.claude/skills/tk:verify ~/.claude/skills/tk:verify
 ```
+
+</details>
 
 ### Use the skills
 
@@ -146,7 +149,8 @@ PRDs are living documents — refine them any time before or during implementati
 
 </details>
 
-## Skills
+<details>
+<summary>Skills reference</summary>
 
 ### `/tk:prd <idea>` — Write a PRD
 
@@ -166,7 +170,10 @@ Read-only review that compares the codebase against the plan's done-when conditi
 
 **Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
 
-## Why TracerKit?
+</details>
+
+<details>
+<summary>Why TracerKit?</summary>
 
 Most planning tools break work into horizontal task lists: "set up the database", "build the API", "add the UI". Nothing works end-to-end until everything is done. And without shared artifacts, AI coding sessions drift, scope creeps, and context gets lost between conversations.
 
@@ -196,7 +203,10 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 
 TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for read-only verification, and the simplest setup with fewest artifacts.
 
-## Contributing
+</details>
+
+<details>
+<summary>Contributing</summary>
 
 1. Fork the repo and create a feature branch
 2. Use TracerKit itself to plan your change (`/tk:prd` + `/tk:plan`)
@@ -204,6 +214,8 @@ TracerKit trades breadth (Claude Code only) for depth — native skill discovery
 4. `npm run lint:fix && npm run test:run && npm run typecheck`
 5. [Conventional Commits](https://www.conventionalcommits.org/) (enforced by commitlint)
 6. Open a PR against `main`
+
+</details>
 
 ## Author
 
