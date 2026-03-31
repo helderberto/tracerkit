@@ -1,3 +1,9 @@
+## [1.3.4](https://github.com/helderberto/tracerkit/compare/v1.3.3...v1.3.4) (2026-03-31)
+
+### Bug Fixes
+
+- default to home directory, remove --overwrite alias ([923a88f](https://github.com/helderberto/tracerkit/commit/923a88f5bb439ebeb2aeab604d932c9a0be8c148))
+
 ## [1.3.3](https://github.com/helderberto/tracerkit/compare/v1.3.2...v1.3.3) (2026-03-31)
 
 ### Bug Fixes
