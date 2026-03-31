@@ -1,6 +1,6 @@
 {
   "name": "tracerkit",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Stack-agnostic spec-driven workflow for AI coding assistants",
   "license": "MIT",
   "author": {
