@@ -8,11 +8,19 @@
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Spec-driven workflow for Claude Code: from idea to product requirements to executable plan.
+Replace ad-hoc AI prompts with a repeatable three-step spec process — from idea to verified, archived code.
 
 **Zero runtime dependencies** — pure Markdown skills, no build step.
 
 </div>
+
+## Why TracerKit?
+
+AI coding without specs means vague prompts and lost context between sessions. Most planning tools produce horizontal task lists — nothing works until everything is done.
+
+TracerKit uses **tracer-bullet vertical slices** instead: each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
+
+The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/).
 
 ## Get Started
 
@@ -24,29 +32,13 @@ npx tracerkit init
 
 Skills are installed globally to `~/.claude/skills/` — available in every project, no per-project setup needed.
 
-### 2. Use the skills
-
-Open Claude Code in any project and start using:
+### 2. Use the workflow
 
 ```bash
 /tk:prd add dark mode support     # define the feature
 /tk:plan dark-mode-support        # break into vertical slices
 /tk:verify dark-mode-support      # verify and archive
 ```
-
-### 3. CLI Reference
-
-| Command                    | Description                                    |
-| -------------------------- | ---------------------------------------------- |
-| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
-| `tracerkit init <path>`    | Install skills to a specific project directory |
-| `tracerkit update`         | Refresh to latest version, skip modified files |
-| `tracerkit update --force` | Replace modified files with latest versions    |
-| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
-| `tracerkit --version`      | Print version                                  |
-| `tracerkit --help`         | Show help message                              |
-
-All commands default to the home directory. Pass a path to target a specific project.
 
 <details>
 <summary>Per-project usage</summary>
@@ -92,88 +84,6 @@ Useful but optional — this category will grow over time.
 #### `/tk:status` — Workflow dashboard
 
 Scans `prds/` and prints a table of all features grouped by status (`in_progress`, `created`, `done`), with age, latest verdict, and blocker/suggestion counts. Read-only — no files are modified.
-
-## Metadata Lifecycle
-
-Each PRD carries YAML frontmatter that tracks its position in the workflow. The skills update it automatically — you never need to edit it by hand.
-
-**Fields:**
-
-- `created` — ISO 8601 UTC timestamp, set when the PRD is written
-- `status` — `created` | `in_progress` | `done`
-- `completed` — ISO 8601 UTC timestamp, set when verification passes
-
-**How it changes:**
-
-| Stage    | Skill               | Frontmatter                                          |
-| -------- | ------------------- | ---------------------------------------------------- |
-| Defined  | `/tk:prd`           | `created: 2025-06-15T14:30:00Z`<br>`status: created` |
-| Planning | `/tk:plan`          | `status: in_progress`                                |
-| Verified | `/tk:verify` (PASS) | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
-
-<details>
-<summary>Example frontmatter at each stage</summary>
-
-After `/tk:prd`:
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: created
----
-```
-
-After `/tk:plan`:
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: in_progress
----
-```
-
-After `/tk:verify` (PASS):
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: done
-completed: 2025-06-20T09:00:00Z
----
-```
-
-</details>
-
-## Why TracerKit?
-
-Most planning tools produce horizontal task lists — nothing works until everything is done. TracerKit uses **tracer-bullet vertical slices** instead: each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small well-scoped phases instead of sprawling layers.
-
-The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/).
-
-### Compared to
-
-**vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub) — Thorough but heavyweight. 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
-
-**vs. [Kiro](https://kiro.dev/)** (AWS) — Powerful but locked to a dedicated IDE. TracerKit works inside Claude Code with pure Markdown skills.
-
-**vs. [OpenSpec](https://github.com/Fission-AI/OpenSpec)** — Similar philosophy, broader tool support. TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for verification, and fewer artifacts.
-
-**vs. nothing** — AI coding without specs means vague prompts and lost context between sessions. TracerKit adds structure without ceremony.
-
-<details>
-<summary>Full comparison table</summary>
-
-|                  | Spec Kit         | Kiro                       | OpenSpec                | TracerKit                          |
-| ---------------- | ---------------- | -------------------------- | ----------------------- | ---------------------------------- |
-| **What it is**   | CLI + extensions | Agentic IDE (VS Code fork) | Slash-command framework | Claude Code skills (pure Markdown) |
-| **Setup**        | Python + uv      | Dedicated IDE              | npm + init              | `npx tracerkit init`               |
-| **Phases**       | 5                | 3                          | 3                       | 3 (prd, plan, verify)              |
-| **Artifacts**    | 4 files          | 3+ files                   | 4+ files                | 2 files (PRD, plan)                |
-| **Verification** | Manual gates     | Diff approval              | Manual                  | Automated PASS/NEEDS_WORK          |
-| **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                   |
-| **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                               |
-
-</details>
 
 ## Examples
 
@@ -259,6 +169,102 @@ AI:  Feature Status Dashboard
      │ user-avatars         │ done        │ 7d  │
      └──────────────────────┴─────────────┴─────┘
 ```
+
+</details>
+
+## CLI Reference
+
+| Command                    | Description                                    |
+| -------------------------- | ---------------------------------------------- |
+| `tracerkit init`           | Install skills to `~/.claude/skills/`          |
+| `tracerkit init <path>`    | Install skills to a specific project directory |
+| `tracerkit update`         | Refresh to latest version, skip modified files |
+| `tracerkit update --force` | Replace modified files with latest versions    |
+| `tracerkit uninstall`      | Remove TracerKit skills, keep user artifacts   |
+| `tracerkit --version`      | Print version                                  |
+| `tracerkit --help`         | Show help message                              |
+
+All commands default to the home directory. Pass a path to target a specific project.
+
+<details>
+<summary>Metadata Lifecycle</summary>
+
+Each PRD carries YAML frontmatter that tracks its position in the workflow. The skills update it automatically — you never need to edit it by hand.
+
+**Fields:**
+
+- `created` — ISO 8601 UTC timestamp, set when the PRD is written
+- `status` — `created` | `in_progress` | `done`
+- `completed` — ISO 8601 UTC timestamp, set when verification passes
+
+**How it changes:**
+
+| Stage    | Skill               | Frontmatter                                          |
+| -------- | ------------------- | ---------------------------------------------------- |
+| Defined  | `/tk:prd`           | `created: 2025-06-15T14:30:00Z`<br>`status: created` |
+| Planning | `/tk:plan`          | `status: in_progress`                                |
+| Verified | `/tk:verify` (PASS) | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
+
+<details>
+<summary>Example frontmatter at each stage</summary>
+
+After `/tk:prd`:
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: created
+---
+```
+
+After `/tk:plan`:
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: in_progress
+---
+```
+
+After `/tk:verify` (PASS):
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: done
+completed: 2025-06-20T09:00:00Z
+---
+```
+
+</details>
+
+</details>
+
+<details>
+<summary>Compared to</summary>
+
+**vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub) — Thorough but heavyweight. 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
+
+**vs. [Kiro](https://kiro.dev/)** (AWS) — Powerful but locked to a dedicated IDE. TracerKit works inside Claude Code with pure Markdown skills.
+
+**vs. [OpenSpec](https://github.com/Fission-AI/OpenSpec)** — Similar philosophy, broader tool support. TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for verification, and fewer artifacts.
+
+**vs. nothing** — AI coding without specs means vague prompts and lost context between sessions. TracerKit adds structure without ceremony.
+
+<details>
+<summary>Full comparison table</summary>
+
+|                  | Spec Kit         | Kiro                       | OpenSpec                | TracerKit                          |
+| ---------------- | ---------------- | -------------------------- | ----------------------- | ---------------------------------- |
+| **What it is**   | CLI + extensions | Agentic IDE (VS Code fork) | Slash-command framework | Claude Code skills (pure Markdown) |
+| **Setup**        | Python + uv      | Dedicated IDE              | npm + init              | `npx tracerkit init`               |
+| **Phases**       | 5                | 3                          | 3                       | 3 (prd, plan, verify)              |
+| **Artifacts**    | 4 files          | 3+ files                   | 4+ files                | 2 files (PRD, plan)                |
+| **Verification** | Manual gates     | Diff approval              | Manual                  | Automated PASS/NEEDS_WORK          |
+| **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                   |
+| **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                               |
+
+</details>
 
 </details>
 
