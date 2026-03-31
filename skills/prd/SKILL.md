@@ -12,7 +12,9 @@ Skip steps already satisfied. If user provided a description via arguments, skip
 
 The argument is: $ARGUMENTS
 
-Convert the argument to a kebab-case slug (lowercase, spaces and underscores replaced with hyphens). This is `<slug>`. The output file is `prds/<slug>.md`.
+If the argument is empty, go straight to Step 1 (gather problem description). After gathering the idea, derive the slug from the idea.
+
+If the argument is provided, convert it to a kebab-case slug (lowercase, spaces and underscores replaced with hyphens). This is `<slug>`. The output file is `prds/<slug>.md`.
 
 If `prds/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
@@ -108,7 +110,7 @@ Do NOT include file paths or code snippets — they go stale.
 Explicit list. Be specific — vague exclusions invite scope creep.
 ```
 
-Tell the user: file created, one-line summary, next step is `/tk:propose <slug>`.
+Tell the user: file created, one-line summary, next step is `/tk:plan <slug>`.
 
 ## Error Handling
 
