@@ -1,7 +1,6 @@
 ---
 description: Compare implementation against plan, emit BLOCKERS/SUGGESTIONS and a PASS or NEEDS_WORK verdict. Auto-archives on PASS. Use after implementing a plan.
 argument-hint: '[slug]'
-disable-model-invocation: true
 ---
 
 # Verify Implementation
@@ -80,9 +79,18 @@ Append a verdict block at the bottom of `plans/<slug>.md`:
 
 If a previous verdict block exists, replace it with the new one.
 
-### 7. On PASS — archive
+### 7. On PASS — update PRD status and archive
 
-If the verdict is **PASS**, automatically archive:
+If the verdict is **PASS**:
+
+**First**, update the YAML frontmatter in `prds/<slug>.md`:
+
+- Set `status: done`
+- Add `completed: <current UTC timestamp, ISO 8601, e.g. 2025-06-15T14:30:00Z>`
+- Do not touch any other frontmatter fields or the markdown content below the closing `---`
+- If the PRD has no frontmatter, skip frontmatter update silently
+
+**Then**, automatically archive:
 
 1. Create `archive/<slug>/` directory (and `archive/` if missing)
 2. Move `prds/<slug>.md` → `archive/<slug>/prd.md`

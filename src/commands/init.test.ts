@@ -18,6 +18,9 @@ describe('init', () => {
     expect(
       existsSync(join(tmp.get(), '.claude/skills/tk:verify/SKILL.md')),
     ).toBe(true);
+    expect(
+      existsSync(join(tmp.get(), '.claude/skills/tk:status/SKILL.md')),
+    ).toBe(true);
     expect(output).toContain('✓ .claude/skills/tk:prd/SKILL.md');
   });
 
@@ -34,7 +37,7 @@ describe('init', () => {
 
     const output = init(tmp.get());
 
-    expect(output.length).toBe(3);
+    expect(output.length).toBe(4);
   });
 
   it('reports each copied file with check prefix', () => {

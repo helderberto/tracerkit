@@ -58,23 +58,86 @@ npx tracerkit uninstall .
 
 ## Skills
 
-### `/tk:prd <idea>` — Write a PRD
+### Core skills
+
+The three-step workflow that takes a feature from idea to verified archive.
+
+#### `/tk:prd <idea>` — Write a PRD
 
 Interactive interview to define a feature. Explores the codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
 **Output:** `prds/<slug>.md`
 
-### `/tk:plan <slug>` — Create an implementation plan
+#### `/tk:plan <slug>` — Create an implementation plan
 
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices** — each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
 **Output:** `plans/<slug>.md`
 
-### `/tk:verify <slug>` — Verify and archive
+#### `/tk:verify <slug>` — Verify and archive
 
 Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **PASS** or **NEEDS_WORK** verdict. On PASS, automatically archives the PRD and plan to `archive/<slug>/`.
 
 **Output:** Verdict block in `plans/<slug>.md` — on PASS: `archive/<slug>/prd.md` + `archive/<slug>/plan.md`
+
+### Helper skills
+
+Useful but optional — this category will grow over time.
+
+#### `/tk:status` — Workflow dashboard
+
+Scans `prds/` and prints a table of all features grouped by status (`in_progress`, `created`, `done`), with age, latest verdict, and blocker/suggestion counts. Read-only — no files are modified.
+
+## Metadata Lifecycle
+
+Each PRD carries YAML frontmatter that tracks its position in the workflow. The skills update it automatically — you never need to edit it by hand.
+
+**Fields:**
+
+- `created` — ISO 8601 UTC timestamp, set when the PRD is written
+- `status` — `created` | `in_progress` | `done`
+- `completed` — ISO 8601 UTC timestamp, set when verification passes
+
+**How it changes:**
+
+| Stage    | Skill               | Frontmatter                                          |
+| -------- | ------------------- | ---------------------------------------------------- |
+| Defined  | `/tk:prd`           | `created: 2025-06-15T14:30:00Z`<br>`status: created` |
+| Planning | `/tk:plan`          | `status: in_progress`                                |
+| Verified | `/tk:verify` (PASS) | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
+
+<details>
+<summary>Example frontmatter at each stage</summary>
+
+After `/tk:prd`:
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: created
+---
+```
+
+After `/tk:plan`:
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: in_progress
+---
+```
+
+After `/tk:verify` (PASS):
+
+```yaml
+---
+created: 2025-06-15T14:30:00Z
+status: done
+completed: 2025-06-20T09:00:00Z
+---
+```
+
+</details>
 
 ## Why TracerKit?
 

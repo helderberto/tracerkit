@@ -19,6 +19,7 @@ describe('uninstall', () => {
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:plan'))).toBe(false);
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:verify'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:status'))).toBe(false);
   });
 
   it('leaves prds/, plans/, and archive/ untouched', () => {
@@ -47,6 +48,9 @@ describe('uninstall', () => {
       true,
     );
     expect(output.some((l) => l.includes('✗') && l.includes('tk:verify'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('✗') && l.includes('tk:status'))).toBe(
       true,
     );
   });

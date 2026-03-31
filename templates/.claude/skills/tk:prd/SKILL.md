@@ -1,7 +1,6 @@
 ---
 description: Create a PRD through user interview, codebase exploration, and module design, saved to prds/. Use when starting a new feature or change.
 argument-hint: <idea>
-disable-model-invocation: true
 ---
 
 # PRD Writing
@@ -55,6 +54,11 @@ Present modules to user. Confirm which need tests.
 Save to `prds/<slug>.md` (create `prds/` if missing).
 
 ```markdown
+---
+created: <current UTC timestamp, ISO 8601, e.g. 2025-06-15T14:30:00Z>
+status: created
+---
+
 # Feature Name
 
 ## Problem Statement

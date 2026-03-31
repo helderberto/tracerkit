@@ -1,7 +1,6 @@
 ---
 description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved to plans/. Use after /tk:prd.
 argument-hint: '[slug]'
-disable-model-invocation: true
 ---
 
 # PRD to Plan
@@ -25,6 +24,12 @@ Use the argument as `<slug>` if given. If no argument is provided, list availabl
 Read `prds/<slug>.md`. If it does not exist, list available PRDs and ask.
 
 If `plans/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
+
+### 1b. Update PRD status
+
+Update the YAML frontmatter in `prds/<slug>.md` to `status: in_progress`. Change only the `status` field — do not touch any other frontmatter fields or the markdown content below the closing `---`.
+
+If the PRD has no frontmatter, skip this step silently.
 
 ### 2. Explore the codebase
 

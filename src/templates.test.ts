@@ -12,7 +12,8 @@ describe('copyTemplates', () => {
     expect(result.copied).toContain('.claude/skills/tk:prd/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:plan/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:verify/SKILL.md');
-    expect(result.copied).toHaveLength(3);
+    expect(result.copied).toContain('.claude/skills/tk:status/SKILL.md');
+    expect(result.copied).toHaveLength(4);
   });
 
   it('preserves file contents', () => {
@@ -42,7 +43,7 @@ describe('diffTemplates', () => {
     copyTemplates(tmp.get());
 
     const result = diffTemplates(tmp.get());
-    expect(result.unchanged).toHaveLength(3);
+    expect(result.unchanged).toHaveLength(4);
     expect(result.modified).toHaveLength(0);
     expect(result.missing).toHaveLength(0);
   });
