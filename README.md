@@ -8,6 +8,8 @@ A spec-driven workflow for Claude Code. Three skills take a feature from idea to
 
 ### 1. Install TracerKit
 
+**Requires Node.js 24.0.0 or higher.**
+
 ```bash
 npx tracerkit init
 ```
@@ -182,18 +184,28 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 
 ### Compared to
 
-|                  | [Spec Kit](https://github.com/github/spec-kit) | [Kiro](https://kiro.dev/)  | [OpenSpec](https://github.com/Fission-AI/OpenSpec) | TracerKit                          |
-| ---------------- | ---------------------------------------------- | -------------------------- | -------------------------------------------------- | ---------------------------------- |
-| **What it is**   | CLI toolkit + extensions                       | Agentic IDE (VS Code fork) | Slash-command framework                            | Claude Code skills (pure Markdown) |
-| **Setup**        | Python + uv                                    | Dedicated IDE              | Copy slash commands                                | `npx tracerkit init`               |
-| **Phases**       | 5                                              | 3                          | 3                                                  | 3 (prd, plan, verify)              |
-| **Artifacts**    | 4 files                                        | 3+ files                   | 4+ files                                           | 2 files (PRD, plan)                |
-| **Verification** | Manual phase gates                             | Diff approval              | Manual                                             | Automated PASS/NEEDS_WORK          |
-| **Tool lock-in** | Any AI assistant                               | Kiro IDE only              | Any AI assistant                                   | Claude Code only                   |
-| **Runtime deps** | Python + uv                                    | Proprietary IDE            | None                                               | None                               |
-| **Complexity**   | High                                           | High                       | Low                                                | Low                                |
+**vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub) — Thorough but heavyweight. 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
 
-TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for read-only verification, and the simplest setup with fewest artifacts.
+**vs. [Kiro](https://kiro.dev/)** (AWS) — Powerful but locked to a dedicated IDE. TracerKit works inside Claude Code with pure Markdown skills.
+
+**vs. [OpenSpec](https://github.com/Fission-AI/OpenSpec)** — Similar philosophy, broader tool support. TracerKit trades breadth (Claude Code only) for depth — native skill discovery, subagents for verification, and fewer artifacts.
+
+**vs. nothing** — AI coding without specs means vague prompts and lost context between sessions. TracerKit adds structure without ceremony.
+
+<details>
+<summary>Full comparison table</summary>
+
+|                  | Spec Kit         | Kiro                       | OpenSpec                | TracerKit                          |
+| ---------------- | ---------------- | -------------------------- | ----------------------- | ---------------------------------- |
+| **What it is**   | CLI + extensions | Agentic IDE (VS Code fork) | Slash-command framework | Claude Code skills (pure Markdown) |
+| **Setup**        | Python + uv      | Dedicated IDE              | npm + init              | `npx tracerkit init`               |
+| **Phases**       | 5                | 3                          | 3                       | 3 (prd, plan, verify)              |
+| **Artifacts**    | 4 files          | 3+ files                   | 4+ files                | 2 files (PRD, plan)                |
+| **Verification** | Manual gates     | Diff approval              | Manual                  | Automated PASS/NEEDS_WORK          |
+| **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                   |
+| **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                               |
+
+</details>
 
 </details>
 
