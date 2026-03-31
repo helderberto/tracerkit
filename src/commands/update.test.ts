@@ -28,7 +28,7 @@ describe('update', () => {
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
   });
 
-  it('skips modified files with warning', () => {
+  it('skips modified files with warning and suggests --force', () => {
     copyTemplates(tmp.get());
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
@@ -43,6 +43,25 @@ describe('update', () => {
     expect(output.some((l) => l.includes('⚠') && l.includes('tk:prd'))).toBe(
       true,
     );
+    expect(output.some((l) => l.includes('--force'))).toBe(true);
+  });
+
+  it('overwrites modified files when force is true', () => {
+    copyTemplates(tmp.get());
+    writeFileSync(
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+      'user modified',
+    );
+
+    const output = update(tmp.get(), { force: true });
+
+    expect(
+      readFileSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'), 'utf8'),
+    ).not.toBe('user modified');
+    expect(output.some((l) => l.includes('✓') && l.includes('tk:prd'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('--force'))).toBe(false);
   });
 
   it('adds missing files', () => {

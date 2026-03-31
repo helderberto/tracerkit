@@ -1,4 +1,4 @@
-import { existsSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
@@ -66,6 +66,20 @@ describe('CLI', () => {
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
     expect(output.some((l) => l.includes('Updated to tracerkit/'))).toBe(true);
     expect(output.some((l) => l.includes('restart your session'))).toBe(true);
+  });
+
+  it('passes --force to update command', () => {
+    copyTemplates(tmp.get());
+    writeFileSync(
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+      'user modified',
+    );
+    const output = run(['update', '--force', tmp.get()]);
+
+    expect(output.some((l) => l.includes('✓') && l.includes('tk:prd'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('--force'))).toBe(false);
   });
 
   it('routes "uninstall <path>" to uninstall command', () => {

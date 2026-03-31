@@ -13,6 +13,7 @@ const USAGE = [
   '  uninstall [path]  Remove TracerKit skills, keep user artifacts',
   '',
   'Options:',
+  '  --force           Replace modified files with latest versions',
   '  --global          Target home directory instead of current directory',
   '  --version, -v     Print version',
 ];
@@ -42,7 +43,9 @@ export function run(args: string[]): string[] {
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {
-      const output = update(resolveTarget(rest));
+      const force = rest.includes('--force');
+      const targetArgs = rest.filter((a) => a !== '--force');
+      const output = update(resolveTarget(targetArgs), { force });
       output.push('', `Updated to tracerkit/${__VERSION__}`);
       output.push(
         'If using Claude Code, restart your session to load changes.',
