@@ -4,87 +4,93 @@
 
 ## Architectural decisions
 
-- **Skills format**: plain `.md` files, no frontmatter — Claude Code loads any `.md` in `.claude/commands/` as a slash command
-- **Artifact layout**: `.tracerkit/changes/<kebab-slug>/proposal.md + spec.md + tasks.md`; archive mirrors same structure under `.tracerkit/archive/`
-- **Change name**: kebab-case slug from the argument passed to `/tk:propose`
-- **Verdict**: written as `<!-- verify: PASS | YYYY-MM-DD -->` at top of `spec.md`; read by `/tk:archive` to gate archiving
-- **Agent tags**: optional `[agent:debugger|test-auditor|code-reviewer]` suffix on each task in `tasks.md`
+- **Plugin format**: Claude Code plugin with `name: "tk"` — skills namespaced as `/tk:prd`, `/tk:plan`, etc.
+- **Skills format**: `skills/<name>/SKILL.md` with YAML frontmatter and dynamic context injection
+- **Artifact layout**: PRDs in `prds/<slug>.md`; plans in `plans/<slug>.md`
+- **Slug**: kebab-case from the argument passed to `/tk:prd`
+- **Agent tags**: optional `[agent:debugger|test-auditor|code-reviewer]` suffix on each task in the plan
 - **No runtime deps**: skills are pure markdown, zero build step, zero install
 
 ---
 
 ## Phase 1 — Creation loop works end-to-end
 
-**User stories**: 1, 2, 3, 4, 10, 11, 12
+**User stories**: 1, 2, 3, 4, 5, 6, 11, 12
 
 ### What to build
 
-Write `skills/tk-propose.md` and `skills/tk-plan.md`.
+Write `skills/prd/SKILL.md` and `skills/plan/SKILL.md`.
 
-`tk-propose.md` must:
+`skills/prd/SKILL.md` must:
 
-- Accept an idea slug as argument
-- Check if a planning doc or existing spec is present; if so, skip the interview
-- Otherwise conduct a focused interview (problem, expected behaviors, acceptance criteria)
-- Write `.tracerkit/changes/<slug>/proposal.md`, `spec.md`, and `tasks.md` stubs
+- Accept an idea as argument
+- Explore the codebase before interviewing
+- Conduct a branch-based interview (scope, data, behavior, display, access, boundaries, integration)
+- Design deep modules and confirm with user
+- Write `prds/<slug>.md` with full PRD structure
 
-`tk-plan.md` must:
+`skills/plan/SKILL.md` must:
 
-- Read `spec.md` for the active change
-- Rewrite `tasks.md` as a tracer-bullet checkbox list
-- Tag each task with `[agent:*]` where appropriate
+- Read the PRD for the given slug
+- Explore the codebase for integration points
+- Extract durable architectural decisions
+- Draft phased vertical slices (tracer bullets)
+- Quiz the user on the breakdown
+- Write `plans/<slug>.md` with phased checklist and agent tags
 
 ### Done when
 
-`/tk:propose add-user-auth` creates `.tracerkit/changes/add-user-auth/` with all three files
-populated; `/tk:plan` rewrites `tasks.md` with checkboxes and at least one `[agent:*]` tag.
+`/tk:prd add-user-auth` creates `prds/add-user-auth.md` with full PRD structure;
+`/tk:plan add-user-auth` creates `plans/add-user-auth.md` with phased checkboxes
+and at least one `[agent:*]` tag.
 
 ---
 
 ## Phase 2 — Closing loop works end-to-end
 
-**User stories**: 5, 6, 7, 8
+**User stories**: 7, 8, 9, 10
 
 ### What to build
 
-Write `skills/tk-verify.md` and `skills/tk-archive.md`.
+Write `skills/verify/SKILL.md` and `skills/archive/SKILL.md`.
 
-`tk-verify.md` must:
+`skills/verify/SKILL.md` must:
 
 - Launch a read-only subagent (no writes)
-- Compare implementation files against `spec.md`
+- Compare implementation files against the plan
 - Output BLOCKERS and SUGGESTIONS as separate sections
-- Write `<!-- verify: PASS | date -->` or `<!-- verify: NEEDS WORK | date -->` at top of `spec.md`
+- Stamp the plan with a verdict
 
-`tk-archive.md` must:
+`skills/archive/SKILL.md` must:
 
-- Read the verify comment from `spec.md`
+- Read the verdict from the plan
 - Block with an error message if verdict is not PASS
-- Move `.tracerkit/changes/<slug>/` to `.tracerkit/archive/<slug>/` with a closing timestamp
+- Archive the completed PRD + plan with a closing timestamp
 
 ### Done when
 
-`/tk:verify` emits a structured verdict and stamps `spec.md`; `/tk:archive` blocks on NEEDS WORK
-and completes the move on PASS, leaving a timestamp in the archived directory.
+`/tk:verify` emits a structured verdict and stamps the plan; `/tk:archive` blocks
+on NEEDS WORK and completes the archive on PASS.
 
 ---
 
 ## Phase 3 — Edge cases and polish
 
-**User stories**: 9, plus testing decisions (duplicate name, missing name, archive without PASS)
+**User stories**: 11, plus error cases (duplicate name, missing name, archive without PASS)
 
 ### What to build
 
-Harden all four skills:
+Harden all skills:
 
-- `/tk:propose` with no argument: prompt for a name or exit with a clear message
-- `/tk:propose` with a duplicate slug: warn and ask to overwrite or pick a new name
+- `/tk:prd` with no argument: prompt for a name or exit with a clear message
+- `/tk:prd` with a duplicate slug: warn and ask to overwrite or pick a new name
+- `/tk:plan` with no PRD found: list available PRDs and ask
 - `/tk:archive` without a prior `/tk:verify`: exit with actionable message
 - Verify each skill is fully self-contained so per-project customization does not break others
 
 ### Done when
 
-Each error case produces a clear, actionable message; all four skills pass manual acceptance
+Each error case produces a clear, actionable message; all skills pass manual acceptance
 tests in a scratch project with no side-effects on the tracerkit repo itself.
 
 ---
@@ -94,9 +100,10 @@ tests in a scratch project with no side-effects on the tracerkit repo itself.
 - CLI distribution (`tracerkit init`) — Phase 2
 - Agents implementation (debugger, test-auditor, code-reviewer) — Phase 3
 - Stack detection or profile selection
-- Spec-to-test generation (auto-generate failing tests from spec.md)
+- Spec-to-test generation
 - Multi-agent parallelism via worktrees
 - Git linkage (recording closing commit hash in archive)
+- `.tracerkit/` directory structure — deferred to Phase 2
 
 ## Open Questions
 
