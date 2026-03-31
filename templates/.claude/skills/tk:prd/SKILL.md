@@ -1,5 +1,5 @@
 ---
-description: Create a PRD through user interview, codebase exploration, and module design, saved to prds/. Use when starting a new feature or change.
+description: Create a PRD through user interview, codebase exploration, and module design, saved to {{paths.prds}}/. Use when starting a new feature or change.
 argument-hint: <idea>
 ---
 
@@ -13,9 +13,9 @@ The argument is: $ARGUMENTS
 
 If the argument is empty, go straight to Step 1 (gather problem description). After gathering the idea, derive the slug from the idea.
 
-If the argument is provided, convert it to a kebab-case slug (lowercase, spaces and underscores replaced with hyphens). This is `<slug>`. The output file is `prds/<slug>.md`.
+If the argument is provided, convert it to a kebab-case slug (lowercase, spaces and underscores replaced with hyphens). This is `<slug>`. The output file is `{{paths.prds}}/<slug>.md`.
 
-If `prds/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
+If `{{paths.prds}}/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
 ## Workflow
 
@@ -51,7 +51,7 @@ Present modules to user. Confirm which need tests.
 
 ### 5. Write PRD
 
-Save to `prds/<slug>.md` (create `prds/` if missing).
+Save to `{{paths.prds}}/<slug>.md` (create `{{paths.prds}}/` if missing).
 
 ```markdown
 ---
@@ -118,5 +118,5 @@ Tell the user: file created, one-line summary, next step is `/tk:plan <slug>`.
 
 ## Error Handling
 
-- `prds/` missing — create it
+- `{{paths.prds}}/` missing — create it
 - Scope larger than expected — surface and re-scope with user before continuing

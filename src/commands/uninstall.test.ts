@@ -2,7 +2,10 @@ import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { uninstall } from './uninstall.ts';
 import { copyTemplates } from '../templates.ts';
+import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
+
+const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
 
 describe('uninstall', () => {
   const tmp = useTmpDir();
@@ -12,7 +15,7 @@ describe('uninstall', () => {
   });
 
   it('removes all tk skill directories', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
 
     uninstall(tmp.get());
 
@@ -23,7 +26,7 @@ describe('uninstall', () => {
   });
 
   it('leaves prds/, plans/, and archive/ untouched', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     for (const dir of ['prds', 'plans', 'archive']) {
       mkdirSync(join(tmp.get(), dir));
       writeFileSync(join(tmp.get(), dir, 'test.md'), 'keep');
@@ -50,7 +53,7 @@ describe('uninstall', () => {
   });
 
   it('reports removed directories', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
 
     const output = uninstall(tmp.get());
 

@@ -10,11 +10,11 @@ Scan all PRDs and display a status overview of every feature in the workflow.
 
 ### 1. Scan PRDs
 
-List all `.md` files in `prds/`. If the directory is missing or empty, print "No features found — run `/tk:prd` to start one." and stop.
+List all `.md` files in `{{paths.prds}}/`. If the directory is missing or empty, print "No features found — run `/tk:prd` to start one." and stop.
 
 ### 2. Parse each PRD
 
-For each file `prds/<slug>.md`:
+For each file `{{paths.prds}}/<slug>.md`:
 
 1. Read YAML frontmatter (between opening and closing `---` delimiters)
 2. Extract fields: `created`, `status`, `completed`
@@ -22,7 +22,7 @@ For each file `prds/<slug>.md`:
 
 ### 3. Read verdict data
 
-For each slug, check if `plans/<slug>.md` exists. If it does, find the last `## Verdict` block and extract:
+For each slug, check if `{{paths.plans}}/<slug>.md` exists. If it does, find the last `## Verdict` block and extract:
 
 - **Result**: PASS or NEEDS_WORK
 - **BLOCKERS**: count

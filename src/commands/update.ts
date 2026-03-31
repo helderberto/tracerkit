@@ -1,5 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
+import { loadConfig } from '../config.ts';
 import { copyTemplates, diffTemplates, SKILL_NAMES } from '../templates.ts';
 
 export function update(cwd: string, opts?: { force?: boolean }): string[] {
@@ -10,13 +11,14 @@ export function update(cwd: string, opts?: { force?: boolean }): string[] {
     throw new Error('TracerKit not initialized — run `tracerkit init` first');
   }
 
-  const { unchanged, modified, missing } = diffTemplates(cwd);
+  const config = loadConfig(cwd);
+  const { unchanged, modified, missing } = diffTemplates(cwd, config);
   const output: string[] = [];
 
   const force = opts?.force ?? false;
   const toCopy = [...unchanged, ...missing, ...(force ? modified : [])];
   if (toCopy.length > 0) {
-    copyTemplates(cwd, toCopy);
+    copyTemplates(cwd, config, toCopy);
     for (const f of unchanged) output.push(`✓ ${f}`);
     for (const f of missing) output.push(`✓ ${f} (added)`);
     if (force) {

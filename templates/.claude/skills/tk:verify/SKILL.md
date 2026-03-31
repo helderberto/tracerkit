@@ -9,7 +9,7 @@ Compare current implementation against a plan, stamp a verdict, and archive on P
 
 ## Pre-loaded context
 
-- Available plans: !`ls plans/ 2>/dev/null || echo "no plans/ directory found"`
+- Available plans: !`ls {{paths.plans}}/ 2>/dev/null || echo "no {{paths.plans}}/ directory found"`
 
 ## Input
 
@@ -21,7 +21,7 @@ Use the argument as `<slug>` if given. If no argument is provided, list availabl
 
 ### 1. Load the plan
 
-Read `plans/<slug>.md`. If it does not exist, list available plans and ask.
+Read `{{paths.plans}}/<slug>.md`. If it does not exist, list available plans and ask.
 
 ### 2. Load the PRD
 
@@ -64,7 +64,7 @@ Print the verdict report:
 
 ### 6. Stamp the plan
 
-Append a verdict block at the bottom of `plans/<slug>.md`:
+Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
 
 ```markdown
 ---
@@ -83,7 +83,7 @@ If a previous verdict block exists, replace it with the new one.
 
 If the verdict is **PASS**:
 
-**First**, update the YAML frontmatter in `prds/<slug>.md`:
+**First**, update the YAML frontmatter in `{{paths.prds}}/<slug>.md`:
 
 - Set `status: done`
 - Add `completed: <current UTC timestamp, ISO 8601, e.g. 2025-06-15T14:30:00Z>`
@@ -92,10 +92,10 @@ If the verdict is **PASS**:
 
 **Then**, automatically archive:
 
-1. Create `archive/<slug>/` directory (and `archive/` if missing)
-2. Move `prds/<slug>.md` → `archive/<slug>/prd.md`
-3. Move `plans/<slug>.md` → `archive/<slug>/plan.md`
-4. Append closing timestamp to `archive/<slug>/plan.md`:
+1. Create `{{paths.archives}}/<slug>/` directory (and `{{paths.archives}}/` if missing)
+2. Move `{{paths.prds}}/<slug>.md` → `{{paths.archives}}/<slug>/prd.md`
+3. Move `{{paths.plans}}/<slug>.md` → `{{paths.archives}}/<slug>/plan.md`
+4. Append closing timestamp to `{{paths.archives}}/<slug>/plan.md`:
 
 ```markdown
 ---
@@ -106,9 +106,9 @@ If the verdict is **PASS**:
 - **Closed**: YYYY-MM-DD HH:MM (UTC)
 ```
 
-5. Tell the user: archived to `archive/<slug>/`, one-line summary of the feature.
+5. Tell the user: archived to `{{paths.archives}}/<slug>/`, one-line summary of the feature.
 
-If `archive/<slug>/` already exists, warn and ask whether to overwrite.
+If `{{paths.archives}}/<slug>/` already exists, warn and ask whether to overwrite.
 
 ### 8. On NEEDS_WORK
 
@@ -126,5 +126,5 @@ Tell the user: fix the listed blockers, then re-run `/tk:verify <slug>`.
 
 - Plan not found — list available plans and ask
 - PRD referenced in plan not found — warn and continue with plan only
-- `plans/` missing — tell user to run `/tk:plan` first
-- `archive/<slug>/` already exists — warn and ask whether to overwrite
+- `{{paths.plans}}/` missing — tell user to run `/tk:plan` first
+- `{{paths.archives}}/<slug>/` already exists — warn and ask whether to overwrite

@@ -10,7 +10,7 @@ const USAGE = [
   'Commands:',
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
-  '  uninstall [path]  Remove TracerKit skill directories, keep prds/ and plans/',
+  '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
   '',
   'Options:',
   '  --force           Overwrite modified files during update',

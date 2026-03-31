@@ -3,7 +3,10 @@ import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
 import { copyTemplates } from './templates.ts';
+import { DEFAULT_PATHS, type Config } from './config.ts';
 import { useTmpDir } from './test-setup.ts';
+
+const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
 
 describe('resolveTarget', () => {
   it('defaults to homedir when no args', () => {
@@ -64,7 +67,7 @@ describe('CLI', () => {
   });
 
   it('routes "update <path>" to update command', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     const output = run(['update', tmp.get()]);
 
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
@@ -75,7 +78,7 @@ describe('CLI', () => {
   });
 
   it('passes --force to update command', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -89,7 +92,7 @@ describe('CLI', () => {
   });
 
   it('routes "uninstall <path>" to uninstall command', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     const output = run(['uninstall', tmp.get()]);
 
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);

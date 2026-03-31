@@ -2,7 +2,10 @@ import { writeFileSync, readFileSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { update } from './update.ts';
 import { copyTemplates } from '../templates.ts';
+import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
+
+const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
 
 describe('update', () => {
   const tmp = useTmpDir();
@@ -12,7 +15,7 @@ describe('update', () => {
   });
 
   it('overwrites unchanged files', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     const before = readFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'utf8',
@@ -29,7 +32,7 @@ describe('update', () => {
   });
 
   it('skips modified files with warning and suggests --force', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -47,7 +50,7 @@ describe('update', () => {
   });
 
   it('overwrites modified files when force is true', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -65,7 +68,7 @@ describe('update', () => {
   });
 
   it('reports all files as unchanged when nothing changed', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
 
     const output = update(tmp.get());
 
@@ -74,7 +77,7 @@ describe('update', () => {
   });
 
   it('outputs only warnings when all files are modified without force', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     for (const name of ['tk:prd', 'tk:plan', 'tk:verify', 'tk:status']) {
       writeFileSync(
         join(tmp.get(), `.claude/skills/${name}/SKILL.md`),
@@ -89,7 +92,7 @@ describe('update', () => {
   });
 
   it('adds missing files', () => {
-    copyTemplates(tmp.get());
+    copyTemplates(tmp.get(), defaultConfig);
     rmSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'));
 
     const output = update(tmp.get());
