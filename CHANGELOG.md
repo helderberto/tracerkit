@@ -1,3 +1,9 @@
+# [1.1.0](https://github.com/helderberto/tracerkit/compare/v1.0.1...v1.1.0) (2026-03-31)
+
+### Features
+
+- add tk:status skill, PRD frontmatter lifecycle ([a8bc5e9](https://github.com/helderberto/tracerkit/commit/a8bc5e928464ecbf01cdffa2b436a942857163fb))
+
 ## [1.0.1](https://github.com/helderberto/tracerkit/compare/v1.0.0...v1.0.1) (2026-03-31)
 
 # 1.0.0 (2026-03-31)
