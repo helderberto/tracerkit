@@ -3,6 +3,8 @@
 # TracerKit
 
 [![CI](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml/badge.svg)](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml)
+[![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
 A spec-driven workflow for Claude Code. Three skills take a feature from idea to verified archive: define, plan, verify.
 
@@ -175,17 +177,29 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 <details>
 <summary>New feature from scratch</summary>
 
-```bash
-# 1. Define the feature
-/tk:prd add dark mode support
+```
+You: /tk:prd add dark mode support
+AI:  Starting PRD interview...
+     ? What problem does this solve for users?
+     ? Should it detect system preference or manual toggle only?
+     ? Which components need theming?
+     ...
+     ✓ Written prds/dark-mode-support.md
 
-# 2. Break into phased vertical slices
-/tk:plan dark-mode-support
+You: /tk:plan dark-mode-support
+AI:  Reading PRD...
+     ✓ Phase 1 — CSS variables + ThemeProvider (schema → context → tests)
+     ✓ Phase 2 — Toggle component + localStorage (UI → persistence → tests)
+     ✓ Phase 3 — System preference detection (media query → sync → tests)
+     Written plans/dark-mode-support.md
 
-# 3. Implement each phase with Claude
+You: # implement each phase with Claude...
 
-# 4. Verify — auto-archives on PASS
-/tk:verify dark-mode-support
+You: /tk:verify dark-mode-support
+AI:  Verifying against plan...
+     ✓ All done-when conditions met
+     ✓ Tests passing
+     PASS — archived to archive/dark-mode-support/
 ```
 
 </details>
@@ -193,15 +207,16 @@ The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20
 <details>
 <summary>Iterating on an accepted PRD</summary>
 
-PRDs are living documents — refine them any time before or during implementation.
+```
+You: /tk:prd update dark mode to detect system preference
+AI:  Found existing prds/dark-mode-support.md
+     ? Start fresh or revise the existing PRD?
+     ...
+     ✓ Updated prds/dark-mode-support.md
 
-```bash
-# Re-run the PRD skill — it detects the existing file and asks
-# whether to start fresh or revise
-/tk:prd update dark mode to detect system preference
-
-# Regenerate the plan from the updated PRD
-/tk:plan dark-mode-support
+You: /tk:plan dark-mode-support
+AI:  Reading updated PRD...
+     ✓ Regenerated plans/dark-mode-support.md with new scope
 ```
 
 </details>
@@ -209,62 +224,37 @@ PRDs are living documents — refine them any time before or during implementati
 <details>
 <summary>Verify → fix → re-verify loop</summary>
 
-```bash
-# First verification attempt
-/tk:verify dark-mode-support
-# → NEEDS_WORK: missing toggle persistence, 2 failing tests
+```
+You: /tk:verify dark-mode-support
+AI:  Verifying against plan...
+     ✗ Missing toggle persistence in localStorage
+     ✗ 2 failing tests in ThemeProvider.test.ts
+     NEEDS_WORK — 2 blockers found
 
-# Fix the blockers, then re-verify
-/tk:verify dark-mode-support
-# → PASS — auto-archived to archive/dark-mode-support/
+You: # fix the blockers...
+
+You: /tk:verify dark-mode-support
+AI:  Verifying against plan...
+     ✓ All done-when conditions met
+     ✓ Tests passing
+     PASS — archived to archive/dark-mode-support/
 ```
 
 </details>
 
 <details>
-<summary>Development flow diagram</summary>
+<summary>Check workflow status</summary>
 
 ```
-                         +------------------+
-                         |   Idea / Issue   |
-                         +--------+---------+
-                                  |
-                                  v
-                       +----------+----------+
-                       |  /tk:prd <idea>     |
-                       |  Interview + Design |
-                       +----------+----------+
-                                  |
-                              prds/<slug>.md
-                                  |
-                                  v
-                       +----------+----------+
-                       |  /tk:plan <slug>    |
-                       |  Vertical Slices    |
-                       +----------+----------+
-                                  |
-                             plans/<slug>.md
-                                  |
-                                  v
-                       +----------+----------+
-                       |   Implement phases  |
-                       |   (you + Claude)    |
-                       +----------+----------+
-                                  |
-                                  v
-                       +----------+----------+
-                       |  /tk:verify <slug>  |
-                       |  Review + archive   |
-                       +----------+----------+
-                                  |
-                         +--------+--------+
-                         |                 |
-                    NEEDS_WORK           PASS
-                         |                 |
-                         v                 v
-                  Fix blockers      Auto-archived
-                  then re-run       to archive/
-                  /tk:verify
+You: /tk:status
+AI:  Feature Status Dashboard
+     ┌──────────────────────┬─────────────┬─────┐
+     │ Feature              │ Status      │ Age │
+     ├──────────────────────┼─────────────┼─────┤
+     │ dark-mode-support    │ in_progress │ 3d  │
+     │ api-rate-limiting    │ created     │ 1d  │
+     │ user-avatars         │ done        │ 7d  │
+     └──────────────────────┴─────────────┴─────┘
 ```
 
 </details>
