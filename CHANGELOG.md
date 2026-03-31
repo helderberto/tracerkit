@@ -1,3 +1,10 @@
+# [1.4.0](https://github.com/helderberto/tracerkit/compare/v1.3.14...v1.4.0) (2026-03-31)
+
+### Features
+
+- add config module for customizable artifact paths ([bca25ae](https://github.com/helderberto/tracerkit/commit/bca25ae0bcec6bbd38893b83ee49d9332485205d))
+- placeholder substitution in skill templates ([7db0bc6](https://github.com/helderberto/tracerkit/commit/7db0bc674b91851c6fe969b9c042b70e8297df15))
+
 ## [1.3.14](https://github.com/helderberto/tracerkit/compare/v1.3.13...v1.3.14) (2026-03-31)
 
 ### Bug Fixes
