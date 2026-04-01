@@ -10,21 +10,21 @@
 
 Replace ad-hoc AI prompts with a repeatable three-step spec process: from idea to verified, archived code.
 
+Named after the tracer-bullet technique from _The Pragmatic Programmer_ — **Tracer** + **Kit**.
+
 **Zero runtime dependencies.** Pure Markdown skills, no build step.
 
 </div>
 
 ## Why TracerKit?
 
-AI coding without specs means vague prompts and lost context between sessions. Most planning tools produce horizontal task lists. Nothing works until everything is done.
+Without specs, every AI session starts from scratch — vague prompts, duplicated context, no way to confirm "done." Most planning tools produce flat task lists where nothing works until everything is done.
 
-TracerKit uses **tracer-bullet vertical slices** instead: each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
-
-The term comes from The Pragmatic Programmer. The name **TracerKit** = Tracer (bullet) + Kit.
+TracerKit takes a different approach: **tracer-bullet vertical slices**. Each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
 
 ## Get Started
 
-### 1. Install TracerKit
+### Install
 
 ```bash
 npx tracerkit init
@@ -32,7 +32,7 @@ npx tracerkit init
 
 Skills are installed globally to `~/.claude/skills/`, available in every project. No per-project setup needed.
 
-### 2. Use the workflow
+### Workflow
 
 ```
 You: /tk:prd add dark mode support
@@ -65,13 +65,15 @@ npx tracerkit uninstall .         # remove project-scoped skills
 
 ## Skills
 
+TracerKit ships four skills — three for the core workflow, one for visibility.
+
 ### Core skills
 
-The three-step workflow that takes a feature from idea to verified archive.
+Three steps that take a feature from idea to verified archive.
 
 #### `/tk:prd <idea>`: Write a PRD
 
-Interactive interview to define a feature. Explores the codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
+Interactive interview that explores your codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
 **Output:** `.tracerkit/prds/<slug>.md`
 
@@ -83,13 +85,13 @@ Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each ph
 
 #### `/tk:verify <slug>`: Verify and archive
 
-Read-only review that compares the codebase against the plan's done-when conditions. Runs tests, checks user stories, and stamps a **✅ PASS** or **🚧 NEEDS_WORK** verdict. On ✅ PASS, automatically archives the PRD and plan to `.tracerkit/archives/<slug>/`.
+Read-only review that checks the codebase against the plan's done-when conditions. Runs tests, validates user stories, and stamps a **✅ PASS** or **🚧 NEEDS_WORK** verdict. On ✅ PASS, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
 
 **Output:** Verdict block in `.tracerkit/plans/<slug>.md`. On ✅ PASS: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
 
 ### Helper skills
 
-Useful but optional. This category will grow over time.
+Useful but optional.
 
 #### `/tk:status`: Workflow dashboard
 
@@ -97,13 +99,13 @@ Scans `.tracerkit/prds/` and prints a table of all features grouped by status (`
 
 ## Docs
 
-| Document                                         | Description                                         |
-| ------------------------------------------------ | --------------------------------------------------- |
-| [Examples](docs/examples.md)                     | End-to-end usage walkthroughs                       |
-| [CLI Reference](docs/cli-reference.md)           | All CLI commands and flags                          |
-| [Configuration](docs/configuration.md)           | Custom artifact paths via `config.json`             |
-| [Metadata Lifecycle](docs/metadata-lifecycle.md) | YAML frontmatter states and transitions             |
-| [Compared to](docs/compared-to.md)               | How TracerKit differs from Spec Kit, Kiro, OpenSpec |
+| Document                                         | Description                                        |
+| ------------------------------------------------ | -------------------------------------------------- |
+| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
+| [CLI Reference](docs/cli-reference.md)           | Browse all CLI commands and flags                  |
+| [Configuration](docs/configuration.md)           | Configure custom artifact paths via `config.json`  |
+| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
+| [Compared to](docs/compared-to.md)               | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
 
 ## Contributing
 
