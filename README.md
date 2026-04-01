@@ -20,7 +20,7 @@ AI coding without specs means vague prompts and lost context between sessions. M
 
 TracerKit uses **tracer-bullet vertical slices** instead: each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
 
-The term comes from [The Pragmatic Programmer](https://pragprog.com/titles/tpp20/the-pragmatic-programmer-20th-anniversary-edition/). The name **TracerKit** = Tracer (bullet) + Kit — [read more about tracer bullets](https://www.aihero.dev/tracer-bullets).
+The term comes from [The Pragmatic Programmer](https://en.wikipedia.org/wiki/The_Pragmatic_Programmer). The name **TracerKit** = Tracer (bullet) + Kit — [read more about tracer bullets](https://www.aihero.dev/tracer-bullets).
 
 ## Get Started
 
