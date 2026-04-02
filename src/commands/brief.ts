@@ -41,7 +41,9 @@ export function brief(cwd: string, now = new Date()): string[] {
     return ['No features found — run `/tk:prd` to start one.'];
   }
 
-  const files = readdirSync(prdsDir).filter((f) => f.endsWith('.md'));
+  const files = readdirSync(prdsDir)
+    .filter((f) => f.endsWith('.md'))
+    .sort();
   if (files.length === 0) {
     return ['No features found — run `/tk:prd` to start one.'];
   }
@@ -57,7 +59,8 @@ export function brief(cwd: string, now = new Date()): string[] {
     if (fm.status === 'done') continue;
 
     const status = fm.status || 'unknown';
-    const created = fm.created || '';
+    const raw = fm.created || '';
+    const created = raw && !isNaN(new Date(raw).getTime()) ? raw : '';
 
     let progress = '—';
     let next = '—';

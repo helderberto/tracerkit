@@ -209,6 +209,20 @@ describe('CLI', () => {
     expect(output.some((l) => l.includes('1/2'))).toBe(true);
   });
 
+  it('routes "brief <path>" to brief command', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    mkdirSync(prdsDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'feat.md'),
+      '---\nstatus: in_progress\ncreated: 2026-03-01T00:00:00Z\n---\n# Feat\n',
+    );
+
+    const output = run(['brief', tmp.get()]);
+
+    expect(output.some((l) => l.includes('feat'))).toBe(true);
+    expect(output.some((l) => l.includes('Focus'))).toBe(true);
+  });
+
   it('returns clean error when archive already exists', () => {
     const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
     const plansDir = join(tmp.get(), '.tracerkit', 'plans');

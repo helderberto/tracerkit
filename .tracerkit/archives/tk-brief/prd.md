@@ -41,16 +41,16 @@ A new `/tk:brief` skill that calls `npx tracerkit brief` — a deterministic CLI
 
 **`src/commands/brief.ts`**
 
-- `brief(cwd: string): void` — scans all PRDs in `config.paths.prds`, parses frontmatter and plan for each, computes progress and next unchecked item, prints dashboard table + focus line to stdout
+- `brief(cwd: string, now?: Date): string[]` — scans all PRDs in `config.paths.prds`, parses frontmatter and plan for each, computes progress and next unchecked item, returns markdown lines for the dashboard table + focus line
 - Excludes features with `status: done`
 - For features with a plan (regardless of frontmatter status), reads and parses the plan file to get progress and first `- [ ]` item
-- Focus selection: if exactly one `in_progress` feature, auto-selects it; if zero or 2+, selects oldest by `created` date (features without `created` sort last); prints a trailing "Focus:" line
+- Focus selection: if exactly one `in_progress` feature, auto-selects it; if 2+, selects oldest `in_progress` by `created` date; if 0, selects oldest overall (features without `created` sort last)
 
 ### Architectural Decisions
 
-- **Deterministic by design**: `brief` is a pure function over filesystem state — no AI, no inference. All numbers come from `parsePlan()` and `parseFrontmatter()`.
+- **Deterministic by design**: `brief` is a pure function over filesystem state and the provided `now` timestamp (defaulting to current time) — no AI, no inference. All numbers come from `parsePlan()` and `parseFrontmatter()`.
 - **Reuses existing modules**: `parsePlan` (from `src/plan.ts`) and `parseFrontmatter` (from `src/frontmatter.ts`) — no new parsing logic.
-- **Output format**: markdown table to stdout, followed by a `Focus:` line. Skill presents it as-is.
+- **Output format**: array of markdown lines forming a table, followed by a `**Focus → <slug>**` line. The CLI prints them to stdout.
 - **Age calculation**: days since `created` field. `0d` if same day, `Nd` for days, `Nw` for weeks, `Nmo` for months. Blank if no `created`.
 - **Progress column**: `checked/total` from `parsePlan` if plan exists; `—` if no plan file found.
 - **Next column**: literal text of first `- [ ]` in the plan (stripped of markdown checkbox prefix). `—` if no plan or all checked.
@@ -60,15 +60,12 @@ A new `/tk:brief` skill that calls `npx tracerkit brief` — a deterministic CLI
 `tracerkit brief` output format (stdout):
 
 ```
-## Session Brief — YYYY-MM-DD
+| Feature | Status | Age | Progress | Next |
+|---------|--------|-----|----------|------|
+| workflow-v2 | in_progress | 0d | 4/12 | implement parsePlan() |
+| cli-init | unknown | | — | — |
 
-| Feature     | Status      | Age | Progress | Next                         |
-|-------------|-------------|-----|----------|------------------------------|
-| workflow-v2 | in_progress | 0d  | 4/12     | implement parsePlan()        |
-| cli-init    | unknown     | —   | —        | run /tk:plan                 |
-
-Focus: workflow-v2 — Phase 2, 1/4 done.
-Next: implement `tracerkit progress <slug>`.
+**Focus → workflow-v2**
 ```
 
 Exit code 0 always (graceful degradation on missing dirs/files).
