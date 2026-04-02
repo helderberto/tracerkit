@@ -10,7 +10,7 @@
 
 Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified, archived code.
 
-Named after the tracer-bullet technique from _The Pragmatic Programmer_ — **Tracer** + **Kit**.
+Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Tracer** + **Kit**.
 
 **Zero runtime dependencies.** Pure Markdown skills, no build step.
 
@@ -18,7 +18,7 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_ — **Tr
 
 ## Why TracerKit?
 
-Without specs, every AI session starts from scratch — vague prompts, duplicated context, no way to confirm "done." Most planning tools produce flat task lists where nothing works until everything is done.
+Without specs, every AI session starts from scratch. Vague prompts, duplicated context, no way to confirm "done." Most planning tools produce flat task lists where nothing works until everything is done.
 
 TracerKit takes a different approach: **tracer-bullet vertical slices**. Each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
 
@@ -36,17 +36,19 @@ Skills are installed globally to `~/.claude/skills/`, available in every project
 
 ```
 You: /tk:prd add dark mode support
-AI:  ✓ Written .tracerkit/prds/dark-mode-support.md
+AI:  Written .tracerkit/prds/dark-mode-support.md
+     Run `/tk:plan dark-mode-support` next?
 
 You: /tk:plan dark-mode-support
-AI:  ✓ Phase 1 — CSS variables + ThemeProvider
-     ✓ Phase 2 — Toggle component + localStorage
-     ✓ Written .tracerkit/plans/dark-mode-support.md
+AI:  Phase 1 — Theme visible end-to-end
+     Phase 2 — User can toggle and persist preference
+     Written .tracerkit/plans/dark-mode-support.md
+     Run `/tk:check dark-mode-support` when ready?
 
-You: # implement each phase...
+You: # open the plan, implement each phase, write tests...
 
 You: /tk:check dark-mode-support
-AI:  ✓ All checks verified — status: done
+AI:  Status: done | Total: 5/5
      Archived to .tracerkit/archives/dark-mode-support/
 ```
 
@@ -97,7 +99,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | [CLI Reference](docs/cli-reference.md)           | Browse all CLI commands and flags                  |
 | [Configuration](docs/configuration.md)           | Configure custom artifact paths via `config.json`  |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
-| [Compared to](docs/compared-to.md)               | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
+| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
 
 ## Contributing
 

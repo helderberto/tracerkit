@@ -50,7 +50,7 @@ status: in_progress
 ---
 ```
 
-After `/tk:check` (partial -- still working):
+After `/tk:check` (partial, still working):
 
 ```yaml
 ---

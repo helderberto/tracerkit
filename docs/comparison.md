@@ -1,12 +1,12 @@
-# Compared to
+# Comparison
 
-**vs. [Spec Kit](https://github.com/github/spec-kit)** (GitHub). Thorough but heavyweight: 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
+**[Spec Kit](https://github.com/github/spec-kit)** (GitHub). Thorough but heavyweight: 5 phases, Python setup, rigid phase gates. TracerKit is 3 phases, zero deps, automated verification.
 
-**vs. [Kiro](https://kiro.dev/)** (AWS). Powerful but locked to a dedicated IDE. TracerKit works inside Claude Code with pure Markdown skills.
+**[Kiro](https://kiro.dev/)** (AWS). Powerful but locked to a dedicated IDE. TracerKit works inside Claude Code with pure Markdown skills.
 
-**vs. [OpenSpec](https://github.com/Fission-AI/OpenSpec)**. Similar philosophy, broader tool support. TracerKit trades breadth (Claude Code only) for depth: native skill discovery, subagents for verification, and fewer artifacts.
+**[OpenSpec](https://github.com/Fission-AI/OpenSpec)**. Similar philosophy, broader tool support. TracerKit trades breadth (Claude Code only) for depth: native skill discovery, subagents for verification, and fewer artifacts.
 
-**vs. nothing.** AI coding without specs means vague prompts and lost context between sessions. TracerKit adds structure without ceremony.
+**No tool at all.** AI coding without specs means vague prompts and lost context between sessions. TracerKit adds structure without ceremony.
 
 ## Full comparison
 
