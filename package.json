@@ -1,6 +1,6 @@
 {
   "name": "tracerkit",
-  "version": "1.10.1",
+  "version": "1.10.2",
   "description": "Spec-driven workflow for Claude Code: replace ad-hoc prompts with PRD → plan → verify.",
   "license": "MIT",
   "author": {
