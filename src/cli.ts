@@ -2,11 +2,13 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { init } from './commands/init.ts';
-import { update } from './commands/update.ts';
-import { uninstall } from './commands/uninstall.ts';
-import { progress } from './commands/progress.ts';
-import { archive } from './commands/archive.ts';
+import {
+  archive,
+  init,
+  progress,
+  uninstall,
+  update,
+} from './commands/index.ts';
 
 const { version } = JSON.parse(
   readFileSync(
