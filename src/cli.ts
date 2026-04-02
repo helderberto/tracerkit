@@ -73,12 +73,7 @@ export function run(args: string[]): string[] {
 
   switch (command) {
     case 'brief':
-      try {
-        return brief(resolveTarget(rest, process.cwd()));
-      } catch (err) {
-        const msg = err instanceof Error ? err.message : String(err);
-        return [`Error: ${msg}`];
-      }
+      return brief(resolveTarget(rest, process.cwd()));
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {

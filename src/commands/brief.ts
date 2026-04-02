@@ -83,26 +83,24 @@ export function brief(cwd: string, now = new Date()): string[] {
   const header = '| Feature | Status | Age | Progress | Next |';
   const divider = '|---------|--------|-----|----------|------|';
 
+  // Sort features: by created date ascending, no-date last
+  features.sort((a, b) => {
+    if (a.created && b.created)
+      return new Date(a.created).getTime() - new Date(b.created).getTime();
+    if (a.created) return -1;
+    if (b.created) return 1;
+    return 0;
+  });
+
   const rows = features.map((f) => {
     const age = f.created ? formatAge(f.created, now) : '';
     return `| ${f.slug} | ${f.status} | ${age} | ${f.progress} | ${f.next} |`;
   });
 
-  // Focus line
+  // Focus: single in_progress → auto; 2+ in_progress → oldest in_progress; 0 → oldest overall
   const inProgress = features.filter((f) => f.status === 'in_progress');
-  let focus: Feature;
-
-  if (inProgress.length === 1) {
-    focus = inProgress[0];
-  } else {
-    const withDate = features.filter((f) => f.created);
-    const withoutDate = features.filter((f) => !f.created);
-    withDate.sort(
-      (a, b) => new Date(a.created).getTime() - new Date(b.created).getTime(),
-    );
-    const sorted = [...withDate, ...withoutDate];
-    focus = sorted[0];
-  }
+  const focus =
+    inProgress.length === 1 ? inProgress[0] : (inProgress[0] ?? features[0]);
 
   return [header, divider, ...rows, '', `**Focus → ${focus.slug}**`];
 }

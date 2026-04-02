@@ -58,7 +58,7 @@ describe('brief', () => {
     expect(output).toContainEqual(expect.stringContaining('alpha'));
   });
 
-  it('picks oldest by created when multiple in_progress', () => {
+  it('picks oldest in_progress when multiple in_progress', () => {
     writePrd(
       'newer',
       '---\nstatus: in_progress\ncreated: 2026-03-20T00:00:00Z\n---\n# Newer',
@@ -73,6 +73,26 @@ describe('brief', () => {
 
     expect(focusLine).toBeDefined();
     expect(focusLine).toContain('older');
+  });
+
+  it('prefers in_progress over older created feature for focus', () => {
+    writePrd(
+      'ancient',
+      '---\nstatus: created\ncreated: 2025-01-01T00:00:00Z\n---\n# Ancient',
+    );
+    writePrd(
+      'active-a',
+      '---\nstatus: in_progress\ncreated: 2026-03-10T00:00:00Z\n---\n# A',
+    );
+    writePrd(
+      'active-b',
+      '---\nstatus: in_progress\ncreated: 2026-03-20T00:00:00Z\n---\n# B',
+    );
+
+    const output = brief(tmp.get());
+    const focusLine = output.find((l) => l.includes('Focus'));
+
+    expect(focusLine).toContain('active-a');
   });
 
   it('picks oldest when zero in_progress', () => {
@@ -158,6 +178,42 @@ describe('brief', () => {
     expect(row).toBeDefined();
     // Age column should be empty (just whitespace between pipes)
     expect(row).toMatch(/\|\s+\|/);
+  });
+
+  it('shows dash for next when all checkboxes checked', () => {
+    writePrd(
+      'alldone',
+      '---\nstatus: in_progress\ncreated: 2026-03-01T00:00:00Z\n---\n# All done',
+    );
+    writePlan('alldone', '## Phase 1 — Setup\n\n- [x] Task A\n- [x] Task B');
+
+    const output = brief(tmp.get());
+    const row = output.find((l) => l.includes('alldone'));
+
+    expect(row).toBeDefined();
+    expect(row).toContain('2/2');
+    expect(row).toMatch(/\| — \|$/);
+  });
+
+  it('sorts features deterministically by created date', () => {
+    writePrd(
+      'charlie',
+      '---\nstatus: created\ncreated: 2026-03-15T00:00:00Z\n---\n# C',
+    );
+    writePrd(
+      'alpha',
+      '---\nstatus: created\ncreated: 2026-01-01T00:00:00Z\n---\n# A',
+    );
+    writePrd(
+      'bravo',
+      '---\nstatus: created\ncreated: 2026-02-10T00:00:00Z\n---\n# B',
+    );
+
+    const output = brief(tmp.get());
+    const rows = output.filter((l) => l.startsWith('|') && !l.startsWith('|-'));
+    const slugs = rows.slice(1).map((r) => r.split('|')[1].trim());
+
+    expect(slugs).toEqual(['alpha', 'bravo', 'charlie']);
   });
 
   it('no-created sorts last for focus selection', () => {
