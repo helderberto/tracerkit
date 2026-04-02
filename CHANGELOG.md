@@ -1,3 +1,9 @@
+# [1.7.0](https://github.com/helderberto/tracerkit/compare/v1.6.1...v1.7.0) (2026-04-02)
+
+### Features
+
+- improve skill UX — slug derivation, fast-path check, flow chaining ([1beb456](https://github.com/helderberto/tracerkit/commit/1beb45666ed23f4d7bafd1387cd9708e309959f3))
+
 ## [1.6.1](https://github.com/helderberto/tracerkit/compare/v1.6.0...v1.6.1) (2026-04-02)
 
 # [1.6.0](https://github.com/helderberto/tracerkit/compare/v1.5.0...v1.6.0) (2026-04-02)
