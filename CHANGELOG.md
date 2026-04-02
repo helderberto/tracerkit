@@ -1,3 +1,9 @@
+# [1.10.0](https://github.com/helderberto/tracerkit/compare/v1.9.6...v1.10.0) (2026-04-02)
+
+### Features
+
+- slim CLI — skills own their algorithms ([#4](https://github.com/helderberto/tracerkit/issues/4)) ([1308114](https://github.com/helderberto/tracerkit/commit/1308114f5d51ece0bf58147c4298e1e0e2bfd1bf))
+
 ## [1.9.6](https://github.com/helderberto/tracerkit/compare/v1.9.5...v1.9.6) (2026-04-02)
 
 ### Bug Fixes
