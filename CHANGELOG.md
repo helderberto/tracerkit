@@ -1,3 +1,9 @@
+## [1.8.3](https://github.com/helderberto/tracerkit/compare/v1.8.2...v1.8.3) (2026-04-02)
+
+### Bug Fixes
+
+- guide to update when skills already exist on init ([7dfbdd6](https://github.com/helderberto/tracerkit/commit/7dfbdd61bdd1330c40b7eef4e06e42409b37f0fa))
+
 ## [1.8.2](https://github.com/helderberto/tracerkit/compare/v1.8.1...v1.8.2) (2026-04-02)
 
 ## [1.8.1](https://github.com/helderberto/tracerkit/compare/v1.8.0...v1.8.1) (2026-04-02)
