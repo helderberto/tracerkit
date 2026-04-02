@@ -12,4 +12,6 @@ Artifacts are stored under `.tracerkit/` by default. To customize paths, create 
 }
 ```
 
-Any missing key falls back to its default. The file is optional; without it, all defaults apply. After changing config, run `tracerkit update` to regenerate skills with the new paths.
+Any missing key falls back to its default. The file is optional; without it, all defaults apply.
+
+After changing config, run `npx tracerkit update` to regenerate skills with the new paths. Existing artifacts are not moved — rename them manually if needed.

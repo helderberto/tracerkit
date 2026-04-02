@@ -30,44 +30,21 @@ These are the only statuses in TracerKit. The same vocabulary is used in PRD fro
 | Checked (partial)  | `/tk:check` | no change (stays `in_progress`)                      |
 | Checked (all pass) | `/tk:check` | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
 
-## Examples
+## Example
 
-After `/tk:prd`:
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: created
----
-```
-
-After `/tk:plan`:
+A single PRD's frontmatter evolves as skills run:
 
 ```yaml
 ---
-created: 2025-06-15T14:30:00Z
-status: in_progress
+created: 2025-06-15T14:30:00Z # set by /tk:prd
+status:
+  created # → in_progress (by /tk:plan)
+  # → done        (by /tk:check, all pass)
+completed: 2025-06-20T09:00:00Z # set by /tk:check when done
 ---
 ```
 
-After `/tk:check` (partial, still working):
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: in_progress
----
-```
-
-After `/tk:check` (all checks pass):
-
-```yaml
----
-created: 2025-06-15T14:30:00Z
-status: done
-completed: 2025-06-20T09:00:00Z
----
-```
+Partial checks (`/tk:check` with remaining items) leave `status: in_progress` unchanged.
 
 ## Plan checks
 
@@ -82,4 +59,4 @@ The plan file uses markdown checkboxes as progress markers:
 - [ ] Tests pass for service + API + component
 ```
 
-The agent marks `[x]` during implementation. `/tk:check` verifies each item against the codebase and updates them. Progress is reported as checked/total (e.g. "2/4").
+The AI assistant marks `[x]` during implementation. `/tk:check` verifies each item against the codebase and updates them. Progress is reported as checked/total (e.g. "2/4").

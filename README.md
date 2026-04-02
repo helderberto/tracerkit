@@ -8,11 +8,11 @@
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified, archived code.
+Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified, archived spec.
 
 Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Tracer** + **Kit**.
 
-**Zero runtime dependencies.** Pure Markdown skills, no build step.
+**Markdown skills, one CLI.** No build step, no project dependencies.
 
 </div>
 
@@ -30,26 +30,11 @@ TracerKit takes a different approach: **tracer-bullet vertical slices**. Each ph
 npx tracerkit init
 ```
 
-Skills are installed globally to `~/.claude/skills/`, available in every project. No per-project setup needed. Safe to re-run — adds any missing skills without overwriting ones you've modified.
+Skills are installed globally to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
 
 ### Workflow
 
 ```
-You: /tk:brief
-AI:  | Feature           | Status      | Age | Progress | Next                         |
-     |-------------------|-------------|-----|----------|------------------------------|
-     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ... |
-
-     **Focus → dark-mode-support**
-
-You: # continue working on dark-mode-support...
-
-You: /tk:check dark-mode-support
-AI:  Status: done | Total: 7/7
-     Archived to .tracerkit/archives/dark-mode-support/
-
----
-
 You: /tk:prd add dark mode support
 AI:  Written .tracerkit/prds/dark-mode-support.md
      Run `/tk:plan dark-mode-support` next?
@@ -65,6 +50,17 @@ You: # open the plan, implement each phase, write tests...
 You: /tk:check dark-mode-support
 AI:  Status: done | Total: 5/5
      Archived to .tracerkit/archives/dark-mode-support/
+```
+
+Use `/tk:brief` at the start of any session to see active features and pick up where you left off:
+
+```
+You: /tk:brief
+AI:  | Feature           | Status      | Age | Progress | Next                         |
+     |-------------------|-------------|-----|----------|------------------------------|
+     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ... |
+
+     **Focus → dark-mode-support**
 ```
 
 See [Examples](docs/examples.md) for full walkthroughs.
@@ -86,27 +82,27 @@ npx tracerkit uninstall .         # remove project-scoped skills
 
 TracerKit ships three skills that take a feature from idea to verified archive.
 
-#### `/tk:prd <idea>`: Write a PRD
+### `/tk:prd <idea>`: Write a PRD
 
 Interactive interview that explores your codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
 **Output:** `.tracerkit/prds/<slug>.md`
 
-#### `/tk:plan <slug>`: Create an implementation plan
+### `/tk:plan <slug>`: Create an implementation plan
 
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
 **Output:** `.tracerkit/plans/<slug>.md`
 
-#### `/tk:brief`: Session briefing
+### `/tk:brief`: Session briefing
 
 Shows active features, their progress, and suggested focus. Use at the start of a session to orient.
 
 **Output:** Feature dashboard in the terminal — no files written.
 
-#### `/tk:check [slug]`: Check and archive
+### `/tk:check [slug]`: Verify and archive
 
-Checks the codebase against the plan's done-when checkboxes. Runs tests, validates user stories, updates check progress, and transitions the PRD status. On `done`, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
+Verifies the codebase against the plan's done-when checkboxes. Runs tests, validates user stories, updates phase progress, and transitions the PRD status. On `done`, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
 
 Without arguments, shows a feature dashboard with status and progress before asking which feature to check.
 

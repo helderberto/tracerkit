@@ -1,27 +1,8 @@
 # Examples
 
-## Session briefing
-
-Start each session with `/tk:brief` to see what's active and where to focus.
-
-```
-You: /tk:brief
-AI:  | Feature           | Status      | Age | Progress | Next                          |
-     |-------------------|-------------|-----|----------|-------------------------------|
-     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ...  |
-     | api-rate-limiting | created     | 1w  | —        | —                             |
-
-     **Focus → dark-mode-support**
-
-     What would you like to do?
-     - Continue dark-mode-support (read its plan)
-     - Start a new feature with /tk:prd
-     - Check progress with /tk:check <slug>
-```
-
 ## Full walkthrough
 
-A feature goes through three steps: define it (`/tk:prd`), plan it (`/tk:plan`), verify it (`/tk:check`). Start with `/tk:brief` to orient, then drive each transition.
+A feature goes through three steps: define it (`/tk:prd`), plan it (`/tk:plan`), verify it (`/tk:check`). Optionally, start with `/tk:brief` to orient.
 
 ```
 You: /tk:prd add dark mode support
@@ -83,6 +64,20 @@ AI:  Loading plan... Loading PRD... Running tests...
      - None
 
      Archived to .tracerkit/archives/dark-mode-support/
+```
+
+## Session briefing
+
+Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional — skip it if you already know what to work on.
+
+```
+You: /tk:brief
+AI:  | Feature           | Status      | Age | Progress | Next                          |
+     |-------------------|-------------|-----|----------|-------------------------------|
+     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ...  |
+     | api-rate-limiting | created     | 1w  | —        | —                             |
+
+     **Focus → dark-mode-support**
 ```
 
 ---
@@ -170,9 +165,9 @@ AI:  Loading plan... Running tests...
 </details>
 
 <details>
-<summary>Starting without an idea</summary>
+<summary>Starting with just an idea</summary>
 
-No argument needed. The skill opens with a question and derives the slug from your answer.
+No slug needed. The skill opens with a question and derives the slug from your answer.
 
 ```
 You: /tk:prd
