@@ -16,10 +16,7 @@ describe('init', () => {
       true,
     );
     expect(
-      existsSync(join(tmp.get(), '.claude/skills/tk:verify/SKILL.md')),
-    ).toBe(true);
-    expect(
-      existsSync(join(tmp.get(), '.claude/skills/tk:status/SKILL.md')),
+      existsSync(join(tmp.get(), '.claude/skills/tk:check/SKILL.md')),
     ).toBe(true);
     expect(output).toContain('✓ .claude/skills/tk:prd/SKILL.md');
   });
@@ -32,20 +29,12 @@ describe('init', () => {
     expect(() => init(tmp.get())).toThrow(/already exists/);
   });
 
-  it('aborts naming the specific skill that already exists', () => {
-    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:verify'), {
-      recursive: true,
-    });
-
-    expect(() => init(tmp.get())).toThrow(/tk:verify/);
-  });
-
   it('preserves existing .claude/ contents', () => {
     mkdirSync(join(tmp.get(), '.claude'), { recursive: true });
 
     const output = init(tmp.get());
 
-    expect(output.length).toBe(4);
+    expect(output.length).toBe(3);
   });
 
   it('reports each copied file with check prefix', () => {

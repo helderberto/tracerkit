@@ -2,9 +2,13 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { init } from './commands/init.ts';
-import { update } from './commands/update.ts';
-import { uninstall } from './commands/uninstall.ts';
+import {
+  archive,
+  init,
+  progress,
+  uninstall,
+  update,
+} from './commands/index.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -20,6 +24,8 @@ const USAGE = [
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
   '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
+  '  progress <slug>   Show per-phase checkbox progress for a plan',
+  '  archive <slug>    Archive a completed feature (PRD + plan)',
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
@@ -29,10 +35,26 @@ const USAGE = [
   'All commands default to the home directory when no path is given.',
 ];
 
-export function resolveTarget(args: string[]): string {
+export function resolveTarget(args: string[], defaultDir = homedir()): string {
   const pathArg = args.find((a) => !a.startsWith('-'));
   if (pathArg) return resolve(pathArg);
-  return homedir();
+  return defaultDir;
+}
+
+function runSlugCommand(
+  rest: string[],
+  fn: (cwd: string, slug: string) => string[],
+): string[] {
+  const slugIndex = rest.findIndex((a) => !a.startsWith('-'));
+  if (slugIndex === -1) return ['Error: missing <slug> argument', '', ...USAGE];
+  const slug = rest[slugIndex];
+  const target = rest.filter((_, i) => i !== slugIndex);
+  try {
+    return fn(resolveTarget(target, process.cwd()), slug);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return [`Error: ${msg}`];
+  }
 }
 
 export function run(args: string[]): string[] {
@@ -62,6 +84,10 @@ export function run(args: string[]): string[] {
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
+    case 'progress':
+      return runSlugCommand(rest, progress);
+    case 'archive':
+      return runSlugCommand(rest, archive);
     default:
       return USAGE;
   }

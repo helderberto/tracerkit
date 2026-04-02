@@ -35,6 +35,8 @@ If the PRD has no frontmatter, skip this step silently.
 
 Understand current architecture, existing patterns, and integration points.
 
+**Research protocol**: codebase first, then project docs. If you cannot verify a technical claim from these sources, flag it as uncertain — never fabricate.
+
 ### 3. Identify durable architectural decisions
 
 Before slicing, extract decisions that hold across all phases:
@@ -64,6 +66,8 @@ Each phase is a thin **tracer bullet** — a narrow but complete path through ev
 **Within each slice, order by dependency:** schema → service → API → UI → tests. Happy paths before edge cases.
 
 **Phase naming:** use a goal phrase answering "what can we demo when this is done?" (e.g., "Phase 1 — Revenue visible end-to-end"), not a layer name.
+
+**Done when:** write as a checkbox list of atomic, testable conditions — not prose. Each item should be independently verifiable. The agent marks `[x]` during implementation to track progress.
 
 **When to use layer-by-layer instead:** If the PRD has complex schema changes that all modules depend on and no single user story can stand alone without the full schema, build the data foundation first, then slice the rest vertically.
 
@@ -112,7 +116,8 @@ Concise description of this vertical slice — end-to-end behavior, not layer-by
 
 ### Done when
 
-<Specific, testable condition>
+- [ ] Atomic, testable condition
+- [ ] Another testable condition
 
 ---
 
@@ -133,7 +138,8 @@ Print saved path and one line per phase: `Phase N — <title> (<condition summar
 
 - Phases derive from PRD user stories — never invented
 - Each phase must be demoable end-to-end on its own
-- "Done when" must be testable, not vague
+- "Done when" must be a checkbox list of testable conditions, not prose
+- **Safety valve**: if a phase has >5 "Done when" items, stop and split it into smaller phases before continuing
 - Never modify the source PRD
 - Carry PRD's Out of Scope forward verbatim
 

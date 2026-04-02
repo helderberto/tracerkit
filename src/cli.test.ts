@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
@@ -27,6 +27,14 @@ describe('resolveTarget', () => {
 
   it('defaults to homedir when only flags are present', () => {
     expect(resolveTarget(['--force', '--verbose'])).toBe(homedir());
+  });
+
+  it('uses custom default when provided and no path arg', () => {
+    expect(resolveTarget([], '/custom/dir')).toBe('/custom/dir');
+  });
+
+  it('ignores custom default when path arg exists', () => {
+    expect(resolveTarget(['/some/path'], '/custom/dir')).toBe('/some/path');
   });
 });
 
@@ -121,5 +129,102 @@ describe('CLI', () => {
     const output = run(['-v']);
 
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
+  });
+
+  it('routes "progress <slug>" to progress command', () => {
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(plansDir, 'feat.md'),
+      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
+    );
+
+    const output = run(['progress', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('1/2'))).toBe(true);
+  });
+
+  it('prints error when progress slug missing', () => {
+    const output = run(['progress']);
+
+    expect(output[0]).toContain('Error');
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
+
+  it('routes "archive <slug>" to archive command', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(prdsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'feat.md'),
+      '---\nstatus: in_progress\n---\n\n# PRD\n',
+    );
+    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
+
+    const output = run(['archive', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('Archived'))).toBe(true);
+  });
+
+  it('prints error when archive slug missing', () => {
+    const output = run(['archive']);
+
+    expect(output[0]).toContain('Error');
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
+
+  it('returns clean error when progress plan not found', () => {
+    const output = run(['progress', 'nonexistent', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*not found/);
+    expect(output).toHaveLength(1);
+  });
+
+  it('returns clean error when archive plan not found', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    mkdirSync(prdsDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'noplans.md'),
+      '---\nstatus: in_progress\n---\n',
+    );
+
+    const output = run(['archive', 'noplans', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*not found/);
+    expect(output).toHaveLength(1);
+  });
+
+  it('does not drop path arg when it equals slug', () => {
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(plansDir, 'feat.md'),
+      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
+    );
+
+    // path arg happens to equal slug value "feat" — both should survive
+    const output = run(['progress', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('1/2'))).toBe(true);
+  });
+
+  it('returns clean error when archive already exists', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    const archiveDir = join(tmp.get(), '.tracerkit', 'archives', 'feat');
+    mkdirSync(prdsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    mkdirSync(archiveDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'feat.md'),
+      '---\nstatus: in_progress\n---\n\n# PRD\n',
+    );
+    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
+
+    const output = run(['archive', 'feat', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*already exists/);
+    expect(output).toHaveLength(1);
   });
 });

@@ -73,12 +73,12 @@ describe('update', () => {
     const output = update(tmp.get());
 
     expect(output.every((l) => !l.includes('⚠'))).toBe(true);
-    expect(output.filter((l) => l.startsWith('✓'))).toHaveLength(4);
+    expect(output.filter((l) => l.startsWith('✓'))).toHaveLength(3);
   });
 
   it('outputs only warnings when all files are modified without force', () => {
     copyTemplates(tmp.get(), defaultConfig);
-    for (const name of ['tk:prd', 'tk:plan', 'tk:verify', 'tk:status']) {
+    for (const name of ['tk:prd', 'tk:plan', 'tk:check']) {
       writeFileSync(
         join(tmp.get(), `.claude/skills/${name}/SKILL.md`),
         'modified',
@@ -88,7 +88,7 @@ describe('update', () => {
     const output = update(tmp.get());
 
     expect(output.filter((l) => l.startsWith('✓'))).toHaveLength(0);
-    expect(output.filter((l) => l.includes('⚠'))).toHaveLength(4);
+    expect(output.filter((l) => l.includes('⚠'))).toHaveLength(3);
   });
 
   it('adds missing files', () => {
