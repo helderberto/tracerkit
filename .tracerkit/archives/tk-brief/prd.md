@@ -1,6 +1,7 @@
 ---
 created: 2026-04-02T15:00:00Z
-status: in_progress
+status: done
+completed: 2026-04-02T13:09:41.314Z
 ---
 
 # tk:brief — Session Briefing Skill

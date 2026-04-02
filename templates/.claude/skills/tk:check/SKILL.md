@@ -47,7 +47,7 @@ Before launching a subagent, check whether the primary module file(s) from Phase
 
 ### 3b. Launch read-only review
 
-Use a **read-only subagent** (no file writes, no edits) to:
+Use a **general-purpose subagent** (not `code-review` — that agent is for PR reviews). The subagent must be **read-only** (no file writes, no edits). It should:
 
 1. Read every section of the plan — architectural decisions, each phase, done-when checkboxes
 2. For each phase, check every `- [ ]` / `- [x]` item against the codebase

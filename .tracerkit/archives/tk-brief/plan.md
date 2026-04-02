@@ -26,11 +26,11 @@ Features with `status: done` are excluded. Features with a plan but no frontmatt
 
 ### Done when
 
-- [ ] `brief(cwd)` scans `config.paths.prds`, returns "No features found — run `/tk:prd` to start one." when dir is missing or empty
-- [ ] Excludes features with `status: done`; features without frontmatter show as `unknown`
-- [ ] Table rows include Feature, Status, Age, Progress (`N/M` from plan or `—`), Next (first unchecked item text or `—`)
-- [ ] Focus line auto-selects single `in_progress`; picks oldest by `created` when 0 or 2+ `in_progress`
-- [ ] Tests cover: empty dir, single in_progress auto-focus, multiple in_progress oldest-focus, no frontmatter with plan, no plan, done excluded, age formatting [agent:test-auditor]
+- [x] `brief(cwd)` scans `config.paths.prds`, returns "No features found — run `/tk:prd` to start one." when dir is missing or empty
+- [x] Excludes features with `status: done`; features without frontmatter show as `unknown`
+- [x] Table rows include Feature, Status, Age, Progress (`N/M` from plan or `—`), Next (first unchecked item text or `—`)
+- [x] Focus line auto-selects single `in_progress`; picks oldest by `created` when 0 or 2+ `in_progress`
+- [x] Tests cover: empty dir, single in_progress auto-focus, multiple in_progress oldest-focus, no frontmatter with plan, no plan, done excluded, age formatting [agent:test-auditor]
 
 ---
 
@@ -46,11 +46,11 @@ Wire `brief` into `cli.ts` as a no-slug command. Add `tk:brief` skill to `templa
 
 ### Done when
 
-- [ ] `brief` wired into `cli.ts` as `case 'brief'` using `resolveTarget(rest, process.cwd())`
-- [ ] USAGE string updated with `brief [path]` entry
-- [ ] `brief` exported from `src/commands/index.ts`
-- [ ] `templates/.claude/skills/tk:brief/SKILL.md` created with `{{paths.prds}}` and `{{paths.plans}}` placeholders
-- [ ] `templates.test.ts` updated: all `toHaveLength(3)` → `4`; `tk:brief` included in `copyTemplates` and `diffTemplates` assertions [agent:test-auditor]
+- [x] `brief` wired into `cli.ts` as `case 'brief'` using `resolveTarget(rest, process.cwd())`
+- [x] USAGE string updated with `brief [path]` entry
+- [x] `brief` exported from `src/commands/index.ts`
+- [x] `templates/.claude/skills/tk:brief/SKILL.md` created with `{{paths.prds}}` and `{{paths.plans}}` placeholders
+- [x] `templates.test.ts` updated: all `toHaveLength(3)` → `4`; `tk:brief` included in `copyTemplates` and `diffTemplates` assertions [agent:test-auditor]
 
 ---
 
@@ -64,9 +64,9 @@ Update `docs/cli-reference.md` with the new `tracerkit brief` command entry. Upd
 
 ### Done when
 
-- [ ] `docs/cli-reference.md` includes `tracerkit brief [path]` row with description
-- [ ] `docs/examples.md` shows a `/tk:brief` standalone example (fresh session, table output, Focus line)
-- [ ] `docs/examples.md` full walkthrough updated to reference `/tk:brief` as the session-start step
+- [x] `docs/cli-reference.md` includes `tracerkit brief [path]` row with description
+- [x] `docs/examples.md` shows a `/tk:brief` standalone example (fresh session, table output, Focus line)
+- [x] `docs/examples.md` full walkthrough updated to reference `/tk:brief` as the session-start step
 
 ---
 
@@ -81,3 +81,16 @@ Update `docs/cli-reference.md` with the new `tracerkit brief` command entry. Upd
 ## Open Questions
 
 None — all decisions resolved during planning.
+
+---
+
+## Verdict
+
+- **Date**: 2026-04-02
+- **Checks**: 13/13
+- **BLOCKERS**: 0
+- **SUGGESTIONS**: 3
+
+## Archived
+
+Archived on 2026-04-02.
