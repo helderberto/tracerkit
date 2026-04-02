@@ -1,3 +1,9 @@
+## [1.9.4](https://github.com/helderberto/tracerkit/compare/v1.9.3...v1.9.4) (2026-04-02)
+
+### Bug Fixes
+
+- use text fence to prevent prettier from breaking YAML example ([1b5bfc0](https://github.com/helderberto/tracerkit/commit/1b5bfc0eacc3fa9c332df99556f53347c608bdaf))
+
 ## [1.9.3](https://github.com/helderberto/tracerkit/compare/v1.9.2...v1.9.3) (2026-04-02)
 
 ### Bug Fixes
