@@ -22,6 +22,8 @@ const USAGE = [
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
   '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
+  '  progress <slug>   Show per-phase checkbox progress for a plan',
+  '  archive <slug>    Archive a completed feature (PRD + plan)',
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
@@ -44,7 +46,12 @@ function runSlugCommand(
   const slug = rest.find((a) => !a.startsWith('-'));
   if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
   const target = rest.filter((a) => a !== slug);
-  return fn(resolveTarget(target), slug);
+  try {
+    return fn(resolveTarget(target), slug);
+  } catch (err) {
+    const msg = err instanceof Error ? err.message : String(err);
+    return [`Error: ${msg}`];
+  }
 }
 
 export function run(args: string[]): string[] {

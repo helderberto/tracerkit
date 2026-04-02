@@ -165,4 +165,37 @@ describe('CLI', () => {
     expect(output[0]).toContain('Error');
     expect(output.some((l) => l.includes('Usage'))).toBe(true);
   });
+
+  it('returns clean error when progress plan not found', () => {
+    const output = run(['progress', 'nonexistent', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*not found/);
+    expect(output).toHaveLength(1);
+  });
+
+  it('returns clean error when archive PRD not found', () => {
+    const output = run(['archive', 'nonexistent', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*not found/);
+    expect(output).toHaveLength(1);
+  });
+
+  it('returns clean error when archive already exists', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    const archiveDir = join(tmp.get(), '.tracerkit', 'archives', 'feat');
+    mkdirSync(prdsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    mkdirSync(archiveDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'feat.md'),
+      '---\nstatus: in_progress\n---\n\n# PRD\n',
+    );
+    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
+
+    const output = run(['archive', 'feat', tmp.get()]);
+
+    expect(output[0]).toMatch(/^Error:.*already exists/);
+    expect(output).toHaveLength(1);
+  });
 });
