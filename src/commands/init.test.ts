@@ -1,7 +1,11 @@
-import { mkdirSync, existsSync } from 'node:fs';
+import { mkdirSync, rmSync, existsSync } from 'node:fs';
 import { join } from 'node:path';
 import { init } from './init.ts';
+import { copyTemplates } from '../templates.ts';
+import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
+
+const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
 
 describe('init', () => {
   const tmp = useTmpDir();
@@ -21,21 +25,26 @@ describe('init', () => {
     expect(output).toContain('✓ .claude/skills/tk:prd/SKILL.md');
   });
 
-  it('aborts if any tk skill already exists', () => {
-    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
-      recursive: true,
-    });
+  it('does not throw when skills already exist', () => {
+    copyTemplates(tmp.get(), defaultConfig);
 
-    expect(() => init(tmp.get())).toThrow(/already exists/);
+    expect(() => init(tmp.get())).not.toThrow();
   });
 
-  it('error message suggests tracerkit update and update --force', () => {
-    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
+  it('adds missing skills when partially installed', () => {
+    copyTemplates(tmp.get(), defaultConfig);
+    rmSync(join(tmp.get(), '.claude', 'skills', 'tk:brief'), {
       recursive: true,
     });
 
-    expect(() => init(tmp.get())).toThrow(/tracerkit update/);
-    expect(() => init(tmp.get())).toThrow(/update --force/);
+    const output = init(tmp.get());
+
+    expect(
+      existsSync(join(tmp.get(), '.claude/skills/tk:brief/SKILL.md')),
+    ).toBe(true);
+    expect(
+      output.some((l) => l.includes('tk:brief') && l.includes('added')),
+    ).toBe(true);
   });
 
   it('preserves existing .claude/ contents', () => {
