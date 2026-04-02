@@ -1,3 +1,9 @@
+# [1.6.0](https://github.com/helderberto/tracerkit/compare/v1.5.0...v1.6.0) (2026-04-02)
+
+### Features
+
+- remove deprecated skills on update, extract constants ([c1cfdb1](https://github.com/helderberto/tracerkit/commit/c1cfdb11a3ffc088c19e6f34b1649af7889840f4))
+
 # [1.5.0](https://github.com/helderberto/tracerkit/compare/v1.4.7...v1.5.0) (2026-04-02)
 
 ### Features
