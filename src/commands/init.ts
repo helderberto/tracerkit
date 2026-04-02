@@ -7,7 +7,9 @@ export function init(cwd: string): string[] {
   for (const name of SKILL_NAMES) {
     const dir = join(cwd, '.claude', 'skills', name);
     if (existsSync(dir)) {
-      throw new Error(`.claude/skills/${name}/ already exists — aborting`);
+      throw new Error(
+        `.claude/skills/${name}/ already exists — run \`tracerkit update\` to add new skills`,
+      );
     }
   }
 
