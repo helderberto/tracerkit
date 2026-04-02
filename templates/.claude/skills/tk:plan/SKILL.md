@@ -9,7 +9,7 @@ Break a PRD into phased vertical slices (tracer bullets). Output: `{{paths.plans
 
 ## Pre-loaded context
 
-- Available PRDs: !`ls {{paths.prds}}/ 2>/dev/null || echo "no {{paths.prds}}/ directory found"`
+- Available PRDs: !`ls {{paths.prds}}/ 2>&1`
 
 ## Input
 

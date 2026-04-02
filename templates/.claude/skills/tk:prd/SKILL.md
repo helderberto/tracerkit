@@ -9,7 +9,7 @@ Skip steps already satisfied. If user provided a description via arguments, skip
 
 ## Pre-loaded context
 
-- Existing PRDs: !`ls {{paths.prds}}/ 2>/dev/null || echo "none"`
+- Existing PRDs: !`ls {{paths.prds}}/ 2>&1`
 
 ## Input
 

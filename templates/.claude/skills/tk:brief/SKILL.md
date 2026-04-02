@@ -8,30 +8,22 @@ Get a quick overview of all active features, their progress, and what to focus o
 
 ## Pre-loaded context
 
-- Briefing: !`npx tracerkit brief 2>/dev/null || echo "no {{paths.prds}}/ directory found"`
+- Briefing: !`tracerkit brief 2>&1`
 
 ## Workflow
 
 ### 1. Present the briefing
 
-Display the output above as-is. The table includes:
+Display the output above as-is. Features with `status: done` are excluded (already archived).
 
-- **Feature**: slug (PRD filename without `.md`)
-- **Status**: from PRD frontmatter (`created`, `in_progress`) — `unknown` if no frontmatter
-- **Age**: time since `created` date
-- **Progress**: checked/total from plan checkboxes, or `—` if no plan
-- **Next**: first unchecked item from the plan, or `—`
-
-Features with `status: done` are excluded (already archived).
-
-### 2. Focus recommendation
+### 3. Focus recommendation
 
 The **Focus** line at the bottom suggests which feature to work on:
 
 - If exactly 1 feature is `in_progress`, it's auto-selected
 - Otherwise, the oldest feature by `created` date is selected
 
-### 3. Offer next steps
+### 4. Offer next steps
 
 Ask the user what they'd like to do:
 

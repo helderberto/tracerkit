@@ -9,7 +9,7 @@ Check implementation against a plan. Update checks, stamp findings, transition s
 
 ## Pre-loaded context
 
-- Available plans: !`ls {{paths.plans}}/ 2>/dev/null || echo "no {{paths.plans}}/ directory found"`
+- Available plans: !`ls {{paths.plans}}/ 2>&1`
 
 ## Input
 
@@ -27,7 +27,7 @@ If no argument is provided, scan `{{paths.prds}}/` and `{{paths.plans}}/` and sh
 
 - **Feature**: slug (filename without `.md`)
 - **Status**: from PRD frontmatter (`created`, `in_progress`, `done`) — `unknown` if no frontmatter
-- **Progress**: run `npx tracerkit progress <slug>` for each feature with a plan — use the Total line (e.g. "3/7"). Show `—` if no plan.
+- **Progress**: run `tracerkit progress <slug>` for each feature with a plan — use the Total line (e.g. "3/7"). Show `—` if no plan.
 
 After the table, ask which feature to verify.
 
@@ -75,7 +75,7 @@ Based on checks and findings, decide the status transition:
 
 ### 5. Report to user
 
-Run `npx tracerkit progress <slug>` to get exact per-phase progress, then print the verdict report:
+Run `tracerkit progress <slug>` to get exact per-phase progress, then print the verdict report:
 
 ```
 ## Verification: <slug>
@@ -114,7 +114,7 @@ If a previous verdict block exists, replace it with the new one.
 If all checks pass and zero BLOCKERS, run:
 
 ```
-npx tracerkit archive <slug>
+tracerkit archive <slug>
 ```
 
 This handles: PRD frontmatter update (`status: done`, `completed` timestamp), file moves to `{{paths.archives}}/<slug>/`, and archived block on the plan.
