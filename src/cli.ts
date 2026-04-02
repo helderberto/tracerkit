@@ -29,7 +29,7 @@ const USAGE = [
   ),
   '',
   'Options:',
-  '  --force           init: replace all skills; update: overwrite modified files',
+  '  --force           Overwrite modified files during update',
   '  --help, -h        Show this help message',
   '  --version, -v     Print version',
   '',
@@ -73,11 +73,8 @@ export function run(args: string[]): string[] {
   switch (command) {
     case 'brief':
       return brief(resolveTarget(rest, process.cwd()));
-    case 'init': {
-      const force = rest.includes(FLAGS.force);
-      const targetArgs = rest.filter((a) => a !== FLAGS.force);
-      return init(resolveTarget(targetArgs), { force });
-    }
+    case 'init':
+      return init(resolveTarget(rest));
     case 'update': {
       const force = rest.includes(FLAGS.force);
       const targetArgs = rest.filter((a) => a !== FLAGS.force);

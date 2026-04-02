@@ -32,12 +32,6 @@ npx tracerkit init
 
 Skills are installed globally to `~/.claude/skills/`, available in every project. No per-project setup needed.
 
-To replace all existing skills with the latest versions:
-
-```bash
-npx tracerkit init --force
-```
-
 ### Workflow
 
 ```

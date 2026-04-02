@@ -29,34 +29,13 @@ describe('init', () => {
     expect(() => init(tmp.get())).toThrow(/already exists/);
   });
 
-  it('error message suggests update and --force', () => {
+  it('error message suggests tracerkit update and update --force', () => {
     mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
       recursive: true,
     });
 
     expect(() => init(tmp.get())).toThrow(/tracerkit update/);
-    expect(() => init(tmp.get())).toThrow(/--force/);
-  });
-
-  it('--force replaces existing skills', () => {
-    mkdirSync(join(tmp.get(), '.claude', 'skills', 'tk:prd'), {
-      recursive: true,
-    });
-
-    const output = init(tmp.get(), { force: true });
-
-    expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'))).toBe(
-      true,
-    );
-    expect(output.some((l) => l.includes('(replaced)'))).toBe(true);
-  });
-
-  it('--force labels every file as replaced', () => {
-    const output = init(tmp.get(), { force: true });
-
-    for (const line of output) {
-      expect(line).toMatch(/\(replaced\)$/);
-    }
+    expect(() => init(tmp.get())).toThrow(/update --force/);
   });
 
   it('preserves existing .claude/ contents', () => {
