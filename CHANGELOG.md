@@ -1,3 +1,5 @@
+## [1.9.5](https://github.com/helderberto/tracerkit/compare/v1.9.4...v1.9.5) (2026-04-02)
+
 ## [1.9.4](https://github.com/helderberto/tracerkit/compare/v1.9.3...v1.9.4) (2026-04-02)
 
 ### Bug Fixes
