@@ -1,7 +1,12 @@
-import { existsSync } from 'node:fs';
+import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
 import { loadConfig } from '../config.ts';
-import { copyTemplates, diffTemplates, SKILL_NAMES } from '../templates.ts';
+import {
+  copyTemplates,
+  diffTemplates,
+  SKILL_NAMES,
+  DEPRECATED_SKILLS,
+} from '../templates.ts';
 
 export function update(cwd: string, opts?: { force?: boolean }): string[] {
   const hasAny = SKILL_NAMES.some((name) =>
@@ -14,6 +19,14 @@ export function update(cwd: string, opts?: { force?: boolean }): string[] {
   const config = loadConfig(cwd);
   const { unchanged, modified, missing } = diffTemplates(cwd, config);
   const output: string[] = [];
+
+  for (const name of DEPRECATED_SKILLS) {
+    const dir = join(cwd, '.claude', 'skills', name);
+    if (existsSync(dir)) {
+      rmSync(dir, { recursive: true, force: true });
+      output.push(`✗ .claude/skills/${name}/ removed (deprecated)`);
+    }
+  }
 
   const force = opts?.force ?? false;
   const toCopy = [...unchanged, ...missing, ...(force ? modified : [])];

@@ -1,7 +1,13 @@
-import { writeFileSync, readFileSync, rmSync } from 'node:fs';
+import {
+  writeFileSync,
+  readFileSync,
+  rmSync,
+  mkdirSync,
+  existsSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { update } from './update.ts';
-import { copyTemplates } from '../templates.ts';
+import { copyTemplates, DEPRECATED_SKILLS } from '../templates.ts';
 import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
 
@@ -89,6 +95,34 @@ describe('update', () => {
 
     expect(output.filter((l) => l.startsWith('✓'))).toHaveLength(0);
     expect(output.filter((l) => l.includes('⚠'))).toHaveLength(3);
+  });
+
+  it('removes deprecated skills', () => {
+    copyTemplates(tmp.get(), defaultConfig);
+    for (const name of DEPRECATED_SKILLS) {
+      const dir = join(tmp.get(), '.claude', 'skills', name);
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(join(dir, 'SKILL.md'), 'old');
+    }
+
+    const output = update(tmp.get());
+
+    for (const name of DEPRECATED_SKILLS) {
+      expect(existsSync(join(tmp.get(), '.claude', 'skills', name))).toBe(
+        false,
+      );
+    }
+    expect(
+      output.some((l) => l.includes('tk:verify') && l.includes('removed')),
+    ).toBe(true);
+  });
+
+  it('skips deprecated removal when none exist', () => {
+    copyTemplates(tmp.get(), defaultConfig);
+
+    const output = update(tmp.get());
+
+    expect(output.some((l) => l.includes('removed'))).toBe(false);
   });
 
   it('adds missing files', () => {

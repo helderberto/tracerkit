@@ -10,7 +10,7 @@ import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { type Config } from './config.ts';
 
-export const SKILL_NAMES = ['tk:prd', 'tk:plan', 'tk:check'] as const;
+export { SKILL_NAMES, DEPRECATED_SKILLS } from './constants.ts';
 
 export interface CopyResult {
   copied: string[];
