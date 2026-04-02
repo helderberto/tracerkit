@@ -30,7 +30,7 @@ TracerKit takes a different approach: **tracer-bullet vertical slices**. Each ph
 npx tracerkit init
 ```
 
-Skills are installed globally to `~/.claude/skills/`, available in every project. No per-project setup needed.
+Skills are installed globally to `~/.claude/skills/`, available in every project. No per-project setup needed. Safe to re-run — adds any missing skills without overwriting ones you've modified.
 
 ### Workflow
 
