@@ -19,11 +19,9 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Trace
 
 ## Why TracerKit?
 
-Without specs, every AI session starts from scratch. Vague prompts, duplicated context, no way to confirm "done." Most planning tools produce flat task lists where nothing works until everything is done.
+AI assistants work best with small, well-scoped tasks — not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
 
-TracerKit takes a different approach: **tracer-bullet vertical slices**. Each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
-
-**Zero runtime deps, intelligent skills.** Skills are pure Markdown with inline algorithms — no CLI calls at runtime. The AI reads your PRDs and plans directly, counts checkboxes, builds dashboards, and archives completed features. The CLI only manages installation (`init`, `update`, `uninstall`). AI adds the judgment: interviewing you for scope, designing modules, verifying implementation against specs.
+The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps — the AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
 
 ## Get Started
 
