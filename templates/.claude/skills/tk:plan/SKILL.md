@@ -67,11 +67,17 @@ Each phase is a thin **tracer bullet** — a narrow but complete path through ev
 
 **Phase naming:** use a goal phrase answering "what can we demo when this is done?" (e.g., "Phase 1 — Revenue visible end-to-end"), not a layer name.
 
-**Done when:** write as a checkbox list of atomic, testable conditions — not prose. Each item should be independently verifiable. The agent marks `[x]` during implementation to track progress.
+**Done when:** write as a checkbox list of atomic, verifiable conditions — not prose. Each item must pass this test: _"Can an agent verify this by reading files, running a command, or checking a test result — with no subjective judgment?"_ Bad: "API is clean". Good: "`GET /api/revenue` returns `{ total: number }`". The agent marks `[x]` during implementation to track progress.
 
 **When to use layer-by-layer instead:** If the PRD has complex schema changes that all modules depend on and no single user story can stand alone without the full schema, build the data foundation first, then slice the rest vertically.
 
-**Phase count:** 2–3 for single-module, 3–5 for multi-module, 5+ means consider splitting the PRD.
+**Phase count thresholds:**
+
+- 1 module touched → 2–3 phases max
+- 2–3 modules touched → 3–5 phases max
+- 4+ modules or 6+ phases → stop and ask the user to split the PRD
+
+Count "modules touched" by scanning the PRD's New Modules and Schema Changes sections.
 
 Assign an agent tag to tasks where appropriate:
 
