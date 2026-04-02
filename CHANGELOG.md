@@ -1,3 +1,9 @@
+# [1.9.0](https://github.com/helderberto/tracerkit/compare/v1.8.3...v1.9.0) (2026-04-02)
+
+### Features
+
+- add --force flag to init to replace existing skills ([1894163](https://github.com/helderberto/tracerkit/commit/1894163ac3240bbc4f54245a85258e1088a1eb26))
+
 ## [1.8.3](https://github.com/helderberto/tracerkit/compare/v1.8.2...v1.8.3) (2026-04-02)
 
 ### Bug Fixes
