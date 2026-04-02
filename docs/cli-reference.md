@@ -4,6 +4,7 @@
 | --------------------------- | --------------------------------------------------------- |
 | `tracerkit init`            | Install skills to `~/.claude/skills/`                     |
 | `tracerkit init <path>`     | Install skills to a specific project directory            |
+| `tracerkit init --force`    | Replace all existing skills with latest versions          |
 | `tracerkit update`          | Refresh to latest version, skip modified files            |
 | `tracerkit update --force`  | Replace modified files with latest versions               |
 | `tracerkit uninstall`       | Remove TracerKit skills, keep user artifacts              |
