@@ -2,15 +2,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import {
-  archive,
-  brief,
-  init,
-  progress,
-  uninstall,
-  update,
-} from './commands/index.ts';
-import { COMMANDS, FLAGS } from './constants.ts';
+import { init, uninstall, update } from './commands/index.ts';
+import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -42,22 +35,6 @@ export function resolveTarget(args: string[], defaultDir = homedir()): string {
   return defaultDir;
 }
 
-function runSlugCommand(
-  rest: string[],
-  fn: (cwd: string, slug: string) => string[],
-): string[] {
-  const slugIndex = rest.findIndex((a) => !a.startsWith('-'));
-  if (slugIndex === -1) return ['Error: missing <slug> argument', '', ...USAGE];
-  const slug = rest[slugIndex];
-  const target = rest.filter((_, i) => i !== slugIndex);
-  try {
-    return fn(resolveTarget(target, process.cwd()), slug);
-  } catch (err) {
-    const msg = err instanceof Error ? err.message : String(err);
-    return [`Error: ${msg}`];
-  }
-}
-
 export function run(args: string[]): string[] {
   if (args.includes(FLAGS.help) || args.includes('-h')) {
     return USAGE;
@@ -70,9 +47,18 @@ export function run(args: string[]): string[] {
   const command = args[0];
   const rest = args.slice(1);
 
+  if (
+    DEPRECATED_COMMANDS.includes(
+      command as (typeof DEPRECATED_COMMANDS)[number],
+    )
+  ) {
+    return [
+      `"${command}" has been removed — skills handle this now.`,
+      'Run `tracerkit update` to get the latest skills.',
+    ];
+  }
+
   switch (command) {
-    case 'brief':
-      return brief(resolveTarget(rest, process.cwd()));
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {
@@ -87,10 +73,6 @@ export function run(args: string[]): string[] {
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
-    case 'progress':
-      return runSlugCommand(rest, progress);
-    case 'archive':
-      return runSlugCommand(rest, archive);
     default:
       return USAGE;
   }
