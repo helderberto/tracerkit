@@ -10,7 +10,7 @@ import {
   uninstall,
   update,
 } from './commands/index.ts';
-import { COMMANDS } from './constants.ts';
+import { COMMANDS, FORCE_FLAG } from './constants.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -29,7 +29,7 @@ const USAGE = [
   ),
   '',
   'Options:',
-  '  --force           Overwrite modified files during update',
+  '  --force           init: replace all skills; update: overwrite modified files',
   '  --help, -h        Show this help message',
   '  --version, -v     Print version',
   '',
@@ -73,11 +73,14 @@ export function run(args: string[]): string[] {
   switch (command) {
     case 'brief':
       return brief(resolveTarget(rest, process.cwd()));
-    case 'init':
-      return init(resolveTarget(rest));
+    case 'init': {
+      const force = rest.includes(FORCE_FLAG);
+      const targetArgs = rest.filter((a) => a !== FORCE_FLAG);
+      return init(resolveTarget(targetArgs), { force });
+    }
     case 'update': {
-      const force = rest.includes('--force');
-      const targetArgs = rest.filter((a) => a !== '--force');
+      const force = rest.includes(FORCE_FLAG);
+      const targetArgs = rest.filter((a) => a !== FORCE_FLAG);
       const output = update(resolveTarget(targetArgs), { force });
       output.push('', 'Updated to the latest TracerKit.');
       output.push(
