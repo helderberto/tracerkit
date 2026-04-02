@@ -43,9 +43,9 @@ AI:  ✓ Phase 1 — CSS variables + ThemeProvider
      ✓ Phase 2 — Toggle component + localStorage
      ✓ Written .tracerkit/plans/dark-mode-support.md
 
-You: /tk:verify dark-mode-support
-AI:  ✓ All done-when conditions met
-     ✅ PASS — archived to .tracerkit/archives/dark-mode-support/
+You: /tk:check dark-mode-support
+AI:  ✓ All checks verified — status: done
+     Archived to .tracerkit/archives/dark-mode-support/
 ```
 
 See [Examples](docs/examples.md) for full walkthroughs.
@@ -65,11 +65,7 @@ npx tracerkit uninstall .         # remove project-scoped skills
 
 ## Skills
 
-TracerKit ships four skills — three for the core workflow, one for visibility.
-
-### Core skills
-
-Three steps that take a feature from idea to verified archive.
+TracerKit ships three skills that take a feature from idea to verified archive.
 
 #### `/tk:prd <idea>`: Write a PRD
 
@@ -83,19 +79,13 @@ Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each ph
 
 **Output:** `.tracerkit/plans/<slug>.md`
 
-#### `/tk:verify <slug>`: Verify and archive
+#### `/tk:check [slug]`: Check and archive
 
-Read-only review that checks the codebase against the plan's done-when conditions. Runs tests, validates user stories, and stamps a **✅ PASS** or **🚧 NEEDS_WORK** verdict. On ✅ PASS, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
+Checks the codebase against the plan's done-when checkboxes. Runs tests, validates user stories, updates check progress, and transitions the PRD status. On `done`, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
 
-**Output:** Verdict block in `.tracerkit/plans/<slug>.md`. On ✅ PASS: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
+Without arguments, shows a feature dashboard with status and progress before asking which feature to check.
 
-### Helper skills
-
-Useful but optional.
-
-#### `/tk:status`: Workflow dashboard
-
-Scans `.tracerkit/prds/` and prints a table of all features grouped by status (`in_progress`, `created`, `done`), with age, latest verdict, and blocker/suggestion counts. Read-only. No files are modified.
+**Output:** Verdict block in `.tracerkit/plans/<slug>.md`. On `done`: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
 
 ## Docs
 
