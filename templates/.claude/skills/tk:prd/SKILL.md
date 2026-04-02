@@ -27,6 +27,8 @@ Ask the user for a detailed description of the problem and any solution ideas.
 
 Verify assertions and map current state: data models, services, API routes, frontend structure, and test patterns. Note what exists vs. what must be built.
 
+**Research protocol**: codebase first, then project docs. If you cannot verify a technical claim from these sources, flag it as uncertain — never fabricate.
+
 ### 3. Interview
 
 Interview relentlessly, one question at a time. Lead with your recommended answer; let the user confirm or correct. If a question can be answered by exploring code, explore instead of asking. For terse answers, offer concrete options (A/B/C).
@@ -40,6 +42,18 @@ Walk these branches (skip any already resolved):
 - **Access & Privacy** — Who sees what? Role-based restrictions? Sensitive data concerns?
 - **Boundaries** — What is explicitly out of scope? Adjacent features to defer?
 - **Integration** — Schema changes? New or extended services? External dependencies?
+
+### 3b. Gray area checkpoint
+
+Before continuing, list any unresolved ambiguities from the interview — vague answers, contradictions, assumptions you made without confirmation. Present them as a numbered list:
+
+```
+Gray areas found:
+1. <ambiguity> — assumed <X>, confirm?
+2. <ambiguity> — two options: A or B
+```
+
+If the list is empty, say so and move on. Otherwise, resolve each item with the user before proceeding.
 
 ### 4. Design modules
 
@@ -64,6 +78,14 @@ status: created
 ## Problem Statement
 
 The problem from the user's perspective. Focus on pain and impact.
+
+## Current State
+
+What exists today that this feature changes or builds on. Skip for greenfield.
+
+- Relevant modules, services, or UI surfaces already in place
+- Current behavior the user experiences
+- Known limitations or workarounds
 
 ## Solution
 

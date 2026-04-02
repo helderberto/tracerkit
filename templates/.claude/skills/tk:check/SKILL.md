@@ -27,7 +27,7 @@ If no argument is provided, scan `{{paths.prds}}/` and `{{paths.plans}}/` and sh
 
 - **Feature**: slug (filename without `.md`)
 - **Status**: from PRD frontmatter (`created`, `in_progress`, `done`) — `unknown` if no frontmatter
-- **Progress**: checked/total checkboxes from plan (e.g. "3/7") — `—` if no plan
+- **Progress**: run `npx tracerkit progress <slug>` for each feature with a plan — use the Total line (e.g. "3/7"). Show `—` if no plan.
 
 After the table, ask which feature to verify.
 
@@ -67,7 +67,7 @@ Based on checks and findings, decide the status transition:
 
 ### 5. Report to user
 
-Print the verdict report:
+Run `npx tracerkit progress <slug>` to get exact per-phase progress, then print the verdict report:
 
 ```
 ## Verification: <slug>
@@ -75,7 +75,7 @@ Print the verdict report:
 ### Status: created | in_progress | done
 
 ### Progress
-Phase 1: 4/4 checks | Phase 2: 2/5 checks | Phase 3: 0/3 checks
+<output from tracerkit progress>
 
 ### BLOCKERS
 - (list or "None")
@@ -101,36 +101,17 @@ Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
 
 If a previous verdict block exists, replace it with the new one.
 
-### 7. On `done` — update PRD status and archive
+### 7. On `done` — archive
 
-If all checks pass and zero BLOCKERS:
+If all checks pass and zero BLOCKERS, run:
 
-**First**, update the YAML frontmatter in `{{paths.prds}}/<slug>.md`:
-
-- Set `status: done`
-- Add `completed: <current UTC timestamp, ISO 8601, e.g. 2025-06-15T14:30:00Z>`
-- Do not touch any other frontmatter fields or the markdown content below the closing `---`
-- If the PRD has no frontmatter, skip frontmatter update silently
-
-**Then**, automatically archive:
-
-1. Create `{{paths.archives}}/<slug>/` directory (and `{{paths.archives}}/` if missing)
-2. Move `{{paths.prds}}/<slug>.md` → `{{paths.archives}}/<slug>/prd.md`
-3. Move `{{paths.plans}}/<slug>.md` → `{{paths.archives}}/<slug>/plan.md`
-4. Append closing timestamp to `{{paths.archives}}/<slug>/plan.md`:
-
-```markdown
----
-
-## Archived
-
-- **Status**: closed
-- **Closed**: YYYY-MM-DD HH:MM (UTC)
+```
+npx tracerkit archive <slug>
 ```
 
-5. Tell the user: archived to `{{paths.archives}}/<slug>/`, one-line summary of the feature.
+This handles: PRD frontmatter update (`status: done`, `completed` timestamp), file moves to `{{paths.archives}}/<slug>/`, and archived block on the plan.
 
-If `{{paths.archives}}/<slug>/` already exists, warn and ask whether to overwrite.
+Tell the user: archived to `{{paths.archives}}/<slug>/`, one-line summary of the feature.
 
 ### 8. On `in_progress` (no blockers)
 
@@ -143,8 +124,8 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 ## Rules
 
 - The review subagent must be **read-only** — it must not create, edit, or delete any files
-- The only file writes this skill makes are: checkboxes + verdict block in the plan, PRD frontmatter update, and the archive move on `done`
-- Never modify the source PRD (except moving it to archive)
+- The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive command on `done`
+- Never modify the source PRD manually — `tracerkit archive` handles frontmatter updates
 - Never modify implementation code — only observe and report
 - If the PRD file is missing but all checks pass, warn but proceed with archiving the plan only
 
@@ -153,4 +134,4 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 - Plan not found — list available plans and ask
 - PRD referenced in plan not found — warn and continue with plan only
 - `{{paths.plans}}/` missing — tell user to run `/tk:plan` first
-- `{{paths.archives}}/<slug>/` already exists — warn and ask whether to overwrite
+- `{{paths.archives}}/<slug>/` already exists — `tracerkit archive` will error; warn and ask whether to remove it first

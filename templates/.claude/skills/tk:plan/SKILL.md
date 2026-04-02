@@ -35,6 +35,8 @@ If the PRD has no frontmatter, skip this step silently.
 
 Understand current architecture, existing patterns, and integration points.
 
+**Research protocol**: codebase first, then project docs. If you cannot verify a technical claim from these sources, flag it as uncertain — never fabricate.
+
 ### 3. Identify durable architectural decisions
 
 Before slicing, extract decisions that hold across all phases:
@@ -137,6 +139,7 @@ Print saved path and one line per phase: `Phase N — <title> (<condition summar
 - Phases derive from PRD user stories — never invented
 - Each phase must be demoable end-to-end on its own
 - "Done when" must be a checkbox list of testable conditions, not prose
+- **Safety valve**: if a phase has >5 "Done when" items, stop and split it into smaller phases before continuing
 - Never modify the source PRD
 - Carry PRD's Out of Scope forward verbatim
 
