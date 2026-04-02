@@ -43,6 +43,41 @@ jobs:
       - run: npm ci
       - run: npm run build
 
+  install-test:
+    runs-on: ubuntu-latest
+    needs: [lint, test]
+    steps:
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - name: Install from git commit
+        run: |
+          mkdir test-project && cd test-project && npm init -y
+          npm install "github:${{ github.repository }}#${{ github.sha }}"
+      - name: Verify CLI
+        run: |
+          cd test-project
+          npx tracerkit --version
+          npx tracerkit --help | grep -q "init \[path\]"
+      - name: Verify init creates skills
+        run: |
+          cd test-project
+          npx tracerkit init .
+          test -f .claude/skills/tk:prd/SKILL.md
+          test -f .claude/skills/tk:plan/SKILL.md
+          test -f .claude/skills/tk:check/SKILL.md
+      - name: Verify update is idempotent
+        run: |
+          cd test-project
+          npx tracerkit update .
+      - name: Verify uninstall removes skills
+        run: |
+          cd test-project
+          npx tracerkit uninstall .
+          test ! -d .claude/skills/tk:prd
+          test ! -d .claude/skills/tk:plan
+          test ! -d .claude/skills/tk:check
+
   release:
     runs-on: ubuntu-latest
     needs: build
