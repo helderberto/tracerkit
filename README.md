@@ -23,15 +23,20 @@ Without specs, every AI session starts from scratch. Vague prompts, duplicated c
 
 TracerKit takes a different approach: **tracer-bullet vertical slices**. Each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
 
+**Deterministic CLI, intelligent skills.** The CLI produces structured, repeatable output — feature tables, progress counts, archive operations — while the skills layer AI reasoning on top. The foundation is deterministic, so every session starts from the same ground truth. AI adds the judgment: interviewing you for scope, designing modules, verifying implementation against specs.
+
 ## Get Started
 
 ### Install
 
 ```bash
-npx tracerkit init
+npm install -g tracerkit
+tracerkit init
 ```
 
-Skills are installed globally to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
+The global install is by design — skills call `tracerkit brief`, `tracerkit progress`, and `tracerkit archive` directly to get deterministic output before the AI acts on it. Having the CLI in your PATH keeps this seamless.
+
+Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
 
 ### Workflow
 
@@ -81,7 +86,7 @@ npx tracerkit uninstall .         # remove project-scoped skills
 
 ## Skills
 
-TracerKit ships three skills that take a feature from idea to verified archive.
+TracerKit ships skills that take a feature from idea to verified archive.
 
 ### `/tk:prd <idea>`: Write a PRD
 
