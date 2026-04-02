@@ -35,6 +35,21 @@ Skills are installed globally to `~/.claude/skills/`, available in every project
 ### Workflow
 
 ```
+You: /tk:brief
+AI:  | Feature           | Status      | Age | Progress | Next                         |
+     |-------------------|-------------|-----|----------|------------------------------|
+     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ... |
+
+     **Focus → dark-mode-support**
+
+You: # continue working on dark-mode-support...
+
+You: /tk:check dark-mode-support
+AI:  Status: done | Total: 7/7
+     Archived to .tracerkit/archives/dark-mode-support/
+
+---
+
 You: /tk:prd add dark mode support
 AI:  Written .tracerkit/prds/dark-mode-support.md
      Run `/tk:plan dark-mode-support` next?
@@ -82,6 +97,12 @@ Interactive interview that explores your codebase, asks scoping questions one at
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
 **Output:** `.tracerkit/plans/<slug>.md`
+
+#### `/tk:brief`: Session briefing
+
+Shows active features, their progress, and suggested focus. Use at the start of a session to orient.
+
+**Output:** Feature dashboard in the terminal — no files written.
 
 #### `/tk:check [slug]`: Check and archive
 
