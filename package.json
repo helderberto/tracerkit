@@ -50,7 +50,7 @@
     "format": "prettier --write .",
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
-    "prepare": "husky || true",
+    "prepare": "husky || true && npm run build",
     "prepublishOnly": "npm run build",
     "release": "semantic-release"
   },
