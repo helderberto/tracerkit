@@ -28,6 +28,14 @@ describe('resolveTarget', () => {
   it('defaults to homedir when only flags are present', () => {
     expect(resolveTarget(['--force', '--verbose'])).toBe(homedir());
   });
+
+  it('uses custom default when provided and no path arg', () => {
+    expect(resolveTarget([], '/custom/dir')).toBe('/custom/dir');
+  });
+
+  it('ignores custom default when path arg exists', () => {
+    expect(resolveTarget(['/some/path'], '/custom/dir')).toBe('/some/path');
+  });
 });
 
 describe('CLI', () => {

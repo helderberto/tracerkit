@@ -35,10 +35,10 @@ const USAGE = [
   'All commands default to the home directory when no path is given.',
 ];
 
-export function resolveTarget(args: string[]): string {
+export function resolveTarget(args: string[], defaultDir = homedir()): string {
   const pathArg = args.find((a) => !a.startsWith('-'));
   if (pathArg) return resolve(pathArg);
-  return homedir();
+  return defaultDir;
 }
 
 function runSlugCommand(
@@ -49,7 +49,7 @@ function runSlugCommand(
   if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
   const target = rest.filter((a) => a !== slug);
   try {
-    return fn(resolveTarget(target), slug);
+    return fn(resolveTarget(target, process.cwd()), slug);
   } catch (err) {
     const msg = err instanceof Error ? err.message : String(err);
     return [`Error: ${msg}`];
