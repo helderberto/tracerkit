@@ -65,6 +65,8 @@ Each phase is a thin **tracer bullet** — a narrow but complete path through ev
 
 **Phase naming:** use a goal phrase answering "what can we demo when this is done?" (e.g., "Phase 1 — Revenue visible end-to-end"), not a layer name.
 
+**Done when:** write as a checkbox list of atomic, testable conditions — not prose. Each item should be independently verifiable. The agent marks `[x]` during implementation to track progress.
+
 **When to use layer-by-layer instead:** If the PRD has complex schema changes that all modules depend on and no single user story can stand alone without the full schema, build the data foundation first, then slice the rest vertically.
 
 **Phase count:** 2–3 for single-module, 3–5 for multi-module, 5+ means consider splitting the PRD.
@@ -112,7 +114,8 @@ Concise description of this vertical slice — end-to-end behavior, not layer-by
 
 ### Done when
 
-<Specific, testable condition>
+- [ ] Atomic, testable condition
+- [ ] Another testable condition
 
 ---
 
@@ -133,7 +136,7 @@ Print saved path and one line per phase: `Phase N — <title> (<condition summar
 
 - Phases derive from PRD user stories — never invented
 - Each phase must be demoable end-to-end on its own
-- "Done when" must be testable, not vague
+- "Done when" must be a checkbox list of testable conditions, not prose
 - Never modify the source PRD
 - Carry PRD's Out of Scope forward verbatim
 

@@ -1,11 +1,11 @@
 ---
-description: Compare implementation against plan, emit BLOCKERS/SUGGESTIONS and a ✅ PASS or 🚧 NEEDS_WORK verdict. Auto-archives on ✅ PASS. Use after implementing a plan.
+description: Verify implementation against plan. Shows progress, finds blockers, and archives when done. Use after implementing a plan, or without arguments to see a feature dashboard.
 argument-hint: '[slug]'
 ---
 
-# Verify Implementation
+# Check Implementation
 
-Compare current implementation against a plan, stamp a verdict, and archive on ✅ PASS.
+Check implementation against a plan. Update checks, stamp findings, transition status, and archive when done.
 
 ## Pre-loaded context
 
@@ -15,7 +15,21 @@ Compare current implementation against a plan, stamp a verdict, and archive on �
 
 The argument (if provided) is: $ARGUMENTS
 
-Use the argument as `<slug>` if given. If no argument is provided, list available plans and ask which one to verify.
+Use the argument as `<slug>` if given.
+
+If no argument is provided, scan `{{paths.prds}}/` and `{{paths.plans}}/` and show a summary table before asking which one to check:
+
+```
+| Feature | Status | Progress |
+|---------|--------|----------|
+| <slug>  | ...    | 3/7      |
+```
+
+- **Feature**: slug (filename without `.md`)
+- **Status**: from PRD frontmatter (`created`, `in_progress`, `done`) — `unknown` if no frontmatter
+- **Progress**: checked/total checkboxes from plan (e.g. "3/7") — `—` if no plan
+
+After the table, ask which feature to verify.
 
 ## Workflow
 
@@ -31,20 +45,25 @@ Read the source PRD referenced in the plan header (`> Source PRD: ...`).
 
 Use a **read-only subagent** (no file writes, no edits) to:
 
-1. Read every section of the plan — architectural decisions, each phase, done-when conditions
-2. For each phase, explore the codebase to verify the done-when condition is satisfied
+1. Read every section of the plan — architectural decisions, each phase, done-when checkboxes
+2. For each phase, check every `- [ ]` / `- [x]` item against the codebase
 3. Run any test commands referenced in the plan or discoverable via project conventions
 4. Compare user stories from the PRD against actual behavior
 
+Mark each checkbox as verified (`[x]`) or not (`[ ]`) in the plan file.
+
 Collect findings into two categories:
 
-- **BLOCKERS** — done-when conditions not met, missing functionality, failing tests, broken contracts. These prevent a ✅ PASS.
-- **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent a ✅ PASS.
+- **BLOCKERS** — checked items that don't hold up, failing tests, broken contracts. These prevent transitioning to `done`.
+- **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent `done`.
 
-### 4. Determine verdict
+### 4. Determine outcome
 
-- **✅ PASS** — zero BLOCKERS
-- **🚧 NEEDS_WORK** — one or more BLOCKERS
+Based on checks and findings, decide the status transition:
+
+- All checks verified + zero BLOCKERS → transition PRD to `done`
+- Some checks verified + zero BLOCKERS → keep PRD as `in_progress`
+- BLOCKERS found → keep PRD as `in_progress`
 
 ### 5. Report to user
 
@@ -53,7 +72,10 @@ Print the verdict report:
 ```
 ## Verification: <slug>
 
-### Verdict: ✅ PASS | 🚧 NEEDS_WORK
+### Status: created | in_progress | done
+
+### Progress
+Phase 1: 4/4 checks | Phase 2: 2/5 checks | Phase 3: 0/3 checks
 
 ### BLOCKERS
 - (list or "None")
@@ -71,17 +93,17 @@ Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
 
 ## Verdict
 
-- **Result**: ✅ PASS | 🚧 NEEDS_WORK
 - **Date**: YYYY-MM-DD
+- **Checks**: (checked/total)
 - **BLOCKERS**: (count)
 - **SUGGESTIONS**: (count)
 ```
 
 If a previous verdict block exists, replace it with the new one.
 
-### 7. On ✅ PASS — update PRD status and archive
+### 7. On `done` — update PRD status and archive
 
-If the verdict is **✅ PASS**:
+If all checks pass and zero BLOCKERS:
 
 **First**, update the YAML frontmatter in `{{paths.prds}}/<slug>.md`:
 
@@ -110,17 +132,21 @@ If the verdict is **✅ PASS**:
 
 If `{{paths.archives}}/<slug>/` already exists, warn and ask whether to overwrite.
 
-### 8. On 🚧 NEEDS_WORK
+### 8. On `in_progress` (no blockers)
 
-Tell the user: fix the listed blockers, then re-run `/tk:verify <slug>`.
+Show progress summary (checked/total per phase), list the next unchecked items to implement. Keep going.
+
+### 9. On `in_progress` (with blockers)
+
+List the blockers to fix, then re-run `/tk:check <slug>`.
 
 ## Rules
 
 - The review subagent must be **read-only** — it must not create, edit, or delete any files
-- The only file writes this skill makes are: the verdict block in the plan, and the archive move on ✅ PASS
+- The only file writes this skill makes are: checkboxes + verdict block in the plan, PRD frontmatter update, and the archive move on `done`
 - Never modify the source PRD (except moving it to archive)
 - Never modify implementation code — only observe and report
-- If the PRD file is missing but the plan has a ✅ PASS verdict, warn but proceed with archiving the plan only
+- If the PRD file is missing but all checks pass, warn but proceed with archiving the plan only
 
 ## Error Handling
 
