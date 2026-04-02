@@ -21,7 +21,6 @@ const USAGE = [
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
   '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
-  '  progress <slug>   Show per-phase checkbox progress for a plan',
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
