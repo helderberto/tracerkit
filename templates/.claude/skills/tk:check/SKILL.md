@@ -17,19 +17,32 @@ The argument (if provided) is: $ARGUMENTS
 
 Use the argument as `<slug>` if given.
 
-If no argument is provided, scan `{{paths.prds}}/` and `{{paths.plans}}/` and show a summary table before asking which one to check:
+If no argument is provided, build a summary table before asking which one to check:
 
-```
+```markdown
 | Feature | Status | Progress |
-|---------|--------|----------|
+| ------- | ------ | -------- |
 | <slug>  | ...    | 3/7      |
 ```
 
-- **Feature**: slug (filename without `.md`)
-- **Status**: from PRD frontmatter (`created`, `in_progress`, `done`) — `unknown` if no frontmatter
-- **Progress**: run `tracerkit progress <slug>` for each feature with a plan — use the Total line (e.g. "3/7"). Show `—` if no plan.
+For each `.md` file in `{{paths.prds}}/`:
+
+1. Read the file, parse YAML frontmatter (block between `---` fences)
+2. Extract `status` — use `unknown` if missing
+3. If `{{paths.plans}}/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
 
 After the table, ask which feature to verify.
+
+## Progress Algorithm
+
+To count progress for a plan file:
+
+1. Find every `## Phase N` heading (regex: `^## Phase \d+`)
+2. Within each phase section (until the next `## ` heading), count:
+   - Checked: lines matching `^- \[x\] ` (case-insensitive)
+   - Unchecked: lines matching `^- \[ \] `
+3. Per-phase output: `  Phase N — title: checked/total`
+4. Sum across all phases → `Total: checked/total`
 
 ## Workflow
 
@@ -75,20 +88,25 @@ Based on checks and findings, decide the status transition:
 
 ### 5. Report to user
 
-Run `tracerkit progress <slug>` to get exact per-phase progress, then print the verdict report:
+Count progress per phase using the Progress Algorithm above, then print the verdict report:
 
-```
+```markdown
 ## Verification: <slug>
 
 ### Status: created | in_progress | done
 
 ### Progress
-<output from tracerkit progress>
+
+Phase 1 — title: checked/total
+Phase 2 — title: checked/total
+Total: checked/total
 
 ### BLOCKERS
+
 - (list or "None")
 
 ### SUGGESTIONS
+
 - (list or "None")
 ```
 
@@ -111,13 +129,19 @@ If a previous verdict block exists, replace it with the new one.
 
 ### 7. On `done` — archive
 
-If all checks pass and zero BLOCKERS, run:
+If all checks pass and zero BLOCKERS, perform these steps in order:
 
-```
-tracerkit archive <slug>
-```
-
-This handles: PRD frontmatter update (`status: done`, `completed` timestamp), file moves to `{{paths.archives}}/<slug>/`, and archived block on the plan.
+1. Create directory `{{paths.archives}}/<slug>/`
+2. If `{{paths.prds}}/<slug>.md` exists:
+   - Read the PRD file
+   - In the YAML frontmatter, set `status: done`
+   - In the YAML frontmatter, add `completed: <ISO 8601 timestamp>`
+   - Write the updated content to `{{paths.archives}}/<slug>/prd.md`
+3. Read `{{paths.plans}}/<slug>.md`
+   - Append to the end: `\n## Archived\n\nArchived on YYYY-MM-DD.\n`
+   - Write the result to `{{paths.archives}}/<slug>/plan.md`
+4. Delete `{{paths.prds}}/<slug>.md` (if it exists)
+5. Delete `{{paths.plans}}/<slug>.md`
 
 Tell the user: archived to `{{paths.archives}}/<slug>/`, one-line summary of the feature.
 
@@ -132,14 +156,13 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 ## Rules
 
 - The review subagent must be **read-only** — it must not create, edit, or delete any files
-- The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive command on `done`
-- Never modify the source PRD manually — `tracerkit archive` handles frontmatter updates
+- The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive steps on `done`
 - Never modify implementation code — only observe and report
-- If the PRD file is missing but all checks pass, warn and proceed — `tracerkit archive` supports plan-only archiving
+- If the PRD file is missing but all checks pass, warn and proceed — archive the plan only (skip PRD steps in archive)
 
 ## Error Handling
 
 - Plan not found — list available plans and ask
 - PRD referenced in plan not found — warn and continue with plan checks only
 - `{{paths.plans}}/` missing — tell user to run `/tk:plan` first
-- `{{paths.archives}}/<slug>/` already exists — `tracerkit archive` will error; warn and ask whether to remove it first
+- `{{paths.archives}}/<slug>/` already exists — warn and ask whether to remove it first
