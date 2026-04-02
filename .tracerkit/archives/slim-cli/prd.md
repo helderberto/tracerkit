@@ -1,6 +1,7 @@
 ---
 created: 2026-04-02T18:00:00Z
-status: in_progress
+status: done
+completed: 2026-04-02T00:00:00Z
 ---
 
 # Slim CLI

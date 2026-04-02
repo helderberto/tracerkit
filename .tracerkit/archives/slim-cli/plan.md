@@ -23,11 +23,11 @@ Update `tk:brief` and `tk:check` templates to be fully self-sufficient. Replace 
 
 ### Done when
 
-- [ ] `tk:brief` uses `!ls {{paths.prds}}/ 2>&1` for pre-loaded context (no `tracerkit brief`)
-- [ ] `tk:brief` contains inline algorithm: read PRDs, parse frontmatter, count plan checkboxes, build table, determine focus
-- [ ] `tk:check` contains inline algorithm for counting `- [x]` vs `- [ ]` per `## Phase N` section
-- [ ] `tk:check` contains inline archive steps: create dir, copy PRD with updated frontmatter, copy plan with archived block, delete originals
-- [ ] Both skills specify exact output format (table columns, sort order, verdict structure)
+- [x] `tk:brief` uses `!ls {{paths.prds}}/ 2>&1` for pre-loaded context (no `tracerkit brief`)
+- [x] `tk:brief` contains inline algorithm: read PRDs, parse frontmatter, count plan checkboxes, build table, determine focus
+- [x] `tk:check` contains inline algorithm for counting `- [x]` vs `- [ ]` per `## Phase N` section
+- [x] `tk:check` contains inline archive steps: create dir, copy PRD with updated frontmatter, copy plan with archived block, delete originals
+- [x] Both skills specify exact output format (table columns, sort order, verdict structure)
 
 ---
 
@@ -41,11 +41,11 @@ Tighten all 4 skill prompts for consistent, precise results across sessions and 
 
 ### Done when
 
-- [ ] `tk:prd` interview branches have explicit skip conditions and slug derivation is unambiguous
-- [ ] `tk:prd` gray-area checkpoint has clear criteria for what counts as an ambiguity
-- [ ] `tk:plan` phase-splitting threshold is explicit (not "does this feel right?")
-- [ ] `tk:plan` "Done when" format enforced as checkbox list with verifiable conditions
-- [ ] `tk:brief` and `tk:check` prompts reviewed for clarity beyond the CLI-removal changes from Phase 1
+- [x] `tk:prd` interview branches have explicit skip conditions and slug derivation is unambiguous
+- [x] `tk:prd` gray-area checkpoint has clear criteria for what counts as an ambiguity
+- [x] `tk:plan` phase-splitting threshold is explicit (not "does this feel right?")
+- [x] `tk:plan` "Done when" format enforced as checkbox list with verifiable conditions
+- [x] `tk:brief` and `tk:check` prompts reviewed for clarity beyond the CLI-removal changes from Phase 1
 
 ---
 
@@ -59,11 +59,11 @@ Delete runtime modules and their tests. Replace CLI switch cases with deprecatio
 
 ### Done when
 
-- [ ] `frontmatter.ts`, `plan.ts` and their tests deleted
-- [ ] `commands/brief.ts`, `commands/progress.ts`, `commands/archive.ts` and their tests deleted
-- [ ] `constants.ts` COMMANDS array contains only `init`, `update`, `uninstall`
-- [ ] `cli.ts` returns deprecation message for `brief`, `progress`, `archive` ("removed — run `tracerkit update`")
-- [ ] `cli.test.ts` verifies deprecation messages; all tests pass
+- [x] `frontmatter.ts`, `plan.ts` and their tests deleted
+- [x] `commands/brief.ts`, `commands/progress.ts`, `commands/archive.ts` and their tests deleted
+- [x] `constants.ts` COMMANDS array contains only `init`, `update`, `uninstall`
+- [x] `cli.ts` returns deprecation message for `brief`, `progress`, `archive` ("removed — run `tracerkit update`")
+- [x] `cli.test.ts` verifies deprecation messages; all tests pass
 
 ---
 
@@ -77,11 +77,11 @@ Update all documentation to reflect the slim CLI. Apply prose revision to every 
 
 ### Done when
 
-- [ ] README removes "deterministic CLI" messaging, updates install and workflow sections
-- [ ] `cli-reference.md` lists only lifecycle commands
-- [ ] `configuration.md` removes `tracerkit update` mention for config changes
-- [ ] `comparison.md` differentiator is "zero runtime deps", "CLI + AI split" row removed
-- [ ] All 5 docs + README pass prose revision (clarity, structure, brevity)
+- [x] README removes "deterministic CLI" messaging, updates install and workflow sections
+- [x] `cli-reference.md` lists only lifecycle commands
+- [x] `configuration.md` removes `tracerkit update` mention for config changes
+- [x] `comparison.md` differentiator is "zero runtime deps", "CLI + AI split" row removed
+- [x] All 5 docs + README pass prose revision (clarity, structure, brevity)
 
 ---
 
@@ -97,3 +97,16 @@ Update all documentation to reflect the slim CLI. Apply prose revision to every 
 ## Open Questions
 
 None.
+
+---
+
+## Verdict
+
+- **Date**: 2026-04-02
+- **Checks**: 20/20
+- **BLOCKERS**: 0
+- **SUGGESTIONS**: 2
+
+## Archived
+
+Archived on 2026-04-02.
