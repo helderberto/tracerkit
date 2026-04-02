@@ -3,7 +3,7 @@
 The CLI manages skill installation and updates. Skills themselves run without CLI calls at runtime.
 
 ```bash
-npm install -g tracerkit
+$ npm install -g tracerkit
 ```
 
 ## Commands
@@ -23,11 +23,7 @@ All commands default to `~/.claude/skills/`. Pass a path to target a specific pr
 ## Per-project usage
 
 ```bash
-npx tracerkit init .         # install to .claude/skills/ in current dir
-npx tracerkit update .       # update project-scoped skills
-npx tracerkit uninstall .    # remove project-scoped skills
+$ tracerkit init .         # install to .claude/skills/ in current dir
+$ tracerkit update .       # update project-scoped skills
+$ tracerkit uninstall .    # remove project-scoped skills
 ```
-
-## Deprecated commands
-
-`brief`, `progress`, and `archive` were removed. Skills now handle these operations directly with inline algorithms. Run `tracerkit update` to get the latest skills.
