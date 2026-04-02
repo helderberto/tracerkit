@@ -4,6 +4,7 @@ import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import {
   archive,
+  brief,
   init,
   progress,
   uninstall,
@@ -24,6 +25,7 @@ const USAGE = [
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
   '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
+  '  brief [path]      Show active features, progress, and suggested focus',
   '  progress <slug>   Show per-phase checkbox progress for a plan',
   '  archive <slug>    Archive a completed feature (PRD + plan)',
   '',
@@ -70,6 +72,13 @@ export function run(args: string[]): string[] {
   const rest = args.slice(1);
 
   switch (command) {
+    case 'brief':
+      try {
+        return brief(resolveTarget(rest, process.cwd()));
+      } catch (err) {
+        const msg = err instanceof Error ? err.message : String(err);
+        return [`Error: ${msg}`];
+      }
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {

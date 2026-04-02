@@ -1,5 +1,6 @@
 export const SKILL_PREFIX = 'tk';
 export const SKILL_NAMES = [
+  `${SKILL_PREFIX}:brief`,
   `${SKILL_PREFIX}:prd`,
   `${SKILL_PREFIX}:plan`,
   `${SKILL_PREFIX}:check`,
