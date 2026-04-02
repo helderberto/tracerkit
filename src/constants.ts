@@ -13,6 +13,8 @@ export const FLAGS = {
   version: '--version',
 } as const;
 
+export const DEPRECATED_COMMANDS = ['brief', 'progress', 'archive'] as const;
+
 export const COMMANDS = [
   {
     name: 'init',
@@ -28,20 +30,5 @@ export const COMMANDS = [
     name: 'uninstall',
     args: '[path]',
     desc: 'Remove TracerKit skill directories, keep .tracerkit/ artifacts',
-  },
-  {
-    name: 'brief',
-    args: '[path]',
-    desc: 'Show active features, progress, and suggested focus',
-  },
-  {
-    name: 'progress',
-    args: '<slug>',
-    desc: 'Show per-phase checkbox progress for a plan',
-  },
-  {
-    name: 'archive',
-    args: '<slug>',
-    desc: 'Archive a completed feature (PRD + plan)',
   },
 ] as const;

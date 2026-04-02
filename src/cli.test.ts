@@ -1,4 +1,4 @@
-import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
@@ -131,114 +131,13 @@ describe('CLI', () => {
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
   });
 
-  it('routes "progress <slug>" to progress command', () => {
-    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
-    mkdirSync(plansDir, { recursive: true });
-    writeFileSync(
-      join(plansDir, 'feat.md'),
-      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
-    );
+  it.each(['brief', 'progress', 'archive'])(
+    'returns deprecation message for "%s"',
+    (cmd) => {
+      const output = run([cmd]);
 
-    const output = run(['progress', 'feat', tmp.get()]);
-
-    expect(output.some((l) => l.includes('1/2'))).toBe(true);
-  });
-
-  it('prints error when progress slug missing', () => {
-    const output = run(['progress']);
-
-    expect(output[0]).toContain('Error');
-    expect(output.some((l) => l.includes('Usage'))).toBe(true);
-  });
-
-  it('routes "archive <slug>" to archive command', () => {
-    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
-    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
-    mkdirSync(prdsDir, { recursive: true });
-    mkdirSync(plansDir, { recursive: true });
-    writeFileSync(
-      join(prdsDir, 'feat.md'),
-      '---\nstatus: in_progress\n---\n\n# PRD\n',
-    );
-    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
-
-    const output = run(['archive', 'feat', tmp.get()]);
-
-    expect(output.some((l) => l.includes('Archived'))).toBe(true);
-  });
-
-  it('prints error when archive slug missing', () => {
-    const output = run(['archive']);
-
-    expect(output[0]).toContain('Error');
-    expect(output.some((l) => l.includes('Usage'))).toBe(true);
-  });
-
-  it('returns clean error when progress plan not found', () => {
-    const output = run(['progress', 'nonexistent', tmp.get()]);
-
-    expect(output[0]).toMatch(/^Error:.*not found/);
-    expect(output).toHaveLength(1);
-  });
-
-  it('returns clean error when archive plan not found', () => {
-    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
-    mkdirSync(prdsDir, { recursive: true });
-    writeFileSync(
-      join(prdsDir, 'noplans.md'),
-      '---\nstatus: in_progress\n---\n',
-    );
-
-    const output = run(['archive', 'noplans', tmp.get()]);
-
-    expect(output[0]).toMatch(/^Error:.*not found/);
-    expect(output).toHaveLength(1);
-  });
-
-  it('does not drop path arg when it equals slug', () => {
-    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
-    mkdirSync(plansDir, { recursive: true });
-    writeFileSync(
-      join(plansDir, 'feat.md'),
-      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
-    );
-
-    // path arg happens to equal slug value "feat" — both should survive
-    const output = run(['progress', 'feat', tmp.get()]);
-
-    expect(output.some((l) => l.includes('1/2'))).toBe(true);
-  });
-
-  it('routes "brief <path>" to brief command', () => {
-    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
-    mkdirSync(prdsDir, { recursive: true });
-    writeFileSync(
-      join(prdsDir, 'feat.md'),
-      '---\nstatus: in_progress\ncreated: 2026-03-01T00:00:00Z\n---\n# Feat\n',
-    );
-
-    const output = run(['brief', tmp.get()]);
-
-    expect(output.some((l) => l.includes('feat'))).toBe(true);
-    expect(output.some((l) => l.includes('Focus'))).toBe(true);
-  });
-
-  it('returns clean error when archive already exists', () => {
-    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
-    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
-    const archiveDir = join(tmp.get(), '.tracerkit', 'archives', 'feat');
-    mkdirSync(prdsDir, { recursive: true });
-    mkdirSync(plansDir, { recursive: true });
-    mkdirSync(archiveDir, { recursive: true });
-    writeFileSync(
-      join(prdsDir, 'feat.md'),
-      '---\nstatus: in_progress\n---\n\n# PRD\n',
-    );
-    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
-
-    const output = run(['archive', 'feat', tmp.get()]);
-
-    expect(output[0]).toMatch(/^Error:.*already exists/);
-    expect(output).toHaveLength(1);
-  });
+      expect(output[0]).toContain('removed');
+      expect(output[1]).toContain('tracerkit update');
+    },
+  );
 });
