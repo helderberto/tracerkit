@@ -34,13 +34,12 @@ These are the only statuses in TracerKit. The same vocabulary is used in PRD fro
 
 A single PRD's frontmatter evolves as skills run:
 
-```yaml
+```text
 ---
-created: 2025-06-15T14:30:00Z # set by /tk:prd
-status:
-  created # → in_progress (by /tk:plan)
-  # → done        (by /tk:check, all pass)
-completed: 2025-06-20T09:00:00Z # set by /tk:check when done
+created: 2025-06-15T14:30:00Z        # set by /tk:prd
+status: created                       # → in_progress (by /tk:plan)
+                                      # → done        (by /tk:check, all pass)
+completed: 2025-06-20T09:00:00Z      # set by /tk:check when done
 ---
 ```
 
