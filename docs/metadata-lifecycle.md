@@ -26,6 +26,7 @@ These are the only statuses in TracerKit. The same vocabulary is used in PRD fro
 | ------------------ | ----------- | ---------------------------------------------------- |
 | Defined            | `/tk:prd`   | `created: 2025-06-15T14:30:00Z`<br>`status: created` |
 | Planning           | `/tk:plan`  | `status: in_progress`                                |
+| Implementation     | (user)      | no change (stays `in_progress`)                      |
 | Checked (partial)  | `/tk:check` | no change (stays `in_progress`)                      |
 | Checked (all pass) | `/tk:check` | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
 

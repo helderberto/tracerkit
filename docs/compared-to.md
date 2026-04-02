@@ -10,12 +10,12 @@
 
 ## Full comparison
 
-|                  | Spec Kit         | Kiro                       | OpenSpec                | TracerKit                          |
-| ---------------- | ---------------- | -------------------------- | ----------------------- | ---------------------------------- |
-| **What it is**   | CLI + extensions | Agentic IDE (VS Code fork) | Slash-command framework | Claude Code skills (pure Markdown) |
-| **Setup**        | Python + uv      | Dedicated IDE              | npm + init              | `npx tracerkit init`               |
-| **Phases**       | 5                | 3                          | 3                       | 3 (prd, plan, verify)              |
-| **Artifacts**    | 4 files          | 3+ files                   | 4+ files                | 2 files (PRD, plan)                |
-| **Verification** | Manual gates     | Diff approval              | Manual                  | Automated ✅ PASS / 🚧 NEEDS_WORK  |
-| **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                   |
-| **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                               |
+|                  | Spec Kit         | Kiro                       | OpenSpec                | TracerKit                           |
+| ---------------- | ---------------- | -------------------------- | ----------------------- | ----------------------------------- |
+| **What it is**   | CLI + extensions | Agentic IDE (VS Code fork) | Slash-command framework | Claude Code skills (pure Markdown)  |
+| **Setup**        | Python + uv      | Dedicated IDE              | npm + init              | `npx tracerkit init`                |
+| **Phases**       | 5                | 3                          | 3                       | 3 (prd, plan, check)                |
+| **Artifacts**    | 4 files          | 3+ files                   | 4+ files                | 2 files (PRD, plan)                 |
+| **Verification** | Manual gates     | Diff approval              | Manual                  | Automated (`done` or `in_progress`) |
+| **Tool lock-in** | Any AI assistant | Kiro IDE only              | Any AI assistant        | Claude Code only                    |
+| **Runtime deps** | Python + uv      | Proprietary IDE            | None                    | None                                |

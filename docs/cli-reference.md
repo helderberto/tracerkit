@@ -8,6 +8,7 @@
 | `tracerkit update --force`  | Replace modified files with latest versions    |
 | `tracerkit uninstall`       | Remove TracerKit skills, keep user artifacts   |
 | `tracerkit progress <slug>` | Show per-phase checkbox progress for a plan    |
+| `tracerkit archive <slug>`  | Archive a completed feature (PRD + plan)       |
 | `tracerkit --version`       | Print version                                  |
 | `tracerkit --help`          | Show help message                              |
 

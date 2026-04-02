@@ -8,7 +8,7 @@
 [![npm version](https://img.shields.io/npm/v/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Replace ad-hoc AI prompts with a repeatable three-step spec process: from idea to verified, archived code.
+Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified, archived code.
 
 Named after the tracer-bullet technique from _The Pragmatic Programmer_ — **Tracer** + **Kit**.
 
@@ -42,6 +42,8 @@ You: /tk:plan dark-mode-support
 AI:  ✓ Phase 1 — CSS variables + ThemeProvider
      ✓ Phase 2 — Toggle component + localStorage
      ✓ Written .tracerkit/plans/dark-mode-support.md
+
+You: # implement each phase...
 
 You: /tk:check dark-mode-support
 AI:  ✓ All checks verified — status: done
