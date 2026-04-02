@@ -134,8 +134,8 @@ If all checks pass and zero BLOCKERS, perform these steps in order:
 1. Create directory `{{paths.archives}}/<slug>/`
 2. If `{{paths.prds}}/<slug>.md` exists:
    - Read the PRD file
-   - In the YAML frontmatter, set `status: done`
-   - In the YAML frontmatter, add `completed: <ISO 8601 timestamp>`
+   - In the YAML frontmatter (between `---` fences), find the `status:` line and replace its value with `done`. If no `status:` line exists, add `status: done` as a new line inside the frontmatter block.
+   - Add a `completed: <current UTC ISO 8601 timestamp>` line inside the frontmatter block (e.g. `completed: 2025-06-15T14:30:00Z`)
    - Write the updated content to `{{paths.archives}}/<slug>/prd.md`
 3. Read `{{paths.plans}}/<slug>.md`
    - Append to the end: `\n## Archived\n\nArchived on YYYY-MM-DD.\n`

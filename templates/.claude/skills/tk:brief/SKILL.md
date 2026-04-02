@@ -44,7 +44,7 @@ Sort features by `created` date ascending (no-date entries last). Calculate age 
 
 - < 7 days → `Nd` (e.g. `3d`)
 - < 30 days → `Nw` (e.g. `2w`)
-- > = 30 days → `Nmo` (e.g. `1mo`)
+- 30+ days → `Nmo` (e.g. `1mo`)
 
 Output this exact table format:
 
