@@ -142,4 +142,27 @@ describe('CLI', () => {
     expect(output[0]).toContain('Error');
     expect(output.some((l) => l.includes('Usage'))).toBe(true);
   });
+
+  it('routes "archive <slug>" to archive command', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(prdsDir, { recursive: true });
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'feat.md'),
+      '---\nstatus: in_progress\n---\n\n# PRD\n',
+    );
+    writeFileSync(join(plansDir, 'feat.md'), '# Plan\n');
+
+    const output = run(['archive', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('Archived'))).toBe(true);
+  });
+
+  it('prints error when archive slug missing', () => {
+    const output = run(['archive']);
+
+    expect(output[0]).toContain('Error');
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
+  });
 });

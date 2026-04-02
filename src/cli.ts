@@ -6,6 +6,7 @@ import { init } from './commands/init.ts';
 import { update } from './commands/update.ts';
 import { uninstall } from './commands/uninstall.ts';
 import { progress } from './commands/progress.ts';
+import { archive } from './commands/archive.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -36,6 +37,16 @@ export function resolveTarget(args: string[]): string {
   return homedir();
 }
 
+function runSlugCommand(
+  rest: string[],
+  fn: (cwd: string, slug: string) => string[],
+): string[] {
+  const slug = rest.find((a) => !a.startsWith('-'));
+  if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
+  const target = rest.filter((a) => a !== slug);
+  return fn(resolveTarget(target), slug);
+}
+
 export function run(args: string[]): string[] {
   if (args.includes('--help') || args.includes('-h')) {
     return USAGE;
@@ -63,12 +74,10 @@ export function run(args: string[]): string[] {
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
-    case 'progress': {
-      const slug = rest.find((a) => !a.startsWith('-'));
-      if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
-      const target = rest.filter((a) => a !== slug);
-      return progress(resolveTarget(target), slug);
-    }
+    case 'progress':
+      return runSlugCommand(rest, progress);
+    case 'archive':
+      return runSlugCommand(rest, archive);
     default:
       return USAGE;
   }
