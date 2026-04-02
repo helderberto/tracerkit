@@ -85,50 +85,10 @@ AI:  Loading plan... Loading PRD... Running tests...
      Archived to .tracerkit/archives/dark-mode-support/
 ```
 
-## Starting without an idea
+---
 
-No argument needed. The skill opens with a question and derives the slug from your answer.
-
-```
-You: /tk:prd
-AI:  What problem are you trying to solve? Describe the idea.
-
-You: users keep asking for dark mode
-
-AI:  Deriving slug: dark-mode
-     Exploring codebase...
-     ? Where should this live — settings page or global toggle?
-     ...
-```
-
-## Slug collisions
-
-When a PRD or plan file already exists, the skill asks before overwriting.
-
-```
-You: /tk:prd dark mode support
-AI:  Deriving slug: dark-mode-support
-     .tracerkit/prds/dark-mode-support.md already exists.
-     Overwrite or pick a new name?
-
-You: overwrite
-AI:  Starting interview...
-     ...
-```
-
-Same for plans:
-
-```
-You: /tk:plan dark-mode-support
-AI:  .tracerkit/plans/dark-mode-support.md already exists.
-     Overwrite or pick a new name?
-
-You: overwrite
-AI:  Reading updated PRD...
-     ...
-```
-
-## Check progress mid-implementation
+<details>
+<summary>Check progress mid-implementation</summary>
 
 Run `/tk:check` any time. You don't have to finish first. It shows per-phase progress and what to tackle next.
 
@@ -154,7 +114,10 @@ AI:  Loading plan... Loading PRD... Running tests...
      - Theme preference persists in localStorage
 ```
 
-## Fix and re-check
+</details>
+
+<details>
+<summary>Fix and re-check</summary>
 
 When `/tk:check` finds blockers, fix them and run it again. The loop continues until all checks pass.
 
@@ -181,7 +144,10 @@ AI:  ...
      Archived to .tracerkit/archives/dark-mode-support/
 ```
 
-## Feature dashboard
+</details>
+
+<details>
+<summary>Feature dashboard</summary>
 
 Run `/tk:check` with no arguments to see all tracked features, then pick one to verify.
 
@@ -200,3 +166,54 @@ AI:  Loading plan... Running tests...
      ## Verification: dark-mode-support
      ...
 ```
+
+</details>
+
+<details>
+<summary>Starting without an idea</summary>
+
+No argument needed. The skill opens with a question and derives the slug from your answer.
+
+```
+You: /tk:prd
+AI:  What problem are you trying to solve? Describe the idea.
+
+You: users keep asking for dark mode
+
+AI:  Deriving slug: dark-mode
+     Exploring codebase...
+     ? Where should this live — settings page or global toggle?
+     ...
+```
+
+</details>
+
+<details>
+<summary>Slug collisions</summary>
+
+When a PRD or plan file already exists, the skill asks before overwriting.
+
+```
+You: /tk:prd dark mode support
+AI:  Deriving slug: dark-mode-support
+     .tracerkit/prds/dark-mode-support.md already exists.
+     Overwrite or pick a new name?
+
+You: overwrite
+AI:  Starting interview...
+     ...
+```
+
+Same for plans:
+
+```
+You: /tk:plan dark-mode-support
+AI:  .tracerkit/plans/dark-mode-support.md already exists.
+     Overwrite or pick a new name?
+
+You: overwrite
+AI:  Reading updated PRD...
+     ...
+```
+
+</details>
