@@ -13,7 +13,7 @@ Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to v
 
 Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Tracer** + **Kit**.
 
-**Markdown skills, one CLI.** No build step, no project dependencies.
+**Markdown skills, zero runtime deps.** No build step, no project dependencies.
 
 </div>
 
@@ -23,7 +23,7 @@ Without specs, every AI session starts from scratch. Vague prompts, duplicated c
 
 TracerKit takes a different approach: **tracer-bullet vertical slices**. Each phase cuts through every layer (schema → service → API → UI → tests), so every phase is demoable on its own. Integration problems surface early, context stays focused, and AI assistants get small, well-scoped phases instead of sprawling layers.
 
-**Deterministic CLI, intelligent skills.** The CLI produces structured, repeatable output — feature tables, progress counts, archive operations — while the skills layer AI reasoning on top. The foundation is deterministic, so every session starts from the same ground truth. AI adds the judgment: interviewing you for scope, designing modules, verifying implementation against specs.
+**Zero runtime deps, intelligent skills.** Skills are pure Markdown with inline algorithms — no CLI calls at runtime. The AI reads your PRDs and plans directly, counts checkboxes, builds dashboards, and archives completed features. The CLI only manages installation (`init`, `update`, `uninstall`). AI adds the judgment: interviewing you for scope, designing modules, verifying implementation against specs.
 
 ## Get Started
 
@@ -33,8 +33,6 @@ TracerKit takes a different approach: **tracer-bullet vertical slices**. Each ph
 npm install -g tracerkit
 tracerkit init
 ```
-
-The global install is by design — skills call `tracerkit brief`, `tracerkit progress`, and `tracerkit archive` directly to get deterministic output before the AI acts on it. Having the CLI in your PATH keeps this seamless.
 
 Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
 
@@ -119,7 +117,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | Document                                         | Description                                        |
 | ------------------------------------------------ | -------------------------------------------------- |
 | [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
-| [CLI Reference](docs/cli-reference.md)           | Browse all CLI commands and flags                  |
+| [CLI Reference](docs/cli-reference.md)           | Lifecycle commands: init, update, uninstall        |
 | [Configuration](docs/configuration.md)           | Configure custom artifact paths via `config.json`  |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
