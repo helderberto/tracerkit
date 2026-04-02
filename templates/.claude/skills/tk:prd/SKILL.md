@@ -17,7 +17,15 @@ The argument is: $ARGUMENTS
 
 If the argument is empty, go straight to Step 1 (gather problem description). After gathering the idea, derive the slug from the idea.
 
-If the argument is provided, derive a slug: use only the text before `—` or `–` (if present), take at most 3–4 keywords, strip filler words (a, the, for, etc.), then convert to kebab-case (lowercase, hyphens). This is `<slug>`. The output file is `{{paths.prds}}/<slug>.md`.
+If the argument is provided, derive a slug using this exact algorithm:
+
+1. Take only the text before the first `—` or `–` (if present)
+2. Lowercase the text
+3. Remove filler words: a, an, the, for, of, to, in, on, with, and, or, but, is, be
+4. Take the first 4 remaining words (or fewer if less exist)
+5. Join with hyphens → `<slug>`
+
+The output file is `{{paths.prds}}/<slug>.md`.
 
 If `{{paths.prds}}/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
@@ -37,19 +45,26 @@ Verify assertions and map current state: data models, services, API routes, fron
 
 Interview relentlessly, one question at a time. Lead with your recommended answer; let the user confirm or correct. If a question can be answered by exploring code, explore instead of asking. For terse answers, offer concrete options (A/B/C).
 
-Walk these branches (skip any already resolved or irrelevant to the project type — e.g., for CLI tools and libraries, skip UI-specific branches like Display, Access, Navigation unless the idea involves them):
+Walk these branches. **Skip rule**: skip a branch when the project type makes it irrelevant (e.g., skip Display/Access/Navigation for CLIs and libraries) AND the user's idea does not mention it.
 
-- **Scope & Surface** — Where does this live? New page/view or integrated? Which user roles?
-- **Data & Concepts** — Precise definitions for each new concept. What data exists, what's missing?
-- **Behavior & Interaction** — How does the user interact? Sorting, filtering, search, time ranges?
-- **Display & Output** — Numbers, tables, charts, forms? Exportable? URL-driven state?
-- **Access & Privacy** — Who sees what? Role-based restrictions? Sensitive data concerns?
-- **Boundaries** — What is explicitly out of scope? Adjacent features to defer?
-- **Integration** — Schema changes? New or extended services? External dependencies?
+- **Scope & Surface** — Where does this live? New page/view or integrated? Which user roles? _Skip if_: single-surface project (CLI, library) with no new entry points.
+- **Data & Concepts** — Precise definitions for each new concept. What data exists, what's missing? _Never skip_ — every feature has data.
+- **Behavior & Interaction** — How does the user interact? Sorting, filtering, search, time ranges? _Skip if_: feature is purely internal/backend with no user-facing behavior change.
+- **Display & Output** — Numbers, tables, charts, forms? Exportable? URL-driven state? _Skip if_: no UI or formatted output involved.
+- **Access & Privacy** — Who sees what? Role-based restrictions? Sensitive data concerns? _Skip if_: single-user project with no auth layer.
+- **Boundaries** — What is explicitly out of scope? Adjacent features to defer? _Never skip_ — scope control prevents creep.
+- **Integration** — Schema changes? New or extended services? External dependencies? _Skip if_: self-contained change touching no external systems or storage.
 
 ### 3b. Gray area checkpoint
 
-Before continuing, list any unresolved ambiguities from the interview — vague answers, contradictions, assumptions you made without confirmation. Present them as a numbered list:
+Before continuing, scan the interview for gray areas. Something is a gray area if any of these are true:
+
+- **Vague answer**: user said "maybe", "probably", "I think", or gave a one-word answer to a multi-part question
+- **Contradiction**: two answers conflict (e.g., "no auth needed" but "only admins can access")
+- **Unstated assumption**: you filled in a detail the user never confirmed
+- **Ambiguous scope**: a feature boundary is unclear (could be in or out of scope)
+
+Present as a numbered list:
 
 ```
 Gray areas found:
@@ -57,7 +72,7 @@ Gray areas found:
 2. <ambiguity> — two options: A or B
 ```
 
-If the list is empty, say so and move on. Otherwise, resolve each item with the user before proceeding.
+If the list is empty, say "No gray areas found" and move on. Otherwise, resolve each item with the user before proceeding.
 
 ### 4. Design modules
 
