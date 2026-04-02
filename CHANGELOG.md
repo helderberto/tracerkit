@@ -1,3 +1,9 @@
+## [1.9.3](https://github.com/helderberto/tracerkit/compare/v1.9.2...v1.9.3) (2026-04-02)
+
+### Bug Fixes
+
+- init delegates to update when skills already exist ([7f5eeab](https://github.com/helderberto/tracerkit/commit/7f5eeabcb58c5388feb81c08e712861e9dc6652d))
+
 ## [1.9.2](https://github.com/helderberto/tracerkit/compare/v1.9.1...v1.9.2) (2026-04-02)
 
 ## [1.9.1](https://github.com/helderberto/tracerkit/compare/v1.9.0...v1.9.1) (2026-04-02)
