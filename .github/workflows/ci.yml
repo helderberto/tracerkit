@@ -45,7 +45,7 @@ jobs:
 
   install-test:
     runs-on: ubuntu-latest
-    needs: build
+    needs: [lint, test]
     if: github.event_name == 'pull_request'
     permissions:
       contents: read

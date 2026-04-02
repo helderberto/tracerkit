@@ -50,12 +50,16 @@ Use a **read-only subagent** (no file writes, no edits) to:
 3. Run any test commands referenced in the plan or discoverable via project conventions
 4. Compare user stories from the PRD against actual behavior
 
-Mark each checkbox as verified (`[x]`) or not (`[ ]`) in the plan file.
+For each checkbox, determine whether it should be verified (`[x]`) or not (`[ ]`) and report this — do not edit any files.
 
 Collect findings into two categories:
 
 - **BLOCKERS** — checked items that don't hold up, failing tests, broken contracts. These prevent transitioning to `done`.
 - **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent `done`.
+
+### 3b. Update checkboxes
+
+Using the subagent's report, update each checkbox in `{{paths.plans}}/<slug>.md` to `[x]` or `[ ]`.
 
 ### 4. Determine outcome
 
@@ -127,11 +131,11 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 - The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive command on `done`
 - Never modify the source PRD manually — `tracerkit archive` handles frontmatter updates
 - Never modify implementation code — only observe and report
-- If the PRD file is missing but all checks pass, warn but proceed with archiving the plan only
+- If the PRD file is missing but all checks pass, warn and proceed — `tracerkit archive` supports plan-only archiving
 
 ## Error Handling
 
 - Plan not found — list available plans and ask
-- PRD referenced in plan not found — warn and continue with plan only
+- PRD referenced in plan not found — warn and continue with plan checks only
 - `{{paths.plans}}/` missing — tell user to run `/tk:plan` first
 - `{{paths.archives}}/<slug>/` already exists — `tracerkit archive` will error; warn and ask whether to remove it first

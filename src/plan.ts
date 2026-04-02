@@ -9,11 +9,11 @@ export interface PlanResult {
 }
 
 const PHASE_RE = /^## (Phase \d+\s*.*)$/;
-const CHECKED_RE = /^- \[x\] /;
+const CHECKED_RE = /^- \[x\] /i;
 const UNCHECKED_RE = /^- \[ \] /;
 
 export function parsePlan(content: string): PlanResult {
-  const lines = content.split('\n');
+  const lines = content.replace(/\r\n/g, '\n').split('\n');
   const phases: Phase[] = [];
   let current: Phase | null = null;
 

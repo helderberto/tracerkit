@@ -181,11 +181,32 @@ describe('CLI', () => {
     expect(output).toHaveLength(1);
   });
 
-  it('returns clean error when archive PRD not found', () => {
-    const output = run(['archive', 'nonexistent', tmp.get()]);
+  it('returns clean error when archive plan not found', () => {
+    const prdsDir = join(tmp.get(), '.tracerkit', 'prds');
+    mkdirSync(prdsDir, { recursive: true });
+    writeFileSync(
+      join(prdsDir, 'noplans.md'),
+      '---\nstatus: in_progress\n---\n',
+    );
+
+    const output = run(['archive', 'noplans', tmp.get()]);
 
     expect(output[0]).toMatch(/^Error:.*not found/);
     expect(output).toHaveLength(1);
+  });
+
+  it('does not drop path arg when it equals slug', () => {
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(plansDir, 'feat.md'),
+      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
+    );
+
+    // path arg happens to equal slug value "feat" — both should survive
+    const output = run(['progress', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('1/2'))).toBe(true);
   });
 
   it('returns clean error when archive already exists', () => {

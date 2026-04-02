@@ -60,10 +60,29 @@ describe('progress', () => {
     const output = progress(tmp.get(), 'empty');
 
     expect(output).toContainEqual(expect.stringContaining('No phases found'));
+    expect(output).toContainEqual(expect.stringContaining('Total: 0/0'));
   });
 
   it('throws when plan file missing', () => {
     expect(() => progress(tmp.get(), 'missing')).toThrow(/plan.*not found/i);
+  });
+
+  it('counts uppercase [X] checkboxes', () => {
+    writePlan(
+      'upper',
+      `
+## Phase 1 — Mixed
+
+- [X] Upper
+- [x] Lower
+- [ ] Unchecked
+`,
+    );
+
+    const output = progress(tmp.get(), 'upper');
+
+    expect(output).toContainEqual(expect.stringContaining('2/3'));
+    expect(output).toContainEqual(expect.stringContaining('Total: 2/3'));
   });
 
   it('handles plan with no checkboxes in phases', () => {

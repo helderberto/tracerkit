@@ -68,12 +68,58 @@ Just text.
     ]);
   });
 
+  it('handles mixed [x] and [X] in same phase', () => {
+    const content = `
+## Phase 1 — Mixed
+
+- [x] Lower
+- [X] Upper
+- [ ] Unchecked
+- [x] Another lower
+`;
+
+    const result = parsePlan(content);
+
+    expect(result.phases[0]).toEqual({
+      title: 'Phase 1 — Mixed',
+      checked: 3,
+      total: 4,
+    });
+  });
+
   it('handles malformed markdown gracefully', () => {
     const content = `random text\n- [x] orphan checkbox\n`;
 
     const result = parsePlan(content);
 
     expect(result.phases).toEqual([]);
+  });
+
+  it('counts uppercase [X] as checked', () => {
+    const content = `
+## Phase 1 — Mixed
+
+- [X] Upper
+- [x] Lower
+- [ ] Unchecked
+`;
+
+    const result = parsePlan(content);
+
+    expect(result.phases).toEqual([
+      { title: 'Phase 1 — Mixed', checked: 2, total: 3 },
+    ]);
+  });
+
+  it('handles CRLF line endings', () => {
+    const content =
+      '## Phase 1 — Setup\r\n\r\n- [x] Task A\r\n- [ ] Task B\r\n';
+
+    const result = parsePlan(content);
+
+    expect(result.phases).toEqual([
+      { title: 'Phase 1 — Setup', checked: 1, total: 2 },
+    ]);
   });
 
   it('ignores non-phase h2 headers', () => {

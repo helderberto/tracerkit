@@ -45,9 +45,10 @@ function runSlugCommand(
   rest: string[],
   fn: (cwd: string, slug: string) => string[],
 ): string[] {
-  const slug = rest.find((a) => !a.startsWith('-'));
-  if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
-  const target = rest.filter((a) => a !== slug);
+  const slugIndex = rest.findIndex((a) => !a.startsWith('-'));
+  if (slugIndex === -1) return ['Error: missing <slug> argument', '', ...USAGE];
+  const slug = rest[slugIndex];
+  const target = rest.filter((_, i) => i !== slugIndex);
   try {
     return fn(resolveTarget(target, process.cwd()), slug);
   } catch (err) {

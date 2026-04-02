@@ -1,7 +1,11 @@
-const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---\n/;
+const FRONTMATTER_RE = /^---\n([\s\S]*?)\n---(?:\n|$)/;
+
+function normalize(content: string): string {
+  return content.replace(/\r\n/g, '\n');
+}
 
 export function parseFrontmatter(content: string): Record<string, string> {
-  const match = content.match(FRONTMATTER_RE);
+  const match = normalize(content).match(FRONTMATTER_RE);
   if (!match) return {};
 
   const fields: Record<string, string> = {};
@@ -20,18 +24,23 @@ export function updateFrontmatter(
   field: string,
   value: string,
 ): string {
-  const match = content.match(FRONTMATTER_RE);
+  const normalized = normalize(content);
+  const match = normalized.match(FRONTMATTER_RE);
 
   if (!match) {
-    return `---\n${field}: ${value}\n---\n${content}`;
+    return `---\n${field}: ${value}\n---\n${normalized}`;
   }
 
-  const existing = parseFrontmatter(content);
-  existing[field] = value;
+  const lines = match[1].split('\n');
+  const fieldRe = new RegExp(`^${field}\\s*:`);
+  const idx = lines.findIndex((l) => fieldRe.test(l));
 
-  const yaml = Object.entries(existing)
-    .map(([k, v]) => `${k}: ${v}`)
-    .join('\n');
-  const body = content.slice(match[0].length);
-  return `---\n${yaml}\n---\n${body}`;
+  if (idx !== -1) {
+    lines[idx] = `${field}: ${value}`;
+  } else {
+    lines.push(`${field}: ${value}`);
+  }
+
+  const body = normalized.slice(match[0].length);
+  return `---\n${lines.join('\n')}\n---\n${body}`;
 }

@@ -15,7 +15,7 @@ export function progress(cwd: string, slug: string): string[] {
   const { phases } = parsePlan(content);
 
   if (phases.length === 0) {
-    return ['No phases found in plan.'];
+    return ['No phases found in plan.', 'Total: 0/0'];
   }
 
   const lines: string[] = [];
