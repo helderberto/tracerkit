@@ -12,10 +12,11 @@ describe('copyTemplates', () => {
   it('copies all template files into target directory', () => {
     const result = copyTemplates(tmp.get(), defaultConfig);
 
+    expect(result.copied).toContain('.claude/skills/tk:brief/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:prd/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:plan/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:check/SKILL.md');
-    expect(result.copied).toHaveLength(3);
+    expect(result.copied).toHaveLength(4);
   });
 
   it('preserves file contents', () => {
@@ -77,7 +78,7 @@ describe('copyTemplates', () => {
   it('leaves no unresolved placeholders in any template', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:prd', 'tk:plan', 'tk:check']) {
+    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:check']) {
       const content = readFileSync(
         join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
         'utf8',
@@ -93,7 +94,7 @@ describe('diffTemplates', () => {
   it('reports all files as missing on empty target', () => {
     const result = diffTemplates(tmp.get(), defaultConfig);
 
-    expect(result.missing).toHaveLength(3);
+    expect(result.missing).toHaveLength(4);
     expect(result.unchanged).toHaveLength(0);
     expect(result.modified).toHaveLength(0);
   });
@@ -102,7 +103,7 @@ describe('diffTemplates', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
     const result = diffTemplates(tmp.get(), defaultConfig);
-    expect(result.unchanged).toHaveLength(3);
+    expect(result.unchanged).toHaveLength(4);
     expect(result.modified).toHaveLength(0);
     expect(result.missing).toHaveLength(0);
   });
@@ -135,6 +136,6 @@ describe('diffTemplates', () => {
       },
     };
     const result = diffTemplates(tmp.get(), newConfig);
-    expect(result.modified).toHaveLength(3);
+    expect(result.modified).toHaveLength(4);
   });
 });

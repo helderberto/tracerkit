@@ -4,11 +4,13 @@ import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import {
   archive,
+  brief,
   init,
   progress,
   uninstall,
   update,
 } from './commands/index.ts';
+import { COMMANDS } from './constants.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -17,15 +19,14 @@ const { version } = JSON.parse(
   ),
 );
 
+const maxLen = Math.max(...COMMANDS.map((c) => `${c.name} ${c.args}`.length));
 const USAGE = [
   'Usage: tracerkit <command> [path]',
   '',
   'Commands:',
-  '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
-  '  update [path]     Refresh unchanged files from latest version, skip modified',
-  '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
-  '  progress <slug>   Show per-phase checkbox progress for a plan',
-  '  archive <slug>    Archive a completed feature (PRD + plan)',
+  ...COMMANDS.map(
+    (c) => `  ${`${c.name} ${c.args}`.padEnd(maxLen + 2)}${c.desc}`,
+  ),
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
@@ -70,6 +71,8 @@ export function run(args: string[]): string[] {
   const rest = args.slice(1);
 
   switch (command) {
+    case 'brief':
+      return brief(resolveTarget(rest, process.cwd()));
     case 'init':
       return init(resolveTarget(rest));
     case 'update': {
