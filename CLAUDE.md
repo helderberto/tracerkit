@@ -9,7 +9,7 @@
 ## Exports
 
 - Always use named exports — never default exports
-- `src/commands/index.ts` is the barrel file for commands — update it when adding new commands
+- Directories with many modules get a barrel file (`index.ts`) — watch for circular dependencies
 
 ## Git
 
