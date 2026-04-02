@@ -1,3 +1,9 @@
+# [1.8.0](https://github.com/helderberto/tracerkit/compare/v1.7.1...v1.8.0) (2026-04-02)
+
+### Features
+
+- add tk:brief session briefing command ([#3](https://github.com/helderberto/tracerkit/issues/3)) ([de18625](https://github.com/helderberto/tracerkit/commit/de1862535351de624c6c3d009bc76044450b6c6e))
+
 ## [1.7.1](https://github.com/helderberto/tracerkit/compare/v1.7.0...v1.7.1) (2026-04-02)
 
 # [1.7.0](https://github.com/helderberto/tracerkit/compare/v1.6.1...v1.7.0) (2026-04-02)
