@@ -1,3 +1,9 @@
+# [1.5.0](https://github.com/helderberto/tracerkit/compare/v1.4.7...v1.5.0) (2026-04-02)
+
+### Features
+
+- workflow v2 — plan checks, CLI scripts, unified statuses ([#2](https://github.com/helderberto/tracerkit/issues/2)) ([4c2a76c](https://github.com/helderberto/tracerkit/commit/4c2a76c486531a8a4e022a57497e21f905fdb7c4))
+
 ## [1.4.7](https://github.com/helderberto/tracerkit/compare/v1.4.6...v1.4.7) (2026-04-01)
 
 ## [1.4.6](https://github.com/helderberto/tracerkit/compare/v1.4.5...v1.4.6) (2026-04-01)
