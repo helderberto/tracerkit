@@ -1,4 +1,4 @@
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
@@ -121,5 +121,25 @@ describe('CLI', () => {
     const output = run(['-v']);
 
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
+  });
+
+  it('routes "progress <slug>" to progress command', () => {
+    const plansDir = join(tmp.get(), '.tracerkit', 'plans');
+    mkdirSync(plansDir, { recursive: true });
+    writeFileSync(
+      join(plansDir, 'feat.md'),
+      '## Phase 1 — Setup\n\n- [x] Done\n- [ ] Todo\n',
+    );
+
+    const output = run(['progress', 'feat', tmp.get()]);
+
+    expect(output.some((l) => l.includes('1/2'))).toBe(true);
+  });
+
+  it('prints error when progress slug missing', () => {
+    const output = run(['progress']);
+
+    expect(output[0]).toContain('Error');
+    expect(output.some((l) => l.includes('Usage'))).toBe(true);
   });
 });

@@ -5,6 +5,7 @@ import { homedir } from 'node:os';
 import { init } from './commands/init.ts';
 import { update } from './commands/update.ts';
 import { uninstall } from './commands/uninstall.ts';
+import { progress } from './commands/progress.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -20,6 +21,7 @@ const USAGE = [
   '  init [path]       Install skills to ~/.claude/skills/ (or [path] if given)',
   '  update [path]     Refresh unchanged files from latest version, skip modified',
   '  uninstall [path]  Remove TracerKit skill directories, keep .tracerkit/ artifacts',
+  '  progress <slug>   Show per-phase checkbox progress for a plan',
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
@@ -62,6 +64,12 @@ export function run(args: string[]): string[] {
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
+    case 'progress': {
+      const slug = rest.find((a) => !a.startsWith('-'));
+      if (!slug) return ['Error: missing <slug> argument', '', ...USAGE];
+      const target = rest.filter((a) => a !== slug);
+      return progress(resolveTarget(target), slug);
+    }
     default:
       return USAGE;
   }
