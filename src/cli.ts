@@ -10,7 +10,7 @@ import {
   uninstall,
   update,
 } from './commands/index.ts';
-import { COMMANDS, FORCE_FLAG } from './constants.ts';
+import { COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
   readFileSync(
@@ -59,11 +59,11 @@ function runSlugCommand(
 }
 
 export function run(args: string[]): string[] {
-  if (args.includes('--help') || args.includes('-h')) {
+  if (args.includes(FLAGS.help) || args.includes('-h')) {
     return USAGE;
   }
 
-  if (args.includes('--version') || args.includes('-v')) {
+  if (args.includes(FLAGS.version) || args.includes('-v')) {
     return [`tracerkit/${version}`];
   }
 
@@ -74,13 +74,13 @@ export function run(args: string[]): string[] {
     case 'brief':
       return brief(resolveTarget(rest, process.cwd()));
     case 'init': {
-      const force = rest.includes(FORCE_FLAG);
-      const targetArgs = rest.filter((a) => a !== FORCE_FLAG);
+      const force = rest.includes(FLAGS.force);
+      const targetArgs = rest.filter((a) => a !== FLAGS.force);
       return init(resolveTarget(targetArgs), { force });
     }
     case 'update': {
-      const force = rest.includes(FORCE_FLAG);
-      const targetArgs = rest.filter((a) => a !== FORCE_FLAG);
+      const force = rest.includes(FLAGS.force);
+      const targetArgs = rest.filter((a) => a !== FLAGS.force);
       const output = update(resolveTarget(targetArgs), { force });
       output.push('', 'Updated to the latest TracerKit.');
       output.push(

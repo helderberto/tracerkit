@@ -7,7 +7,11 @@ export const SKILL_NAMES = [
 ] as const;
 export const DEPRECATED_SKILLS = [`${SKILL_PREFIX}:verify`] as const;
 
-export const FORCE_FLAG = '--force';
+export const FLAGS = {
+  force: '--force',
+  help: '--help',
+  version: '--version',
+} as const;
 
 export const COMMANDS = [
   {
