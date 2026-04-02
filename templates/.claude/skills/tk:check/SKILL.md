@@ -41,13 +41,17 @@ Read `{{paths.plans}}/<slug>.md`. If it does not exist, list available plans and
 
 Read the source PRD referenced in the plan header (`> Source PRD: ...`).
 
-### 3. Launch read-only review
+### 3. Fast-path: check if implementation exists
+
+Before launching a subagent, check whether the primary module file(s) from Phase 1 exist. If none exist, skip the subagent entirely and report `0/N — not yet started`. List Phase 1's "Done when" items as next steps and jump to Step 5.
+
+### 3b. Launch read-only review
 
 Use a **read-only subagent** (no file writes, no edits) to:
 
 1. Read every section of the plan — architectural decisions, each phase, done-when checkboxes
 2. For each phase, check every `- [ ]` / `- [x]` item against the codebase
-3. Run any test commands referenced in the plan or discoverable via project conventions
+3. Run the project's test suite (e.g., `npm test`, `npx vitest run`) and include pass/fail results in the report. If no test command is discoverable, note this.
 4. Compare user stories from the PRD against actual behavior
 
 For each checkbox, determine whether it should be verified (`[x]`) or not (`[ ]`) and report this — do not edit any files.
@@ -57,7 +61,7 @@ Collect findings into two categories:
 - **BLOCKERS** — checked items that don't hold up, failing tests, broken contracts. These prevent transitioning to `done`.
 - **SUGGESTIONS** — improvements, minor gaps, style issues. These do not prevent `done`.
 
-### 3b. Update checkboxes
+### 3c. Update checkboxes
 
 Using the subagent's report, update each checkbox in `{{paths.plans}}/<slug>.md` to `[x]` or `[ ]`.
 

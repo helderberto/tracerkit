@@ -7,13 +7,17 @@ argument-hint: <idea>
 
 Skip steps already satisfied. If user provided a description via arguments, skip to Step 2.
 
+## Pre-loaded context
+
+- Existing PRDs: !`ls {{paths.prds}}/ 2>/dev/null || echo "none"`
+
 ## Input
 
 The argument is: $ARGUMENTS
 
 If the argument is empty, go straight to Step 1 (gather problem description). After gathering the idea, derive the slug from the idea.
 
-If the argument is provided, convert it to a kebab-case slug (lowercase, spaces and underscores replaced with hyphens). This is `<slug>`. The output file is `{{paths.prds}}/<slug>.md`.
+If the argument is provided, derive a slug: use only the text before `—` or `–` (if present), take at most 3–4 keywords, strip filler words (a, the, for, etc.), then convert to kebab-case (lowercase, hyphens). This is `<slug>`. The output file is `{{paths.prds}}/<slug>.md`.
 
 If `{{paths.prds}}/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
@@ -33,7 +37,7 @@ Verify assertions and map current state: data models, services, API routes, fron
 
 Interview relentlessly, one question at a time. Lead with your recommended answer; let the user confirm or correct. If a question can be answered by exploring code, explore instead of asking. For terse answers, offer concrete options (A/B/C).
 
-Walk these branches (skip any already resolved):
+Walk these branches (skip any already resolved or irrelevant to the project type — e.g., for CLI tools and libraries, skip UI-specific branches like Display, Access, Navigation unless the idea involves them):
 
 - **Scope & Surface** — Where does this live? New page/view or integrated? Which user roles?
 - **Data & Concepts** — Precise definitions for each new concept. What data exists, what's missing?
@@ -124,6 +128,8 @@ Long numbered list. Cover happy path, edge cases, error states.
 
 Do NOT include file paths or code snippets — they go stale.
 
+Omit any section whose content would be "None required" — only include sections with actual content.
+
 ## Testing Decisions
 
 - What makes a good test (behavior, not implementation)
@@ -136,7 +142,7 @@ Do NOT include file paths or code snippets — they go stale.
 Explicit list. Be specific — vague exclusions invite scope creep.
 ```
 
-Tell the user: file created, one-line summary, next step is `/tk:plan <slug>`.
+Tell the user: file created, one-line summary. Then ask: "Run `/tk:plan <slug>` next?"
 
 ## Error Handling
 

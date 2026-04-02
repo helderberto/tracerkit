@@ -33,7 +33,7 @@ If the PRD has no frontmatter, skip this step silently.
 
 ### 2. Explore the codebase
 
-Understand current architecture, existing patterns, and integration points.
+Understand current architecture, existing patterns, and integration points. If you already have codebase context from a prior step in this conversation (e.g., you just ran `/tk:prd`), skip the exploration and note which context you're reusing.
 
 **Research protocol**: codebase first, then project docs. If you cannot verify a technical claim from these sources, flag it as uncertain — never fabricate.
 
@@ -132,7 +132,7 @@ Carried forward from PRD verbatim.
 Gaps found in the PRD needing resolution. Blank if none.
 ```
 
-Print saved path and one line per phase: `Phase N — <title> (<condition summary>)`.
+Print saved path and one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "Run `/tk:check <slug>` when ready?"
 
 ## Rules
 
@@ -140,7 +140,7 @@ Print saved path and one line per phase: `Phase N — <title> (<condition summar
 - Each phase must be demoable end-to-end on its own
 - "Done when" must be a checkbox list of testable conditions, not prose
 - **Safety valve**: if a phase has >5 "Done when" items, stop and split it into smaller phases before continuing
-- Never modify the source PRD
+- Never modify the source PRD content — only update frontmatter status fields
 - Carry PRD's Out of Scope forward verbatim
 
 ## Error Handling
