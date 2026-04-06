@@ -2,6 +2,13 @@
 description: Session briefing — shows active features, progress, and suggested focus. Use at the start of a session to orient.
 ---
 
+## Storage
+
+Read `.tracerkit/config.json` in the project root. If absent, use `local`.
+
+- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
+- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
+
 # Session Briefing
 
 Get a quick overview of all active features, their progress, and what to focus on next.

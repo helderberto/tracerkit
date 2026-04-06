@@ -1,7 +1,14 @@
 ---
-description: Create a PRD through user interview, codebase exploration, and module design, saved to .tracerkit/prds/. Use when starting a new feature or change.
+description: Create a PRD through user interview, codebase exploration, and module design. Use when starting a new feature or change.
 argument-hint: <idea>
 ---
+
+## Storage
+
+Read `.tracerkit/config.json` in the project root. If absent, use `local`.
+
+- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
+- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
 
 # PRD Writing
 

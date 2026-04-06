@@ -8,12 +8,7 @@ import {
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import {
-  type Config,
-  DEFAULT_PATHS,
-  STORAGE_LOCAL,
-  STORAGE_GITHUB,
-} from './config.ts';
+import { type Config, DEFAULT_PATHS } from './config.ts';
 import { SKILL_PREFIX } from './constants.ts';
 
 export { SKILL_NAMES, DEPRECATED_SKILLS } from './constants.ts';
@@ -64,26 +59,6 @@ export function renderTemplate(content: string, config: Config): string {
   if (config.paths.archives !== DEFAULT_PATHS.archives) {
     result = result.replaceAll(DEFAULT_PATHS.archives, config.paths.archives);
   }
-
-  // Conditional blocks: strip inactive storage, unwrap active
-  const active = config.storage ?? STORAGE_LOCAL;
-  const inactive = active === STORAGE_LOCAL ? STORAGE_GITHUB : STORAGE_LOCAL;
-
-  result = result.replace(
-    new RegExp(
-      `<!-- if:${inactive} -->[^\\S\\n]*\\n[\\s\\S]*?<!-- end:${inactive} -->[^\\S\\n]*\\n?`,
-      'g',
-    ),
-    '',
-  );
-  result = result.replace(
-    new RegExp(`<!-- if:${active} -->[^\\S\\n]*\\n`, 'g'),
-    '',
-  );
-  result = result.replace(
-    new RegExp(`<!-- end:${active} -->[^\\S\\n]*\\n?`, 'g'),
-    '',
-  );
 
   // GitHub template variables
   if (config.github?.repo) {

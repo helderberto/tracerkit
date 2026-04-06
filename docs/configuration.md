@@ -1,6 +1,6 @@
 # Configuration
 
-TracerKit stores artifacts as local files by default. You can switch to GitHub Issues as the storage backend, or customize local paths.
+TracerKit stores artifacts as local files by default. Storage is configured **per-project** -- each project can use a different backend. Skills are installed globally and resolve the storage backend at runtime by reading `.tracerkit/config.json` from the project root.
 
 ## Storage
 
@@ -14,14 +14,15 @@ Set `storage` to choose where PRDs, plans, and status live:
 ### Via CLI
 
 ```bash
-tracerkit init --storage github        # first install with GitHub
-tracerkit config storage github        # switch existing install (auto re-renders skills)
-tracerkit config storage local         # switch back
+tracerkit config storage github        # set current project to GitHub
+tracerkit config storage local         # switch back to local
 ```
+
+The `config` command defaults to the current working directory, so it always sets per-project config.
 
 ### Via config file
 
-Create or edit `.tracerkit/config.json`:
+Create or edit `.tracerkit/config.json` in the project root:
 
 ```json
 {
@@ -29,7 +30,7 @@ Create or edit `.tracerkit/config.json`:
 }
 ```
 
-When editing the config file directly, run `tracerkit update --force` to re-render skills. The `tracerkit config` CLI does this automatically.
+Skills read this file at runtime -- no re-rendering needed.
 
 ## Local paths
 
@@ -100,8 +101,9 @@ Override `tk:prd` and `tk:plan` via `github.labels.prd` and `github.labels.plan`
 ## Reading current config
 
 ```bash
-tracerkit config                       # print full config as JSON
+tracerkit config                       # print project config as JSON
 tracerkit config storage               # print specific key
 tracerkit config github.repo           # print nested key
-tracerkit config . storage             # print key for project install
 ```
+
+The `config` command always operates on the current working directory.

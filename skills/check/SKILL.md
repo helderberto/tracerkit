@@ -3,6 +3,13 @@ description: Verify implementation against plan. Shows progress, finds blockers,
 argument-hint: '[slug]'
 ---
 
+## Storage
+
+Read `.tracerkit/config.json` in the project root. If absent, use `local`.
+
+- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
+- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
+
 # Check Implementation
 
 Check implementation against a plan. Update checks, stamp findings, transition status, and archive when done.

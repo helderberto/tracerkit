@@ -114,8 +114,8 @@ describe('config', () => {
         join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
         'utf8',
       );
-      expect(skill).not.toContain('<!-- if:github -->');
-      expect(skill).not.toContain('<!-- if:local -->');
+      expect(skill).toContain('<!-- if:github -->');
+      expect(skill).toContain('<!-- if:local -->');
     });
 
     it('returns confirmation message', () => {

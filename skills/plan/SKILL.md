@@ -1,7 +1,14 @@
 ---
-description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved to .tracerkit/plans/. Use after /tk:prd.
+description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices. Use after /tk:prd.
 argument-hint: '[slug]'
 ---
+
+## Storage
+
+Read `.tracerkit/config.json` in the project root. If absent, use `local`.
+
+- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
+- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
 
 # PRD to Plan
 
