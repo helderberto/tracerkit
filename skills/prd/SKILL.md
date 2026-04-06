@@ -99,7 +99,7 @@ status: created
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `gh label create {{github.labels.prd}} --repo <repo> --force`, `gh label create tk:created --repo <repo> --force`.
+Ensure labels exist: `gh label create {{github.labels.prd}} --repo {{github.repo}} --force`, `gh label create tk:created --repo {{github.repo}} --force`.
 
 Create GitHub Issue — title: `[{{github.labels.prd}}] <slug>: <Feature Title>`, labels: `{{github.labels.prd}}`, `tk:created`.
 

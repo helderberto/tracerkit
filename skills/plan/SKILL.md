@@ -134,6 +134,7 @@ Save to `.tracerkit/plans/<slug>.md` (create dir if missing).
 ---
 source_prd: .tracerkit/prds/<slug>.md
 slug: <slug>
+status: in_progress
 ---
 
 # Plan: <Feature Name>
@@ -146,7 +147,7 @@ Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field.
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `gh label create {{github.labels.plan}} --repo <repo> --force`, `gh label create tk:in-progress --repo <repo> --force`.
+Ensure labels exist: `gh label create {{github.labels.plan}} --repo {{github.repo}} --force`, `gh label create tk:in-progress --repo {{github.repo}} --force`.
 
 Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature Title>`, labels: `{{github.labels.plan}}`, `tk:in-progress`.
 
@@ -154,6 +155,7 @@ Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature 
 <!-- tk:metadata
 source_prd: #<PRD issue number>
 slug: <slug>
+status: in_progress
 -->
 
 # Plan: <Feature Name>

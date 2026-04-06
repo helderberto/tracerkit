@@ -442,12 +442,11 @@ function migrateGitHubToLocal(
   }
 
   for (const issue of allIssues) {
-    const slug = extractSlugFromTitle(issue.title);
+    const { metadata, body } = parseMetadata(issue.body ?? '');
+    const slug = metadata.slug ?? extractSlugFromTitle(issue.title);
     if (!slug) continue;
 
     const labels = issue.labels.map((l) => l.name);
-    const { metadata, body } = parseMetadata(issue.body ?? '');
-
     const status = metadata.status ?? statusFromLabels(labels);
 
     const dir = issue.type === 'prd' ? cfg.paths.prds : cfg.paths.plans;
@@ -466,6 +465,7 @@ function migrateGitHubToLocal(
       if (metadata.source_prd) planMeta.source_prd = metadata.source_prd;
       if (metadata.slug || slug) planMeta.slug = metadata.slug ?? slug;
       if (status) planMeta.status = status;
+      if (metadata.completed) planMeta.completed = metadata.completed;
       const fm = metadataToFrontmatter(planMeta);
       writeLocalFile(filePath, `${fm}\n${body}`);
     }

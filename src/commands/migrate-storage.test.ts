@@ -996,15 +996,15 @@ describe('migrateStorage', () => {
       expect(output.some((l) => l.includes('switched'))).toBe(true);
     });
 
-    it('github→local derives slug from metadata.slug when present', () => {
+    it('github→local prefers metadata.slug over title-derived slug', () => {
       setupConfig(tmp.get(), { storage: 'github' });
       const { runGh } = createGhToLocalMock({
-        planIssues: [
+        prdIssues: [
           {
-            number: 11,
-            title: '[tk:plan] my-feat: Plan',
-            body: '<!-- tk:metadata\nslug: my-feat\n-->\n\n# Plan',
-            labels: ['tk:plan', 'tk:in-progress'],
+            number: 10,
+            title: '[tk:prd] wrong-slug: Edited Title',
+            body: '<!-- tk:metadata\nslug: correct-slug\nstatus: created\n-->\n\n# Feature',
+            labels: ['tk:prd', 'tk:created'],
             state: 'OPEN',
           },
         ],
@@ -1012,11 +1012,39 @@ describe('migrateStorage', () => {
 
       migrateStorage(tmp.get(), { runGh });
 
+      const correctPath = join(
+        tmp.get(),
+        '.tracerkit',
+        'prds',
+        'correct-slug.md',
+      );
+      const wrongPath = join(tmp.get(), '.tracerkit', 'prds', 'wrong-slug.md');
+      expect(existsSync(correctPath)).toBe(true);
+      expect(existsSync(wrongPath)).toBe(false);
+    });
+
+    it('github→local plan includes completed in frontmatter', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] done-plan: Plan',
+            body: '<!-- tk:metadata\nslug: done-plan\nstatus: done\ncompleted: 2026-04-01T00:00:00Z\n-->\n\n# Plan',
+            labels: ['tk:plan', 'tk:done'],
+            state: 'CLOSED',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
       const content = readFileSync(
-        join(tmp.get(), '.tracerkit', 'plans', 'my-feat.md'),
+        join(tmp.get(), '.tracerkit', 'plans', 'done-plan.md'),
         'utf8',
       );
-      expect(content).toContain('slug: my-feat');
+      expect(content).toContain('completed: 2026-04-01T00:00:00Z');
+      expect(content).toContain('status: done');
     });
 
     it('github→local handles issue with no body', () => {

@@ -7,6 +7,7 @@
 - 3+ params: use a single object argument; 1-2 positional args are fine
 - No unnecessary comments — code should be explicit and self-explanatory
 - Prefer immutable data — avoid mutation; use `const`, spread, and `map`/`filter` over in-place changes
+- No inline-ifs or ternary — prefer explicit `if`/`else` blocks
 - Every exported function must have related unit tests
 
 ## Exports
