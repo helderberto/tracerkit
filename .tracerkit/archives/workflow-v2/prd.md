@@ -1,6 +1,7 @@
 ---
 created: 2026-04-02T14:00:00Z
-status: in_progress
+status: done
+completed: 2026-04-06T00:00:00Z
 ---
 
 # Workflow V2 — Plan Checks, CLI Scripts, and Unified Statuses

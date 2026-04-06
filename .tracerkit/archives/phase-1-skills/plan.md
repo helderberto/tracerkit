@@ -108,3 +108,7 @@ tests in a scratch project with no side-effects on the tracerkit repo itself.
 ## Open Questions
 
 - None — PRD is complete and unambiguous for this scope.
+
+## Archived
+
+Archived on 2026-04-06.

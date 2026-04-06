@@ -1,3 +1,8 @@
+---
+status: done
+completed: 2026-04-06T00:00:00Z
+---
+
 # Phase 1 — Skills
 
 ## Problem Statement

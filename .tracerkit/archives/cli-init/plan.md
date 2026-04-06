@@ -69,3 +69,7 @@ Build the `uninstall` command: abort if not initialized, then recursively remove
 ## Open Questions
 
 None.
+
+## Archived
+
+Archived on 2026-04-06.

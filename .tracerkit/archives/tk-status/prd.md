@@ -1,3 +1,8 @@
+---
+status: done
+completed: 2026-04-06T00:00:00Z
+---
+
 # tk:status — Workflow Dashboard Skill
 
 ## Problem Statement

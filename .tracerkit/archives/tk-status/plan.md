@@ -62,3 +62,7 @@ Create the `/tk:status` skill and register it in the CLI, then document the meta
 ## Open Questions
 
 None.
+
+## Archived
+
+Archived on 2026-04-06. Feature superseded — dashboard functionality merged into `tk:check` (no-args mode) by workflow-v2.
