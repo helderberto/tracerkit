@@ -1,3 +1,9 @@
+# [1.12.0](https://github.com/helderberto/tracerkit/compare/v1.11.3...v1.12.0) (2026-04-06)
+
+### Features
+
+- add GitHub Issues as storage backend ([#6](https://github.com/helderberto/tracerkit/issues/6)) ([0cd4b2c](https://github.com/helderberto/tracerkit/commit/0cd4b2ca813f47852fc137225fc434e25c4563ec))
+
 ## [1.11.3](https://github.com/helderberto/tracerkit/compare/v1.11.2...v1.11.3) (2026-04-06)
 
 ## [1.11.2](https://github.com/helderberto/tracerkit/compare/v1.11.1...v1.11.2) (2026-04-06)
