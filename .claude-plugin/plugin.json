@@ -3,8 +3,10 @@
   "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and archive features using tracer-bullet vertical slices.",
   "version": "1.11.0",
   "author": {
-    "name": "helderberto"
+    "name": "Helder Burato Berto",
+    "email": "helder.burato@gmail.com"
   },
+  "homepage": "https://github.com/helderberto/tracerkit",
   "repository": "https://github.com/helderberto/tracerkit",
   "license": "MIT",
   "keywords": [
