@@ -215,12 +215,11 @@ AI:  Reading updated PRD...
 
 ## GitHub Issues walkthrough
 
-Same workflow, but PRDs and plans are stored as GitHub Issues instead of local files. Set up once:
+Same workflow, but PRDs and plans are stored as GitHub Issues instead of local files. Storage is per-project -- other projects stay local unless configured otherwise:
 
 ```bash
 $ tracerkit config storage github
 ✓ Set storage = github
-✓ Skills re-rendered
 ```
 
 Then use the same skills:

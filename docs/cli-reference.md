@@ -1,6 +1,6 @@
 # CLI Reference
 
-The CLI manages skill installation and updates. Skills themselves run without CLI calls at runtime.
+The CLI manages skill installation, updates, and per-project configuration. Skills themselves run without CLI calls at runtime.
 
 ```bash
 $ npm install -g tracerkit
@@ -24,7 +24,7 @@ $ npm install -g tracerkit
 
 `init`, `update`, and `uninstall` default to `~/.claude/skills/`. `config` defaults to the current working directory.
 
-## Per-project storage
+## Per-project usage
 
 Storage is configured per-project. Skills resolve the backend at runtime:
 
@@ -34,7 +34,7 @@ $ tracerkit config github.repo org/repo # set target repo
 $ tracerkit config storage local        # switch back to local
 ```
 
-## Per-project skill install
+Team-scoped skill installs:
 
 ```bash
 $ tracerkit init .                      # install to .claude/skills/ in current dir

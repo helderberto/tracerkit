@@ -140,7 +140,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | Document                                         | Description                                        |
 | ------------------------------------------------ | -------------------------------------------------- |
 | [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
-| [CLI Reference](docs/cli-reference.md)           | Lifecycle commands: init, update, uninstall        |
+| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, config, uninstall          |
 | [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths     |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
