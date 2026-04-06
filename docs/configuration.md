@@ -93,7 +93,7 @@ When `storage` is `"local"` (default), customize file paths:
 }
 ```
 
-Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved -- rename them manually if needed.
+Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved — rename them manually if needed.
 
 ## Reading current config
 
