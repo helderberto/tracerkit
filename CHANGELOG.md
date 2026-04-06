@@ -1,3 +1,9 @@
+# [1.13.0](https://github.com/helderberto/tracerkit/compare/v1.12.0...v1.13.0) (2026-04-06)
+
+### Features
+
+- per-project storage config with runtime resolution ([#7](https://github.com/helderberto/tracerkit/issues/7)) ([b15a1b9](https://github.com/helderberto/tracerkit/commit/b15a1b9338664de8dfa7466717215b3b225c34e5))
+
 # [1.12.0](https://github.com/helderberto/tracerkit/compare/v1.11.3...v1.12.0) (2026-04-06)
 
 ### Features
