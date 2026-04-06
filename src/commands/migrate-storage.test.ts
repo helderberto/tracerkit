@@ -1,9 +1,12 @@
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { useTmpDir } from '../test-setup.ts';
+import { existsSync } from 'node:fs';
 import {
   parseFrontmatter,
+  parseMetadata,
   frontmatterToMetadata,
+  metadataToFrontmatter,
   statusToLabel,
   labelToStatus,
   extractSlugFromTitle,
@@ -120,6 +123,83 @@ describe('labelToStatus', () => {
 
   it('falls back to created for unknown label', () => {
     expect(labelToStatus('unknown')).toBe('created');
+  });
+});
+
+describe('parseMetadata', () => {
+  it('extracts HTML comment metadata and body', () => {
+    const content =
+      '<!-- tk:metadata\ncreated: 2026-04-06T10:00:00Z\nstatus: created\n-->\n\n# My Feature\n\nBody here.';
+
+    const result = parseMetadata(content);
+
+    expect(result.metadata).toEqual({
+      created: '2026-04-06T10:00:00Z',
+      status: 'created',
+    });
+    expect(result.body).toBe('# My Feature\n\nBody here.');
+  });
+
+  it('returns empty metadata when no comment block', () => {
+    const content = '# My Feature\n\nBody here.';
+
+    const result = parseMetadata(content);
+
+    expect(result.metadata).toEqual({});
+    expect(result.body).toBe('# My Feature\n\nBody here.');
+  });
+
+  it('handles metadata with completed field', () => {
+    const content =
+      '<!-- tk:metadata\ncreated: 2026-04-01T00:00:00Z\nstatus: done\ncompleted: 2026-04-06T00:00:00Z\n-->\n\n# Done Feature';
+
+    const result = parseMetadata(content);
+
+    expect(result.metadata).toEqual({
+      created: '2026-04-01T00:00:00Z',
+      status: 'done',
+      completed: '2026-04-06T00:00:00Z',
+    });
+  });
+
+  it('handles empty metadata block', () => {
+    const content = '<!-- tk:metadata\n-->\n\nBody';
+
+    const result = parseMetadata(content);
+
+    expect(result.metadata).toEqual({});
+    expect(result.body).toBe('Body');
+  });
+});
+
+describe('metadataToFrontmatter', () => {
+  it('converts metadata to YAML frontmatter', () => {
+    const result = metadataToFrontmatter({
+      created: '2026-04-06T10:00:00Z',
+      status: 'created',
+    });
+
+    expect(result).toBe(
+      '---\ncreated: 2026-04-06T10:00:00Z\nstatus: created\n---\n',
+    );
+  });
+
+  it('includes completed when present', () => {
+    const result = metadataToFrontmatter({
+      created: '2026-04-01T00:00:00Z',
+      status: 'done',
+      completed: '2026-04-06T00:00:00Z',
+    });
+
+    expect(result).toContain('completed: 2026-04-06T00:00:00Z');
+    expect(result).toMatch(/^---\n/);
+    expect(result).toMatch(/\n---\n$/);
+  });
+
+  it('handles empty metadata', () => {
+    const result = metadataToFrontmatter({});
+
+    expect(result).toBe('---\n---\n');
   });
 });
 
@@ -276,13 +356,65 @@ describe('migrateStorage', () => {
     return { runGh, calls };
   }
 
-  it('returns early when storage is already github', () => {
-    setupConfig(tmp.get(), { storage: 'github' });
+  function createGhToLocalMock(opts: {
+    prdIssues?: Array<{
+      number: number;
+      title: string;
+      body: string;
+      labels: string[];
+      state: string;
+    }>;
+    planIssues?: Array<{
+      number: number;
+      title: string;
+      body: string;
+      labels: string[];
+      state: string;
+    }>;
+    mergedPrs?: Array<{ number: number; title: string }>;
+  }): { runGh: RunGh; calls: string[][] } {
+    const calls: string[][] = [];
+    const runGh: RunGh = (args: string[]) => {
+      calls.push(args);
+      const joined = args.join(' ');
 
-    const output = migrateStorage(tmp.get());
+      if (joined.includes('issue list')) {
+        const labelArg = args[args.indexOf('--label') + 1];
+        if (labelArg === 'tk:prd' || labelArg?.includes('prd')) {
+          return JSON.stringify(
+            (opts.prdIssues ?? []).map((i) => ({
+              ...i,
+              labels: i.labels.map((name) => ({ name })),
+            })),
+          );
+        }
+        if (labelArg === 'tk:plan' || labelArg?.includes('plan')) {
+          return JSON.stringify(
+            (opts.planIssues ?? []).map((i) => ({
+              ...i,
+              labels: i.labels.map((name) => ({ name })),
+            })),
+          );
+        }
+        return '[]';
+      }
 
-    expect(output[0]).toContain('already');
-  });
+      if (joined.includes('pr list')) {
+        return JSON.stringify(opts.mergedPrs ?? []);
+      }
+
+      if (joined.includes('issue comment')) {
+        return '';
+      }
+
+      if (joined.includes('repo view')) {
+        return 'owner/repo';
+      }
+
+      return '';
+    };
+    return { runGh, calls };
+  }
 
   describe('local → github', () => {
     it('creates GitHub issue from local PRD', () => {
@@ -509,6 +641,281 @@ describe('migrateStorage', () => {
       );
       const titleIdx = createCall!.indexOf('--title') + 1;
       expect(createCall![titleIdx]).toContain('[tk:plan] my-feature:');
+    });
+  });
+
+  describe('github → local', () => {
+    it('creates local PRD file from GitHub issue', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] my-feature: My Feature',
+            body: '<!-- tk:metadata\ncreated: 2026-04-06T10:00:00Z\nstatus: created\n-->\n\n# My Feature\n\nDescription.',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      const prdPath = join(tmp.get(), '.tracerkit', 'prds', 'my-feature.md');
+      expect(existsSync(prdPath)).toBe(true);
+      const content = readFileSync(prdPath, 'utf8');
+      expect(content).toContain('---');
+      expect(content).toContain('created: 2026-04-06T10:00:00Z');
+      expect(content).toContain('status: created');
+      expect(content).toContain('# My Feature');
+      expect(output.some((l) => l.includes('my-feature'))).toBe(true);
+    });
+
+    it('creates local plan file from GitHub issue', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] my-feature: Plan: My Feature',
+            body: '<!-- tk:metadata\nsource_prd: #10\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task 1',
+            labels: ['tk:plan', 'tk:in-progress'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      const planPath = join(tmp.get(), '.tracerkit', 'plans', 'my-feature.md');
+      expect(existsSync(planPath)).toBe(true);
+      const content = readFileSync(planPath, 'utf8');
+      expect(content).toContain('# Plan: My Feature');
+      expect(output.some((l) => l.includes('my-feature'))).toBe(true);
+    });
+
+    it('routes closed tk:done issues to archives', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] done-feature: Done Feature',
+            body: '<!-- tk:metadata\ncreated: 2026-03-01T00:00:00Z\nstatus: done\ncompleted: 2026-04-01T00:00:00Z\n-->\n\n# Done Feature\n\nCompleted.',
+            labels: ['tk:prd', 'tk:done'],
+            state: 'CLOSED',
+          },
+        ],
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] done-feature: Plan: Done Feature',
+            body: '<!-- tk:metadata\nstatus: done\n-->\n\n# Plan: Done Feature\n\n- [x] All done',
+            labels: ['tk:plan', 'tk:done'],
+            state: 'CLOSED',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const archivePrd = join(
+        tmp.get(),
+        '.tracerkit',
+        'archives',
+        'done-feature',
+        'prd.md',
+      );
+      const archivePlan = join(
+        tmp.get(),
+        '.tracerkit',
+        'archives',
+        'done-feature',
+        'plan.md',
+      );
+      expect(existsSync(archivePrd)).toBe(true);
+      expect(existsSync(archivePlan)).toBe(true);
+
+      const prdContent = readFileSync(archivePrd, 'utf8');
+      expect(prdContent).toContain('status: done');
+      expect(prdContent).toContain('completed: 2026-04-01T00:00:00Z');
+    });
+
+    it('skips when local file already exists', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      writePrd(tmp.get(), 'existing-feature');
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] existing-feature: Existing Feature',
+            body: '<!-- tk:metadata\ncreated: 2026-04-06T10:00:00Z\nstatus: created\n-->\n\n# Existing Feature',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      expect(output.some((l) => l.includes('skip') || l.includes('⚠'))).toBe(
+        true,
+      );
+    });
+
+    it('flips config to local after migration', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] my-feature: My Feature',
+            body: '<!-- tk:metadata\ncreated: 2026-04-06T10:00:00Z\nstatus: created\n-->\n\n# My Feature',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const cfg = JSON.parse(
+        readFileSync(join(tmp.get(), '.tracerkit', 'config.json'), 'utf8'),
+      );
+      expect(cfg.storage).toBe('local');
+    });
+
+    it('flips config even when no GitHub issues exist', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({});
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      const cfg = JSON.parse(
+        readFileSync(join(tmp.get(), '.tracerkit', 'config.json'), 'utf8'),
+      );
+      expect(cfg.storage).toBe('local');
+      expect(
+        output.some(
+          (l) => l.includes('nothing to migrate') || l.includes('No'),
+        ),
+      ).toBe(true);
+    });
+
+    it('derives status from labels when metadata has no status', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] my-feature: My Feature',
+            body: '<!-- tk:metadata\ncreated: 2026-04-06T10:00:00Z\n-->\n\n# My Feature',
+            labels: ['tk:prd', 'tk:in-progress'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const content = readFileSync(
+        join(tmp.get(), '.tracerkit', 'prds', 'my-feature.md'),
+        'utf8',
+      );
+      expect(content).toContain('status: in_progress');
+    });
+
+    it('uses plan body directly without frontmatter for active plans', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] my-feature: Plan: My Feature',
+            body: '<!-- tk:metadata\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task',
+            labels: ['tk:plan', 'tk:in-progress'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const content = readFileSync(
+        join(tmp.get(), '.tracerkit', 'plans', 'my-feature.md'),
+        'utf8',
+      );
+      expect(content).toContain('# Plan: My Feature');
+      expect(content).not.toContain('<!-- tk:metadata');
+      expect(content).not.toContain('---');
+    });
+  });
+
+  describe('PR linking (local → github archives)', () => {
+    it('adds PR reference when merged PR matches slug', () => {
+      setupConfig(tmp.get());
+      writeArchive(tmp.get(), 'linked-feature');
+
+      const calls: string[][] = [];
+      const issueCounter = { current: 100 };
+      const runGh: RunGh = (args: string[]) => {
+        calls.push(args);
+        const joined = args.join(' ');
+
+        if (joined.includes('issue list')) return '[]';
+        if (joined.includes('label create')) return '';
+        if (joined.includes('issue create')) {
+          const num = issueCounter.current++;
+          return `https://github.com/owner/repo/issues/${num}`;
+        }
+        if (joined.includes('issue close')) return '';
+        if (joined.includes('pr list')) {
+          return JSON.stringify([
+            { number: 55, title: 'feat: linked feature' },
+          ]);
+        }
+        if (joined.includes('issue comment')) return '';
+        return '';
+      };
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const commentCalls = calls.filter(
+        (c) => c.includes('issue') && c.includes('comment'),
+      );
+      expect(commentCalls.length).toBeGreaterThan(0);
+      const commentBody = commentCalls[0].join(' ');
+      expect(commentBody).toContain('#55');
+    });
+
+    it('skips PR comment when no matching PR found', () => {
+      setupConfig(tmp.get());
+      writeArchive(tmp.get(), 'no-pr-feature');
+
+      const calls: string[][] = [];
+      const issueCounter = { current: 100 };
+      const runGh: RunGh = (args: string[]) => {
+        calls.push(args);
+        const joined = args.join(' ');
+
+        if (joined.includes('issue list')) return '[]';
+        if (joined.includes('label create')) return '';
+        if (joined.includes('issue create')) {
+          const num = issueCounter.current++;
+          return `https://github.com/owner/repo/issues/${num}`;
+        }
+        if (joined.includes('issue close')) return '';
+        if (joined.includes('pr list')) return '[]';
+        if (joined.includes('issue comment')) return '';
+        return '';
+      };
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const commentCalls = calls.filter(
+        (c) => c.includes('issue') && c.includes('comment'),
+      );
+      expect(commentCalls).toHaveLength(0);
     });
   });
 });

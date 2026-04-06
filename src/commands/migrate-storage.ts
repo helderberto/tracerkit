@@ -1,5 +1,11 @@
-import { existsSync, readdirSync, readFileSync } from 'node:fs';
-import { join, basename } from 'node:path';
+import {
+  existsSync,
+  mkdirSync,
+  readdirSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
+import { join, basename, dirname } from 'node:path';
 import { execSync } from 'node:child_process';
 import {
   loadConfig,
@@ -72,6 +78,34 @@ export function statusToLabel(status: string): string {
 
 export function labelToStatus(label: string): string {
   return LABEL_MAP[label] ?? 'created';
+}
+
+export function parseMetadata(content: string): {
+  metadata: Record<string, string>;
+  body: string;
+} {
+  const match = content.match(/<!--\s*tk:metadata\n([\s\S]*?)-->\n*([\s\S]*)$/);
+  if (!match) return { metadata: {}, body: content };
+
+  const metadata: Record<string, string> = {};
+  for (const line of match[1].split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim();
+    const value = line.slice(idx + 1).trim();
+    if (key) metadata[key] = value;
+  }
+
+  return { metadata, body: match[2] };
+}
+
+export function metadataToFrontmatter(
+  metadata: Record<string, string>,
+): string {
+  const entries = Object.entries(metadata);
+  if (entries.length === 0) return '---\n---\n';
+  const lines = entries.map(([k, v]) => `${k}: ${v}`);
+  return `---\n${lines.join('\n')}\n---\n`;
 }
 
 export function extractSlugFromTitle(title: string): string | null {
@@ -192,6 +226,7 @@ function resolveRepo(cfg: Config, runGh: RunGh): string {
 interface ExistingIssue {
   number: number;
   title: string;
+  body?: string;
   labels: { name: string }[];
   state: string;
 }
@@ -211,7 +246,7 @@ function fetchExistingIssues(
     '--state',
     'all',
     '--json',
-    'number,title,labels,state',
+    'number,title,body,labels,state',
     '--limit',
     '1000',
   ]);
@@ -258,17 +293,78 @@ function closeIssue(repo: string, issueNumber: number, runGh: RunGh): void {
   runGh(['issue', 'close', String(issueNumber), '--repo', repo]);
 }
 
+function searchMergedPrs(
+  repo: string,
+  slug: string,
+  runGh: RunGh,
+): { number: number; title: string }[] {
+  const json = runGh([
+    'pr',
+    'list',
+    '--repo',
+    repo,
+    '--search',
+    slug,
+    '--state',
+    'merged',
+    '--json',
+    'number,title',
+    '--limit',
+    '5',
+  ]);
+  return JSON.parse(json || '[]');
+}
+
+function addIssueComment(
+  repo: string,
+  issueNumber: number,
+  body: string,
+  runGh: RunGh,
+): void {
+  runGh([
+    'issue',
+    'comment',
+    String(issueNumber),
+    '--repo',
+    repo,
+    '--body',
+    body,
+  ]);
+}
+
+// --- GitHub → Local helpers ---
+
+function statusFromLabels(labels: string[]): string {
+  for (const label of labels) {
+    const status = LABEL_MAP[label];
+    if (status) return status;
+  }
+  return 'created';
+}
+
+function writeLocalFile(filePath: string, content: string): void {
+  mkdirSync(dirname(filePath), { recursive: true });
+  writeFileSync(filePath, content);
+}
+
 // --- Main command ---
 
 export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
   const runGh = opts?.runGh ?? defaultRunGh;
   const cfg = loadConfig(cwd);
-  const output: string[] = [];
 
-  if (cfg.storage !== STORAGE_LOCAL) {
-    return [`Storage is already "${cfg.storage}". Nothing to migrate.`];
+  if (cfg.storage === STORAGE_LOCAL) {
+    return migrateLocalToGitHub(cwd, cfg, runGh);
   }
+  return migrateGitHubToLocal(cwd, cfg, runGh);
+}
 
+function migrateLocalToGitHub(
+  cwd: string,
+  cfg: Config,
+  runGh: RunGh,
+): string[] {
+  const output: string[] = [];
   const repo = resolveRepo(cfg, runGh);
   const artifacts = discoverLocalArtifacts(cwd, cfg);
 
@@ -279,7 +375,6 @@ export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
     return output;
   }
 
-  // Collect all labels we'll need
   const prdLabel = cfg.github.labels?.prd ?? 'tk:prd';
   const planLabel = cfg.github.labels?.plan ?? 'tk:plan';
   const statusLabels = [
@@ -287,10 +382,8 @@ export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
       artifacts.map((a) => statusToLabel(a.metadata.status ?? 'created')),
     ),
   ];
-  const allLabels = [prdLabel, planLabel, ...statusLabels];
-  ensureLabels(repo, allLabels, runGh);
+  ensureLabels(repo, [prdLabel, planLabel, ...statusLabels], runGh);
 
-  // Fetch existing issues for duplicate detection
   const existingPrds = fetchExistingIssues(repo, prdLabel, runGh);
   const existingPlans = fetchExistingIssues(repo, planLabel, runGh);
 
@@ -319,6 +412,7 @@ export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
 
     if (artifact.archived) {
       closeIssue(repo, issueNumber, runGh);
+      linkPrToIssue(repo, artifact.slug, issueNumber, runGh);
       output.push(
         `✓ ${artifact.type} "${artifact.slug}" → issue #${issueNumber} (closed)`,
       );
@@ -331,6 +425,101 @@ export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
 
   saveConfig(cwd, { storage: STORAGE_GITHUB });
   output.push(`✓ Storage switched to "${STORAGE_GITHUB}".`);
+  return output;
+}
 
+function linkPrToIssue(
+  repo: string,
+  slug: string,
+  issueNumber: number,
+  runGh: RunGh,
+): void {
+  const prs = searchMergedPrs(repo, slug, runGh);
+  if (prs.length === 0) return;
+  const refs = prs.map((pr) => `#${pr.number}`).join(', ');
+  addIssueComment(repo, issueNumber, `Linked PR: ${refs}`, runGh);
+}
+
+function migrateGitHubToLocal(
+  cwd: string,
+  cfg: Config,
+  runGh: RunGh,
+): string[] {
+  const output: string[] = [];
+  const repo = resolveRepo(cfg, runGh);
+  const prdLabel = cfg.github.labels?.prd ?? 'tk:prd';
+  const planLabel = cfg.github.labels?.plan ?? 'tk:plan';
+
+  const prdIssues = fetchExistingIssues(repo, prdLabel, runGh);
+  const planIssues = fetchExistingIssues(repo, planLabel, runGh);
+  const allIssues = [
+    ...prdIssues.map((i) => ({ ...i, type: 'prd' as const })),
+    ...planIssues.map((i) => ({ ...i, type: 'plan' as const })),
+  ];
+
+  if (allIssues.length === 0) {
+    saveConfig(cwd, { storage: STORAGE_LOCAL });
+    output.push('No GitHub issues found — nothing to migrate.');
+    output.push(`✓ Storage switched to "${STORAGE_LOCAL}".`);
+    return output;
+  }
+
+  for (const issue of allIssues) {
+    const slug = extractSlugFromTitle(issue.title);
+    if (!slug) continue;
+
+    const labels = issue.labels.map((l) => l.name);
+    const isDone = labels.includes('tk:done') && issue.state === 'CLOSED';
+    const { metadata, body } = parseMetadata(issue.body ?? '');
+
+    // Derive status from labels if not in metadata
+    const status = metadata.status ?? statusFromLabels(labels);
+
+    if (isDone) {
+      // Route to archives
+      const archiveDir = join(cwd, cfg.paths.archives, slug);
+      const prdPath = join(archiveDir, 'prd.md');
+      const planPath = join(archiveDir, 'plan.md');
+      const targetPath = issue.type === 'prd' ? prdPath : planPath;
+
+      if (existsSync(targetPath)) {
+        output.push(
+          `⚠ skip ${issue.type} "${slug}" — local file already exists`,
+        );
+        continue;
+      }
+
+      if (issue.type === 'prd') {
+        const fm = metadataToFrontmatter({ ...metadata, status });
+        writeLocalFile(targetPath, `${fm}\n${body}`);
+      } else {
+        writeLocalFile(targetPath, body);
+      }
+      output.push(`✓ ${issue.type} "${slug}" → ${targetPath} (archived)`);
+    } else {
+      // Route to active dirs
+      const dir = issue.type === 'prd' ? cfg.paths.prds : cfg.paths.plans;
+      const filePath = join(cwd, dir, `${slug}.md`);
+
+      if (existsSync(filePath)) {
+        output.push(
+          `⚠ skip ${issue.type} "${slug}" — local file already exists`,
+        );
+        continue;
+      }
+
+      if (issue.type === 'prd') {
+        const fm = metadataToFrontmatter({ ...metadata, status });
+        writeLocalFile(filePath, `${fm}\n${body}`);
+      } else {
+        // Plans stored without frontmatter locally
+        writeLocalFile(filePath, body);
+      }
+      output.push(`✓ ${issue.type} "${slug}" → ${filePath}`);
+    }
+  }
+
+  saveConfig(cwd, { storage: STORAGE_LOCAL });
+  output.push(`✓ Storage switched to "${STORAGE_LOCAL}".`);
   return output;
 }

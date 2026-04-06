@@ -103,6 +103,14 @@ tracerkit config github.repo org/repo   # set target repo
 
 PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
 
+To migrate existing artifacts between backends:
+
+```bash
+tracerkit migrate-storage           # local→github or github→local (auto-detected)
+```
+
+Direction is inferred from the current `storage` config. All artifacts are migrated, existing duplicates are skipped, and the config is flipped to the target backend. Source artifacts are left intact as backup. For archived features migrating to GitHub, merged PRs matching the slug are linked automatically.
+
 </details>
 
 ## Skills
@@ -137,13 +145,13 @@ Without arguments, shows a feature dashboard with status and progress before ask
 
 ## Docs
 
-| Document                                         | Description                                        |
-| ------------------------------------------------ | -------------------------------------------------- |
-| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
-| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, config, uninstall          |
-| [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths     |
-| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
-| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
+| Document                                         | Description                                                |
+| ------------------------------------------------ | ---------------------------------------------------------- |
+| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios                    |
+| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, config, migrate-storage, uninstall |
+| [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths             |
+| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions         |
+| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec          |
 
 ## Contributing
 
