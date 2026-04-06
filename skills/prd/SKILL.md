@@ -1,5 +1,5 @@
 ---
-description: Create a PRD through user interview, codebase exploration, and module design, saved to {{paths.prds}}/. Use when starting a new feature or change.
+description: Create a PRD through user interview, codebase exploration, and module design, saved to .tracerkit/prds/. Use when starting a new feature or change.
 argument-hint: <idea>
 ---
 
@@ -9,7 +9,7 @@ Skip steps already satisfied. If user provided a description via arguments, skip
 
 ## Pre-loaded context
 
-- Existing PRDs: !`ls {{paths.prds}}/ 2>&1`
+- Existing PRDs: !`ls .tracerkit/prds/ 2>&1`
 
 ## Input
 
@@ -25,9 +25,9 @@ If the argument is provided, derive a slug using this exact algorithm:
 4. Take the first 4 remaining words (or fewer if less exist)
 5. Join with hyphens → `<slug>`
 
-The output file is `{{paths.prds}}/<slug>.md`.
+The output file is `.tracerkit/prds/<slug>.md`.
 
-If `{{paths.prds}}/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
+If `.tracerkit/prds/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
 ## Workflow
 
@@ -84,7 +84,7 @@ Present modules to user. Confirm which need tests.
 
 ### 5. Write PRD
 
-Save to `{{paths.prds}}/<slug>.md` (create `{{paths.prds}}/` if missing).
+Save to `.tracerkit/prds/<slug>.md` (create `.tracerkit/prds/` if missing).
 
 ```markdown
 ---
@@ -161,5 +161,5 @@ Tell the user: file created, one-line summary. Then ask: "Run `/tk:plan <slug>` 
 
 ## Error Handling
 
-- `{{paths.prds}}/` missing — create it
+- `.tracerkit/prds/` missing — create it
 - Scope larger than expected — surface and re-scope with user before continuing

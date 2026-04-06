@@ -8,7 +8,7 @@ Get a quick overview of all active features, their progress, and what to focus o
 
 ## Pre-loaded context
 
-- Available PRDs: !`ls {{paths.prds}}/ 2>&1`
+- Available PRDs: !`ls .tracerkit/prds/ 2>&1`
 
 ## Algorithm
 
@@ -16,7 +16,7 @@ Follow these steps exactly to build the briefing table:
 
 ### 1. Discover features
 
-For each `.md` file in `{{paths.prds}}/`:
+For each `.md` file in `.tracerkit/prds/`:
 
 1. Read the file
 2. Parse YAML frontmatter (the block between `---` fences at the top)
@@ -26,7 +26,7 @@ For each `.md` file in `{{paths.prds}}/`:
 
 ### 2. Count progress from plans
 
-For each slug, check if `{{paths.plans}}/<slug>.md` exists. If it does:
+For each slug, check if `.tracerkit/plans/<slug>.md` exists. If it does:
 
 1. Read the plan file
 2. Find every `## Phase N` heading (regex: `^## Phase \d+`)
@@ -74,6 +74,6 @@ Append below the table:
 
 Ask the user what they'd like to do:
 
-- Continue the focused feature (read its plan at `{{paths.plans}}/<slug>.md`)
+- Continue the focused feature (read its plan at `.tracerkit/plans/<slug>.md`)
 - Start a new feature with `/tk:prd`
 - Check progress on a feature with `/tk:check <slug>`

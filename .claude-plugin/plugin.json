@@ -1,0 +1,19 @@
+{
+  "name": "tk",
+  "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and archive features using tracer-bullet vertical slices.",
+  "version": "1.10.2",
+  "author": {
+    "name": "helderberto"
+  },
+  "repository": "https://github.com/helderberto/tracerkit",
+  "license": "MIT",
+  "keywords": [
+    "claude-code",
+    "ai-workflow",
+    "spec-driven",
+    "tracer-bullet",
+    "developer-tools",
+    "markdown",
+    "plugin"
+  ]
+}

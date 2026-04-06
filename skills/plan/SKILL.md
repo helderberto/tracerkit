@@ -1,15 +1,15 @@
 ---
-description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved to {{paths.plans}}/. Use after /tk:prd.
+description: Turn a PRD into a multi-phase implementation plan using tracer-bullet vertical slices, saved to .tracerkit/plans/. Use after /tk:prd.
 argument-hint: '[slug]'
 ---
 
 # PRD to Plan
 
-Break a PRD into phased vertical slices (tracer bullets). Output: `{{paths.plans}}/<slug>.md`.
+Break a PRD into phased vertical slices (tracer bullets). Output: `.tracerkit/plans/<slug>.md`.
 
 ## Pre-loaded context
 
-- Available PRDs: !`ls {{paths.prds}}/ 2>&1`
+- Available PRDs: !`ls .tracerkit/prds/ 2>&1`
 
 ## Input
 
@@ -21,13 +21,13 @@ Use the argument as `<slug>` if given. If no argument is provided, list availabl
 
 ### 1. Read the PRD
 
-Read `{{paths.prds}}/<slug>.md`. If it does not exist, list available PRDs and ask.
+Read `.tracerkit/prds/<slug>.md`. If it does not exist, list available PRDs and ask.
 
-If `{{paths.plans}}/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
+If `.tracerkit/plans/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
 
 ### 1b. Update PRD status
 
-Update the YAML frontmatter in `{{paths.prds}}/<slug>.md` to `status: in_progress`. Change only the `status` field — do not touch any other frontmatter fields or the markdown content below the closing `---`.
+Update the YAML frontmatter in `.tracerkit/prds/<slug>.md` to `status: in_progress`. Change only the `status` field — do not touch any other frontmatter fields or the markdown content below the closing `---`.
 
 If the PRD has no frontmatter, skip this step silently.
 
@@ -97,12 +97,12 @@ Ask: Does the granularity feel right? Should any phases merge or split? Iterate 
 
 ### 6. Save plan
 
-Save to `{{paths.plans}}/<slug>.md` (create `{{paths.plans}}/` if missing).
+Save to `.tracerkit/plans/<slug>.md` (create `.tracerkit/plans/` if missing).
 
 ```markdown
 # Plan: <Feature Name>
 
-> Source PRD: `{{paths.prds}}/<slug>.md`
+> Source PRD: `.tracerkit/prds/<slug>.md`
 
 ## Architectural Decisions
 
@@ -153,4 +153,4 @@ Print saved path and one line per phase: `Phase N — <title> (<condition summar
 
 - PRD not found — list available PRDs and ask
 - PRD missing sections — note gaps inline and continue
-- `{{paths.plans}}/` missing — create it
+- `.tracerkit/plans/` missing — create it

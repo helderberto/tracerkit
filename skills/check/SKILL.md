@@ -9,7 +9,7 @@ Check implementation against a plan. Update checks, stamp findings, transition s
 
 ## Pre-loaded context
 
-- Available plans: !`ls {{paths.plans}}/ 2>&1`
+- Available plans: !`ls .tracerkit/plans/ 2>&1`
 
 ## Input
 
@@ -25,11 +25,11 @@ If no argument is provided, build a summary table before asking which one to che
 | <slug>  | ...    | 3/7      |
 ```
 
-For each `.md` file in `{{paths.prds}}/`:
+For each `.md` file in `.tracerkit/prds/`:
 
 1. Read the file, parse YAML frontmatter (block between `---` fences)
 2. Extract `status` — use `unknown` if missing
-3. If `{{paths.plans}}/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
+3. If `.tracerkit/plans/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
 
 After the table, ask which feature to verify.
 
@@ -48,7 +48,7 @@ To count progress for a plan file:
 
 ### 1. Load the plan
 
-Read `{{paths.plans}}/<slug>.md`. If it does not exist, list available plans and ask.
+Read `.tracerkit/plans/<slug>.md`. If it does not exist, list available plans and ask.
 
 ### 2. Load the PRD
 
@@ -76,7 +76,7 @@ Collect findings into two categories:
 
 ### 3c. Update checkboxes
 
-Using the subagent's report, update each checkbox in `{{paths.plans}}/<slug>.md` to `[x]` or `[ ]`.
+Using the subagent's report, update each checkbox in `.tracerkit/plans/<slug>.md` to `[x]` or `[ ]`.
 
 ### 4. Determine outcome
 
@@ -112,7 +112,7 @@ Total: checked/total
 
 ### 6. Stamp the plan
 
-Append a verdict block at the bottom of `{{paths.plans}}/<slug>.md`:
+Append a verdict block at the bottom of `.tracerkit/plans/<slug>.md`:
 
 ```markdown
 ---
@@ -131,19 +131,19 @@ If a previous verdict block exists, replace it with the new one.
 
 If all checks pass and zero BLOCKERS, perform these steps in order:
 
-1. Create directory `{{paths.archives}}/<slug>/`
-2. If `{{paths.prds}}/<slug>.md` exists:
+1. Create directory `.tracerkit/archives/<slug>/`
+2. If `.tracerkit/prds/<slug>.md` exists:
    - Read the PRD file
    - In the YAML frontmatter (between `---` fences), find the `status:` line and replace its value with `done`. If no `status:` line exists, add `status: done` as a new line inside the frontmatter block.
    - Add a `completed: <current UTC ISO 8601 timestamp>` line inside the frontmatter block (e.g. `completed: 2025-06-15T14:30:00Z`)
-   - Write the updated content to `{{paths.archives}}/<slug>/prd.md`
-3. Read `{{paths.plans}}/<slug>.md`
+   - Write the updated content to `.tracerkit/archives/<slug>/prd.md`
+3. Read `.tracerkit/plans/<slug>.md`
    - Append to the end: `\n## Archived\n\nArchived on YYYY-MM-DD.\n`
-   - Write the result to `{{paths.archives}}/<slug>/plan.md`
-4. Delete `{{paths.prds}}/<slug>.md` (if it exists)
-5. Delete `{{paths.plans}}/<slug>.md`
+   - Write the result to `.tracerkit/archives/<slug>/plan.md`
+4. Delete `.tracerkit/prds/<slug>.md` (if it exists)
+5. Delete `.tracerkit/plans/<slug>.md`
 
-Tell the user: archived to `{{paths.archives}}/<slug>/`, one-line summary of the feature.
+Tell the user: archived to `.tracerkit/archives/<slug>/`, one-line summary of the feature.
 
 ### 8. On `in_progress` (no blockers)
 
@@ -164,5 +164,5 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 
 - Plan not found — list available plans and ask
 - PRD referenced in plan not found — warn and continue with plan checks only
-- `{{paths.plans}}/` missing — tell user to run `/tk:plan` first
-- `{{paths.archives}}/<slug>/` already exists — warn and ask whether to remove it first
+- `.tracerkit/plans/` missing — tell user to run `/tk:plan` first
+- `.tracerkit/archives/<slug>/` already exists — warn and ask whether to remove it first
