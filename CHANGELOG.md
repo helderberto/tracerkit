@@ -1,3 +1,9 @@
+# [1.14.0](https://github.com/helderberto/tracerkit/compare/v1.13.1...v1.14.0) (2026-04-06)
+
+### Features
+
+- add migrate-storage command for local→GitHub migration ([#9](https://github.com/helderberto/tracerkit/issues/9)) ([ce2718d](https://github.com/helderberto/tracerkit/commit/ce2718ded1083837844ff4c3afde53e607b93776))
+
 ## [1.13.1](https://github.com/helderberto/tracerkit/compare/v1.13.0...v1.13.1) (2026-04-06)
 
 # [1.13.0](https://github.com/helderberto/tracerkit/compare/v1.12.0...v1.13.0) (2026-04-06)
