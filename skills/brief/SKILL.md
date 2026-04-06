@@ -12,7 +12,7 @@ Overview of active features, progress, and suggested focus.
 
 <!-- if:local -->
 
-- Available PRDs: !`ls .tracerkit/prds/ 2>&1`
+- Available PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
   <!-- end:local -->
   <!-- if:github -->
 - Available PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
@@ -31,11 +31,11 @@ For each `.md` file in `.tracerkit/prds/`: parse frontmatter, extract `status` a
 
 List open GitHub Issues with label `{{github.labels.prd}}`:
 
-6. For each issue, parse the `<!-- tk:metadata -->` comment in the body
-7. Extract `status` and `created` fields from the metadata
-8. Also check labels: `tk:created`, `tk:in-progress`
-9. Skip issues with `tk:done` label
-10. The slug is extracted from the title: `[{{github.labels.prd}}] <slug>: ...`
+1. For each issue, parse the `<!-- tk:metadata -->` comment in the body
+2. Extract `status` and `created` fields from the metadata
+3. Also check labels: `tk:created`, `tk:in-progress`
+4. Skip issues with `tk:done` label
+5. The slug is extracted from the title: `[{{github.labels.prd}}] <slug>: ...`
 <!-- end:github -->
 
 ### 2. Count progress from plans

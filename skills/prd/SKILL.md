@@ -13,7 +13,7 @@ Skip satisfied steps. If argument provided, skip to Step 2.
 
 <!-- if:local -->
 
-- Existing PRDs: !`ls .tracerkit/prds/ 2>&1`
+- Existing PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
   <!-- end:local -->
   <!-- if:github -->
 - Existing PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
@@ -26,10 +26,11 @@ The argument is: $ARGUMENTS
 If empty, go to Step 1; derive slug after gathering the idea. If provided, derive slug:
 
 1. Take only the text before the first `—` or `–` (if present)
-2. Lowercase the text
-3. Remove filler words: a, an, the, for, of, to, in, on, with, and, or, but, is, be
-4. Take the first 4 remaining words (or fewer if less exist)
-5. Join with hyphens → `<slug>`
+2. Strip leading command verbs: create, build, implement, add, update, fix, make, write, plan, get, show, support
+3. Lowercase the text
+4. Remove filler words: a, an, the, for, of, to, in, on, with, and, or, but, is, be
+5. Take the first 4 remaining words (or fewer if less exist)
+6. Join with hyphens → `<slug>`
 
 <!-- if:local -->
 
@@ -98,12 +99,13 @@ status: created
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `{{github.labels.prd}}`, `tk:created` (create if missing).
+Ensure labels exist: `gh label create {{github.labels.prd}} --repo <repo> --force`, `gh label create tk:created --repo <repo> --force`.
 
 Create GitHub Issue — title: `[{{github.labels.prd}}] <slug>: <Feature Title>`, labels: `{{github.labels.prd}}`, `tk:created`.
 
 ```markdown
 <!-- tk:metadata
+slug: <slug>
 created: <UTC ISO 8601>
 status: created
 -->

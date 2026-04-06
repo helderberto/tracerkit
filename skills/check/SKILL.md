@@ -1,5 +1,5 @@
 ---
-description: Verify implementation against plan. Shows progress, finds blockers, and archives when done. Use after implementing a plan, or without arguments to see a feature dashboard.
+description: Verify implementation against plan. Shows progress, finds blockers, and marks complete when done. Use after implementing a plan, or without arguments to see a feature dashboard.
 argument-hint: '[slug]'
 ---
 
@@ -7,13 +7,13 @@ argument-hint: '[slug]'
 
 # Check Implementation
 
-Check implementation against a plan. Update checks, stamp findings, transition status, and archive when done.
+Check implementation against a plan. Update checks, stamp findings, transition status, and mark complete when done.
 
 ## Pre-loaded context
 
 <!-- if:local -->
 
-- Available plans: !`ls .tracerkit/plans/ 2>&1`
+- Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
   <!-- end:local -->
   <!-- if:github -->
 - Available plans: list open GitHub Issues with label `{{github.labels.plan}}`
@@ -175,25 +175,25 @@ Append a verdict block at the bottom of the plan issue body by editing the issue
 
 If a previous verdict block exists, replace it with the new one.
 
-### 7. On `done` — archive
+### 7. On `done` — mark complete
 
 If all checks pass and zero BLOCKERS:
 
 <!-- if:local -->
 
-Archive to `.tracerkit/archives/<slug>/`:
-
-1. Copy PRD → `prd.md` (set `status: done`, add `completed` timestamp in frontmatter)
-2. Copy plan → `plan.md` (append `## Archived` with date)
-3. Delete originals
+1. Update PRD frontmatter: `status: done`, add `completed: <UTC ISO 8601>`
+2. Update plan frontmatter: `status: done`, add `completed: <UTC ISO 8601>`
 
 <!-- end:local -->
 <!-- if:github -->
 
-1. PRD issue: add `tk:done`, remove `tk:in-progress`, set metadata `status: done` + `completed` timestamp
-2. Close PRD issue (reason: `completed`)
-3. Close plan issue (reason: `completed`)
-4. If current PR exists, reference it in closing comment on PRD issue
+1. If on a feature branch with commits ahead of default:
+   a. Push branch if not pushed
+   b. Open PR with `Closes #<prd-number>, Closes #<plan-number>` (or update existing PR body)
+2. Search merged PRs matching slug: `gh pr list --search <slug> --state merged` — add comment on PRD issue linking found PRs
+3. PRD issue: add `tk:done`, remove `tk:in-progress`, update metadata `status: done` + `completed` timestamp
+4. Close PRD issue (reason: `completed`)
+5. Close plan issue (reason: `completed`)
 
 <!-- end:github -->
 
@@ -208,6 +208,6 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 ## Rules
 
 - The review subagent must be **read-only** — it must not create, edit, or delete any files
-- The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive steps on `done`
+- The only file writes this skill makes are: checkboxes + verdict block in the plan, and the status updates on `done`
 - Never modify implementation code — only observe and report
-- If the PRD file is missing but all checks pass, warn and proceed — archive the plan only (skip PRD steps in archive)
+- If the PRD file is missing but all checks pass, warn and proceed — mark the plan complete only (skip PRD status update)
