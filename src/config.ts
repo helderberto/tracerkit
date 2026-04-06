@@ -1,7 +1,9 @@
 import { existsSync, readFileSync, writeFileSync, mkdirSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
-export const VALID_STORAGE = ['local', 'github'] as const;
+export const STORAGE_LOCAL = 'local' as const;
+export const STORAGE_GITHUB = 'github' as const;
+export const VALID_STORAGE = [STORAGE_LOCAL, STORAGE_GITHUB] as const;
 export type Storage = (typeof VALID_STORAGE)[number];
 
 export const DEFAULT_PATHS = {
@@ -40,7 +42,7 @@ export function loadConfig(cwd: string): Config {
 
   if (!existsSync(configPath)) {
     return {
-      storage: 'local',
+      storage: STORAGE_LOCAL,
       paths: { ...DEFAULT_PATHS },
       github: { ...DEFAULT_GITHUB },
     };
@@ -63,7 +65,7 @@ export function loadConfig(cwd: string): Config {
 function parseStorage(raw: unknown): Storage {
   return typeof raw === 'string' && VALID_STORAGE.includes(raw as Storage)
     ? (raw as Storage)
-    : 'local';
+    : STORAGE_LOCAL;
 }
 
 function parsePaths(raw: unknown): Config['paths'] {

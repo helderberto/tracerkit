@@ -8,7 +8,12 @@ import {
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Config, DEFAULT_PATHS } from './config.ts';
+import {
+  type Config,
+  DEFAULT_PATHS,
+  STORAGE_LOCAL,
+  STORAGE_GITHUB,
+} from './config.ts';
 import { SKILL_PREFIX } from './constants.ts';
 
 export { SKILL_NAMES, DEPRECATED_SKILLS } from './constants.ts';
@@ -61,8 +66,8 @@ export function renderTemplate(content: string, config: Config): string {
   }
 
   // Conditional blocks: strip inactive storage, unwrap active
-  const active = config.storage ?? 'local';
-  const inactive = active === 'local' ? 'github' : 'local';
+  const active = config.storage ?? STORAGE_LOCAL;
+  const inactive = active === STORAGE_LOCAL ? STORAGE_GITHUB : STORAGE_LOCAL;
 
   result = result.replace(
     new RegExp(

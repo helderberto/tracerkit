@@ -3,6 +3,7 @@ import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
 import { config, init, uninstall, update } from './commands/index.ts';
+import { type Storage } from './config.ts';
 import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
@@ -75,7 +76,7 @@ export function run(args: string[]): string[] {
       const initArgs =
         idx >= 0 ? rest.filter((_, i) => i !== idx && i !== idx + 1) : rest;
       return init(resolveTarget(initArgs), {
-        storage: storage as 'local' | 'github' | undefined,
+        storage: storage as Storage | undefined,
       });
     }
     case 'update': {

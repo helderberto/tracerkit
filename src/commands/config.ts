@@ -1,6 +1,6 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadConfig, saveConfig } from '../config.ts';
+import { loadConfig, saveConfig, STORAGE_LOCAL } from '../config.ts';
 import { copyTemplates, SKILL_NAMES } from '../templates.ts';
 
 export function config(cwd: string, args: string[]): string[] {
@@ -20,7 +20,9 @@ export function config(cwd: string, args: string[]): string[] {
 function printConfig(cwd: string): string[] {
   const cfg = loadConfig(cwd);
   const output =
-    cfg.storage === 'local' ? { storage: cfg.storage, paths: cfg.paths } : cfg;
+    cfg.storage === STORAGE_LOCAL
+      ? { storage: cfg.storage, paths: cfg.paths }
+      : cfg;
   return JSON.stringify(output, null, 2).split('\n');
 }
 
