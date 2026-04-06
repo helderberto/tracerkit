@@ -15,7 +15,7 @@ Set `storage` to choose where PRDs, plans, and status live:
 
 ```bash
 tracerkit init --storage github        # first install with GitHub
-tracerkit config storage github        # switch existing install
+tracerkit config storage github        # switch existing install (auto re-renders skills)
 tracerkit config storage local         # switch back
 ```
 
@@ -29,7 +29,23 @@ Create or edit `.tracerkit/config.json`:
 }
 ```
 
-Then run `tracerkit update --force` to re-render skills.
+When editing the config file directly, run `tracerkit update --force` to re-render skills. The `tracerkit config` CLI does this automatically.
+
+## Local paths
+
+When `storage` is `"local"` (default), customize file paths:
+
+```json
+{
+  "paths": {
+    "prds": ".tracerkit/prds",
+    "plans": ".tracerkit/plans",
+    "archives": ".tracerkit/archives"
+  }
+}
+```
+
+Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved — rename them manually if needed.
 
 ## GitHub options
 
@@ -69,31 +85,17 @@ Required GitHub token scopes: `repo` (for private repos) or `public_repo` (for p
 
 ### Labels
 
-TracerKit uses these labels (created automatically by skills at runtime):
+Skills create these labels automatically at runtime:
 
-| Label            | Color  | Purpose                       |
-| ---------------- | ------ | ----------------------------- |
-| `tk:prd`         | green  | PRD issues                    |
-| `tk:plan`        | blue   | Plan issues                   |
-| `tk:created`     | yellow | PRD written, no plan yet      |
-| `tk:in-progress` | orange | Plan generated, work underway |
-| `tk:done`        | green  | All checks verified           |
+| Label            | Color  | Configurable | Purpose                       |
+| ---------------- | ------ | ------------ | ----------------------------- |
+| `tk:prd`         | green  | yes          | PRD issues                    |
+| `tk:plan`        | blue   | yes          | Plan issues                   |
+| `tk:created`     | yellow | no           | PRD written, no plan yet      |
+| `tk:in-progress` | orange | no           | Plan generated, work underway |
+| `tk:done`        | green  | no           | All checks verified           |
 
-## Local paths
-
-When `storage` is `"local"` (default), customize file paths:
-
-```json
-{
-  "paths": {
-    "prds": ".tracerkit/prds",
-    "plans": ".tracerkit/plans",
-    "archives": ".tracerkit/archives"
-  }
-}
-```
-
-Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved — rename them manually if needed.
+Override `tk:prd` and `tk:plan` via `github.labels.prd` and `github.labels.plan`. Status labels are managed by skills and cannot be renamed.
 
 ## Reading current config
 
@@ -101,4 +103,5 @@ Any missing key falls back to its default. Skills read paths from this config vi
 tracerkit config                       # print full config as JSON
 tracerkit config storage               # print specific key
 tracerkit config github.repo           # print nested key
+tracerkit config . storage             # print key for project install
 ```

@@ -58,20 +58,6 @@ Run `/reload-plugins` if needed. Skills are available immediately — no build s
 
 </details>
 
-<details>
-<summary>GitHub Issues as storage backend</summary>
-
-Store PRDs and plans as GitHub Issues instead of local files:
-
-```bash
-tracerkit init --storage github         # first install
-tracerkit config github.repo org/repo   # set target repo
-```
-
-Same skills, same workflow — artifacts live in GitHub Issues with `tk:prd` and `tk:plan` labels. See [Configuration](docs/configuration.md) for details.
-
-</details>
-
 ### Workflow
 
 ```
@@ -104,6 +90,20 @@ AI:  | Feature           | Status      | Age | Progress | Next                  
 ```
 
 See [Examples](docs/examples.md) for full walkthroughs.
+
+<details>
+<summary>GitHub Issues as storage backend</summary>
+
+Same skills, same workflow — artifacts live in GitHub Issues instead of local files:
+
+```bash
+tracerkit init --storage github         # first install
+tracerkit config github.repo org/repo   # set target repo
+```
+
+PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. See [Configuration](docs/configuration.md) for details.
+
+</details>
 
 ## Skills
 
