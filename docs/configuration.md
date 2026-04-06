@@ -41,8 +41,7 @@ When `storage` is `"local"` (default), customize file paths:
 {
   "paths": {
     "prds": ".tracerkit/prds",
-    "plans": ".tracerkit/plans",
-    "archives": ".tracerkit/archives"
+    "plans": ".tracerkit/plans"
   }
 }
 ```

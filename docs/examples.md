@@ -63,8 +63,11 @@ AI:  Loading plan... Loading PRD... Running tests...
      ### SUGGESTIONS
      - None
 
-     Archived to .tracerkit/archives/dark-mode-support/
+     Marked complete — PRD and plan updated to status: done
+     with completed: 2025-06-20T09:00:00Z timestamp.
 ```
+
+Completed features stay in `.tracerkit/prds/` and `.tracerkit/plans/` with `status: done`. They are excluded from `/tk:brief` and future checks.
 
 ## Session briefing
 
@@ -134,7 +137,8 @@ AI:  ...
      ### BLOCKERS
      - None
 
-     Archived to .tracerkit/archives/dark-mode-support/
+     Marked complete — PRD and plan updated to status: done.
+     with completed: 2025-06-20T09:00:00Z timestamp.
 ```
 
 </details>
@@ -264,7 +268,15 @@ AI:  Loading plan from issue #43... Loading PRD from issue #42...
      ### BLOCKERS
      - None
 
-     Closed #42 (PRD) and #43 (plan).
+     Pushed branch feat/dark-mode-support.
+     Opened PR #44 with Closes #42, Closes #43.
+     Linked merged PR #44 to PRD and plan issues.
+     Closed #42 (PRD) and #43 (plan) — reason: completed.
 ```
 
-Issues are closed with `completed` reason instead of archiving local files.
+On `done`, GitHub mode:
+
+1. Pushes the feature branch and opens (or updates) a PR with `Closes` references to both issues
+2. Searches merged PRs matching the slug and links them via comments
+3. Updates metadata and labels on both issues
+4. Closes both issues with reason `completed`

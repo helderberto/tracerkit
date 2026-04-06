@@ -38,7 +38,7 @@ $ tracerkit config storage local        # switch back to local
 
 ## Migrating between backends
 
-`migrate-storage` moves all PRDs, plans, and archives from the current backend to the opposite one. Direction is inferred from `config.storage`:
+`migrate-storage` moves all PRDs and plans from the current backend to the opposite one. Direction is inferred from `config.storage`:
 
 ```bash
 $ tracerkit migrate-storage            # local→github or github→local
@@ -46,8 +46,8 @@ $ tracerkit migrate-storage            # local→github or github→local
 
 - Existing artifacts on the target are skipped (idempotent)
 - Source artifacts are left intact as backup
-- Archived features migrating to GitHub get merged PRs linked automatically
 - Config is flipped to the target backend after migration
+- Completed features (`status: done`) are migrated with their status preserved
 
 Requires `gh` CLI authenticated with access to the target repo.
 
