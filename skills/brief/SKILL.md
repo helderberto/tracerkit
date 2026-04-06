@@ -8,13 +8,21 @@ Get a quick overview of all active features, their progress, and what to focus o
 
 ## Pre-loaded context
 
+<!-- if:local -->
+
 - Available PRDs: !`ls .tracerkit/prds/ 2>&1`
+  <!-- end:local -->
+  <!-- if:github -->
+- Available PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
+<!-- end:github -->
 
 ## Algorithm
 
 Follow these steps exactly to build the briefing table:
 
 ### 1. Discover features
+
+<!-- if:local -->
 
 For each `.md` file in `.tracerkit/prds/`:
 
@@ -23,8 +31,21 @@ For each `.md` file in `.tracerkit/prds/`:
 3. Extract `status` and `created` fields
 4. Skip files where `status: done`
 5. The slug is the filename without `.md`
+   <!-- end:local -->
+   <!-- if:github -->
+
+   List open GitHub Issues with label `{{github.labels.prd}}`:
+
+6. For each issue, parse the `<!-- tk:metadata -->` comment in the body
+7. Extract `status` and `created` fields from the metadata
+8. Also check labels: `tk:created`, `tk:in-progress`
+9. Skip issues with `tk:done` label
+10. The slug is extracted from the title: `[{{github.labels.prd}}] <slug>: ...`
+<!-- end:github -->
 
 ### 2. Count progress from plans
+
+<!-- if:local -->
 
 For each slug, check if `.tracerkit/plans/<slug>.md` exists. If it does:
 
@@ -37,6 +58,23 @@ For each slug, check if `.tracerkit/plans/<slug>.md` exists. If it does:
 5. Find the first unchecked item (`^- \[ \] (.+)`) in the entire plan — that's the "Next" value. Strip any trailing `[tag]` markers.
 
 If no plan exists, progress is `—` and next is `—`.
+
+<!-- end:local -->
+<!-- if:github -->
+
+For each slug, search for a GitHub Issue with label `{{github.labels.plan}}` and title matching `[{{github.labels.plan}}] <slug>:`. If found:
+
+1. Read the plan issue body
+2. Find every `## Phase N` heading (regex: `^## Phase \d+`)
+3. Within each phase section (until the next `## ` heading), count:
+   - Checked items: lines matching `^- \[x\] ` (case-insensitive)
+   - Unchecked items: lines matching `^- \[ \] `
+4. Sum checked and total across all phases → `checked/total`
+5. Find the first unchecked item (`^- \[ \] (.+)`) in the entire plan — that's the "Next" value. Strip any trailing `[tag]` markers.
+
+If no plan issue exists, progress is `—` and next is `—`.
+
+<!-- end:github -->
 
 ### 3. Build the table
 
@@ -74,6 +112,12 @@ Append below the table:
 
 Ask the user what they'd like to do:
 
+<!-- if:local -->
+
 - Continue the focused feature (read its plan at `.tracerkit/plans/<slug>.md`)
+  <!-- end:local -->
+  <!-- if:github -->
+- Continue the focused feature (read its plan issue)
+<!-- end:github -->
 - Start a new feature with `/tk:prd`
 - Check progress on a feature with `/tk:check <slug>`

@@ -9,7 +9,13 @@ Check implementation against a plan. Update checks, stamp findings, transition s
 
 ## Pre-loaded context
 
+<!-- if:local -->
+
 - Available plans: !`ls .tracerkit/plans/ 2>&1`
+  <!-- end:local -->
+  <!-- if:github -->
+- Available plans: list open GitHub Issues with label `{{github.labels.plan}}`
+<!-- end:github -->
 
 ## Input
 
@@ -25,11 +31,22 @@ If no argument is provided, build a summary table before asking which one to che
 | <slug>  | ...    | 3/7      |
 ```
 
+<!-- if:local -->
+
 For each `.md` file in `.tracerkit/prds/`:
 
 1. Read the file, parse YAML frontmatter (block between `---` fences)
 2. Extract `status` — use `unknown` if missing
 3. If `.tracerkit/plans/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
+   <!-- end:local -->
+   <!-- if:github -->
+
+   List open GitHub Issues with label `{{github.labels.prd}}`:
+
+4. For each PRD issue, extract `status` from labels (`tk:created`, `tk:in-progress`)
+5. Find matching plan issue with label `{{github.labels.plan}}` and same slug in title
+6. If plan issue exists, count progress from checkboxes in its body (see Progress Algorithm below). Show `—` if no plan.
+<!-- end:github -->
 
 After the table, ask which feature to verify.
 
@@ -48,11 +65,29 @@ To count progress for a plan file:
 
 ### 1. Load the plan
 
+<!-- if:local -->
+
 Read `.tracerkit/plans/<slug>.md`. If it does not exist, list available plans and ask.
+
+<!-- end:local -->
+<!-- if:github -->
+
+Find the plan issue: search for an open GitHub Issue with label `{{github.labels.plan}}` and title matching `[{{github.labels.plan}}] <slug>:`. Read its body. If not found, list available plan issues and ask.
+
+<!-- end:github -->
 
 ### 2. Load the PRD
 
+<!-- if:local -->
+
 Read the source PRD referenced in the plan header (`> Source PRD: ...`).
+
+<!-- end:local -->
+<!-- if:github -->
+
+Read the source PRD issue referenced in the plan body (`> Source PRD: #<number>`).
+
+<!-- end:github -->
 
 ### 3. Fast-path: check if implementation exists
 
@@ -76,7 +111,16 @@ Collect findings into two categories:
 
 ### 3c. Update checkboxes
 
+<!-- if:local -->
+
 Using the subagent's report, update each checkbox in `.tracerkit/plans/<slug>.md` to `[x]` or `[ ]`.
+
+<!-- end:local -->
+<!-- if:github -->
+
+Using the subagent's report, update each checkbox in the plan issue body to `[x]` or `[ ]` by editing the issue.
+
+<!-- end:github -->
 
 ### 4. Determine outcome
 
@@ -112,7 +156,16 @@ Total: checked/total
 
 ### 6. Stamp the plan
 
+<!-- if:local -->
+
 Append a verdict block at the bottom of `.tracerkit/plans/<slug>.md`:
+
+<!-- end:local -->
+<!-- if:github -->
+
+Append a verdict block at the bottom of the plan issue body by editing the issue:
+
+<!-- end:github -->
 
 ```markdown
 ---
@@ -129,7 +182,11 @@ If a previous verdict block exists, replace it with the new one.
 
 ### 7. On `done` — archive
 
-If all checks pass and zero BLOCKERS, perform these steps in order:
+If all checks pass and zero BLOCKERS:
+
+<!-- if:local -->
+
+Perform these steps in order:
 
 1. Create directory `.tracerkit/archives/<slug>/`
 2. If `.tracerkit/prds/<slug>.md` exists:
@@ -144,6 +201,22 @@ If all checks pass and zero BLOCKERS, perform these steps in order:
 5. Delete `.tracerkit/plans/<slug>.md`
 
 Tell the user: archived to `.tracerkit/archives/<slug>/`, one-line summary of the feature.
+
+<!-- end:local -->
+<!-- if:github -->
+
+Perform these steps in order:
+
+1. Update the PRD issue:
+   - Add `tk:done` label, remove `tk:in-progress` label
+   - Update the `<!-- tk:metadata -->` comment: set `status: done`, add `completed: <current UTC ISO 8601 timestamp>`
+2. Close the PRD issue with reason `completed`
+3. Close the plan issue with reason `completed`
+4. If there is a current PR associated with this work, reference it in a closing comment on the PRD issue
+
+Tell the user: issues closed (include issue numbers), one-line summary of the feature.
+
+<!-- end:github -->
 
 ### 8. On `in_progress` (no blockers)
 
@@ -164,5 +237,10 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 
 - Plan not found — list available plans and ask
 - PRD referenced in plan not found — warn and continue with plan checks only
+<!-- if:local -->
 - `.tracerkit/plans/` missing — tell user to run `/tk:plan` first
 - `.tracerkit/archives/<slug>/` already exists — warn and ask whether to remove it first
+  <!-- end:local -->
+  <!-- if:github -->
+- Issue update fails — report the error and suggest checking `gh auth status`
+<!-- end:github -->
