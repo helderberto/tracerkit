@@ -68,7 +68,7 @@ describe('copyTemplates', () => {
   it('substitutes placeholders with custom paths', () => {
     const customConfig: Config = {
       storage: 'local',
-      paths: { prds: 'docs/prds', plans: 'docs/plans', archives: 'docs/done' },
+      paths: { prds: 'docs/prds', plans: 'docs/plans' },
       github: { ...DEFAULT_GITHUB },
     };
     copyTemplates(tmp.get(), customConfig);
@@ -190,7 +190,6 @@ describe('diffTemplates', () => {
       paths: {
         prds: 'custom/prds',
         plans: 'custom/plans',
-        archives: 'custom/archives',
       },
       github: { ...DEFAULT_GITHUB },
     };

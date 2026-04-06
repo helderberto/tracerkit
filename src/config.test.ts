@@ -29,7 +29,6 @@ describe('loadConfig', () => {
 
     expect(config.paths.prds).toBe('docs/prds');
     expect(config.paths.plans).toBe(DEFAULT_PATHS.plans);
-    expect(config.paths.archives).toBe(DEFAULT_PATHS.archives);
   });
 
   it('overrides all paths when fully specified', () => {
@@ -38,13 +37,13 @@ describe('loadConfig', () => {
     writeFileSync(
       join(dir, 'config.json'),
       JSON.stringify({
-        paths: { prds: 'a', plans: 'b', archives: 'c' },
+        paths: { prds: 'a', plans: 'b' },
       }),
     );
 
     const config = loadConfig(tmp.get());
 
-    expect(config.paths).toEqual({ prds: 'a', plans: 'b', archives: 'c' });
+    expect(config.paths).toEqual({ prds: 'a', plans: 'b' });
   });
 
   it('throws on invalid JSON', () => {
