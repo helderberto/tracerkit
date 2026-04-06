@@ -11,7 +11,11 @@ import { copyTemplates, DEPRECATED_SKILLS } from '../templates.ts';
 import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
 
-const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
+const defaultConfig: Config = {
+  storage: 'local',
+  paths: { ...DEFAULT_PATHS },
+  github: { labels: { prd: 'tk:prd', plan: 'tk:plan' } },
+};
 
 describe('update', () => {
   const tmp = useTmpDir();
