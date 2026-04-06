@@ -1,11 +1,15 @@
-import { mkdirSync, rmSync, existsSync } from 'node:fs';
+import { mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { init } from './init.ts';
 import { copyTemplates } from '../templates.ts';
-import { DEFAULT_PATHS, type Config } from '../config.ts';
+import { DEFAULT_PATHS, DEFAULT_GITHUB, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
 
-const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
+const defaultConfig: Config = {
+  storage: 'local',
+  paths: { ...DEFAULT_PATHS },
+  github: { ...DEFAULT_GITHUB },
+};
 
 describe('init', () => {
   const tmp = useTmpDir();
@@ -61,5 +65,28 @@ describe('init', () => {
     for (const line of output) {
       expect(line).toMatch(/^✓/);
     }
+  });
+
+  it('writes config with storage when --storage flag is provided', () => {
+    init(tmp.get(), { storage: 'github' });
+
+    const raw = readFileSync(
+      join(tmp.get(), '.tracerkit', 'config.json'),
+      'utf8',
+    );
+
+    expect(JSON.parse(raw).storage).toBe('github');
+  });
+
+  it('renders skills with github blocks when storage is github', () => {
+    init(tmp.get(), { storage: 'github' });
+
+    const skill = readFileSync(
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+      'utf8',
+    );
+
+    expect(skill).not.toContain('<!-- if:github -->');
+    expect(skill).not.toContain('<!-- if:local -->');
   });
 });

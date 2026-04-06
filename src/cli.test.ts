@@ -3,10 +3,14 @@ import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
 import { copyTemplates } from './templates.ts';
-import { DEFAULT_PATHS, type Config } from './config.ts';
+import { DEFAULT_PATHS, DEFAULT_GITHUB, type Config } from './config.ts';
 import { useTmpDir } from './test-setup.ts';
 
-const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
+const defaultConfig: Config = {
+  storage: 'local',
+  paths: { ...DEFAULT_PATHS },
+  github: { ...DEFAULT_GITHUB },
+};
 
 describe('resolveTarget', () => {
   it('defaults to homedir when no args', () => {

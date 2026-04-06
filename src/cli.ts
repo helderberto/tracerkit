@@ -2,7 +2,8 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { init, uninstall, update } from './commands/index.ts';
+import { extractFlag } from './args.ts';
+import { config, init, uninstall, update } from './commands/index.ts';
 import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
@@ -23,6 +24,7 @@ const USAGE = [
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
+  '  --storage <type>  Set storage (local, github) during init',
   '  --help, -h        Show this help message',
   '  --version, -v     Print version',
   '',
@@ -59,8 +61,15 @@ export function run(args: string[]): string[] {
   }
 
   switch (command) {
-    case 'init':
-      return init(resolveTarget(rest));
+    case 'init': {
+      const { value: storage, rest: initArgs } = extractFlag(
+        rest,
+        FLAGS.storage,
+      );
+      return init(resolveTarget(initArgs), {
+        storage: storage as 'local' | 'github' | undefined,
+      });
+    }
     case 'update': {
       const force = rest.includes(FLAGS.force);
       const targetArgs = rest.filter((a) => a !== FLAGS.force);
@@ -71,6 +80,8 @@ export function run(args: string[]): string[] {
       );
       return output;
     }
+    case 'config':
+      return config(process.cwd(), rest);
     case 'uninstall':
       return uninstall(resolveTarget(rest));
     default:
