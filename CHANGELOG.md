@@ -1,3 +1,9 @@
+# [1.16.0](https://github.com/helderberto/tracerkit/compare/v1.15.0...v1.16.0) (2026-04-06)
+
+### Features
+
+- replace archive workflow with status-based completion ([#10](https://github.com/helderberto/tracerkit/issues/10)) ([f6cc0a5](https://github.com/helderberto/tracerkit/commit/f6cc0a5219708fec0f6e2ba2de687304eb7ad95c))
+
 # [1.15.0](https://github.com/helderberto/tracerkit/compare/v1.14.0...v1.15.0) (2026-04-06)
 
 ### Features
