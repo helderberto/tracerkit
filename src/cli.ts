@@ -2,7 +2,6 @@ import { readFileSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { extractFlag } from './args.ts';
 import { config, init, uninstall, update } from './commands/index.ts';
 import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
@@ -62,10 +61,10 @@ export function run(args: string[]): string[] {
 
   switch (command) {
     case 'init': {
-      const { value: storage, rest: initArgs } = extractFlag(
-        rest,
-        FLAGS.storage,
-      );
+      const idx = rest.indexOf(FLAGS.storage);
+      const storage = idx >= 0 ? rest[idx + 1] : undefined;
+      const initArgs =
+        idx >= 0 ? rest.filter((_, i) => i !== idx && i !== idx + 1) : rest;
       return init(resolveTarget(initArgs), {
         storage: storage as 'local' | 'github' | undefined,
       });
@@ -81,7 +80,7 @@ export function run(args: string[]): string[] {
       return output;
     }
     case 'config':
-      return config(process.cwd(), rest);
+      return config(homedir(), rest);
     case 'uninstall':
       return uninstall(resolveTarget(rest));
     default:

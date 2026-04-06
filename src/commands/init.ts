@@ -9,7 +9,11 @@ interface InitOptions {
 }
 
 export function init(cwd: string, opts?: InitOptions): string[] {
-  if (opts?.storage) {
+  const currentConfig = loadConfig(cwd);
+  const storageChanged =
+    opts?.storage && opts.storage !== currentConfig.storage;
+
+  if (storageChanged) {
     saveConfig(cwd, { storage: opts.storage });
   }
 
@@ -18,7 +22,7 @@ export function init(cwd: string, opts?: InitOptions): string[] {
   );
 
   if (hasAny) {
-    return update(cwd, { force: !!opts?.storage });
+    return update(cwd, { force: !!storageChanged });
   }
 
   const config = loadConfig(cwd);

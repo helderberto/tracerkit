@@ -22,6 +22,25 @@ describe('config', () => {
       expect(output.join('\n')).toContain('"local"');
     });
 
+    it('omits github from output when storage is local', () => {
+      const output = config(tmp.get(), []);
+
+      expect(output.join('\n')).not.toContain('"github"');
+    });
+
+    it('includes github in output when storage is github', () => {
+      const dir = join(tmp.get(), '.tracerkit');
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        join(dir, 'config.json'),
+        JSON.stringify({ storage: 'github' }),
+      );
+
+      const output = config(tmp.get(), []);
+
+      expect(output.join('\n')).toContain('"github"');
+    });
+
     it('prints specific key value', () => {
       const output = config(tmp.get(), ['storage']);
 
@@ -103,6 +122,41 @@ describe('config', () => {
       const output = config(tmp.get(), ['storage', 'github']);
 
       expect(output.some((l) => l.includes('storage'))).toBe(true);
+    });
+
+    it('re-renders skills when labels change', () => {
+      const ghConfig: Config = {
+        ...defaultConfig,
+        storage: 'github',
+        github: { labels: { prd: 'tk:prd', plan: 'tk:plan' } },
+      };
+      copyTemplates(tmp.get(), ghConfig);
+      const dir = join(tmp.get(), '.tracerkit');
+      mkdirSync(dir, { recursive: true });
+      writeFileSync(
+        join(dir, 'config.json'),
+        JSON.stringify({ storage: 'github' }),
+      );
+
+      config(tmp.get(), ['github.labels.prd', 'custom:prd']);
+
+      const skill = readFileSync(
+        join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+        'utf8',
+      );
+      expect(skill).toContain('custom:prd');
+    });
+
+    it('re-renders skills when paths change', () => {
+      copyTemplates(tmp.get(), defaultConfig);
+
+      config(tmp.get(), ['paths.prds', 'custom/prds']);
+
+      const skill = readFileSync(
+        join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+        'utf8',
+      );
+      expect(skill).toContain('custom/prds');
     });
   });
 });

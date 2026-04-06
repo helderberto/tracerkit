@@ -19,7 +19,9 @@ export function config(cwd: string, args: string[]): string[] {
 
 function printConfig(cwd: string): string[] {
   const cfg = loadConfig(cwd);
-  return JSON.stringify(cfg, null, 2).split('\n');
+  const output =
+    cfg.storage === 'local' ? { storage: cfg.storage, paths: cfg.paths } : cfg;
+  return JSON.stringify(output, null, 2).split('\n');
 }
 
 function getKey(cwd: string, key: string): string[] {
@@ -42,10 +44,7 @@ function setKey(cwd: string, key: string, value: string): string[] {
   saveConfig(cwd, partial);
 
   const output = [`✓ Set ${key} = ${value}`];
-
-  if (key === 'storage') {
-    reRenderSkills(cwd, output);
-  }
+  reRenderSkills(cwd, output);
 
   return output;
 }

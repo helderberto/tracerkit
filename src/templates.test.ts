@@ -297,6 +297,24 @@ describe('renderTemplate', () => {
     expect(result).toBe('repo: {{github.repo}}');
   });
 
+  it('handles trailing whitespace after conditional tags', () => {
+    const input = [
+      '<!-- if:local -->  ',
+      'local content',
+      '<!-- end:local -->  ',
+      '<!-- if:github -->  ',
+      'github content',
+      '<!-- end:github -->  ',
+    ].join('\n');
+
+    const result = renderTemplate(input, defaultConfig);
+
+    expect(result).toContain('local content');
+    expect(result).not.toContain('github content');
+    expect(result).not.toContain('<!-- if');
+    expect(result).not.toContain('<!-- end');
+  });
+
   it('handles multiple conditional blocks', () => {
     const input = [
       '<!-- if:local -->',

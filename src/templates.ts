@@ -66,13 +66,19 @@ export function renderTemplate(content: string, config: Config): string {
 
   result = result.replace(
     new RegExp(
-      `<!-- if:${inactive} -->\\n[\\s\\S]*?<!-- end:${inactive} -->\\n?`,
+      `<!-- if:${inactive} -->[^\\S\\n]*\\n[\\s\\S]*?<!-- end:${inactive} -->[^\\S\\n]*\\n?`,
       'g',
     ),
     '',
   );
-  result = result.replace(new RegExp(`<!-- if:${active} -->\\n`, 'g'), '');
-  result = result.replace(new RegExp(`<!-- end:${active} -->\\n?`, 'g'), '');
+  result = result.replace(
+    new RegExp(`<!-- if:${active} -->[^\\S\\n]*\\n`, 'g'),
+    '',
+  );
+  result = result.replace(
+    new RegExp(`<!-- end:${active} -->[^\\S\\n]*\\n?`, 'g'),
+    '',
+  );
 
   // GitHub template variables
   if (config.github?.repo) {

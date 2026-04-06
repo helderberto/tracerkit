@@ -1,4 +1,10 @@
-import { mkdirSync, rmSync, existsSync, readFileSync } from 'node:fs';
+import {
+  mkdirSync,
+  rmSync,
+  existsSync,
+  readFileSync,
+  writeFileSync,
+} from 'node:fs';
 import { join } from 'node:path';
 import { init } from './init.ts';
 import { copyTemplates } from '../templates.ts';
@@ -88,5 +94,25 @@ describe('init', () => {
 
     expect(skill).not.toContain('<!-- if:github -->');
     expect(skill).not.toContain('<!-- if:local -->');
+  });
+
+  it('does not force-update when storage matches current', () => {
+    const dir = join(tmp.get(), '.tracerkit');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      join(dir, 'config.json'),
+      JSON.stringify({ storage: 'github' }),
+    );
+    init(tmp.get(), { storage: 'github' });
+
+    // User modifies a skill
+    const skillPath = join(tmp.get(), '.claude/skills/tk:prd/SKILL.md');
+    writeFileSync(skillPath, 'user modified');
+
+    // Re-init with same storage should NOT overwrite
+    const output = init(tmp.get(), { storage: 'github' });
+
+    expect(readFileSync(skillPath, 'utf8')).toBe('user modified');
+    expect(output.some((l) => l.includes('modified'))).toBe(true);
   });
 });
