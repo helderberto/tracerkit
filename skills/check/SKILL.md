@@ -3,12 +3,7 @@ description: Verify implementation against plan. Shows progress, finds blockers,
 argument-hint: '[slug]'
 ---
 
-## Storage
-
-Read `.tracerkit/config.json` in the project root. If absent, use `local`.
-
-- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
-- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
 
 # Check Implementation
 
@@ -55,18 +50,11 @@ For each `.md` file in `.tracerkit/prds/`:
 6. If plan issue exists, count progress from checkboxes in its body (see Progress Algorithm below). Show `—` if no plan.
 <!-- end:github -->
 
-After the table, ask which feature to verify.
+Ask which feature to verify.
 
 ## Progress Algorithm
 
-To count progress for a plan file:
-
-1. Find every `## Phase N` heading (regex: `^## Phase \d+`)
-2. Within each phase section (until the next `## ` heading), count:
-   - Checked: lines matching `^- \[x\] ` (case-insensitive)
-   - Unchecked: lines matching `^- \[ \] `
-3. Per-phase output: `  Phase N — title: checked/total`
-4. Sum across all phases → `Total: checked/total`
+Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Per-phase: `Phase N — title: checked/total`. Sum → `Total: checked/total`.
 
 ## Workflow
 
@@ -74,12 +62,12 @@ To count progress for a plan file:
 
 <!-- if:local -->
 
-Read `.tracerkit/plans/<slug>.md`. If it does not exist, list available plans and ask.
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask.
 
 <!-- end:local -->
 <!-- if:github -->
 
-Find the plan issue: search for an open GitHub Issue with label `{{github.labels.plan}}` and title matching `[{{github.labels.plan}}] <slug>:`. Read its body. If not found, list available plan issues and ask.
+Find plan issue: open issue with label `{{github.labels.plan}}`, title matching `[{{github.labels.plan}}] <slug>:`. If missing, list plans and ask.
 
 <!-- end:github -->
 
@@ -87,18 +75,18 @@ Find the plan issue: search for an open GitHub Issue with label `{{github.labels
 
 <!-- if:local -->
 
-Read the source PRD referenced in the plan header (`> Source PRD: ...`).
+Read source PRD referenced in plan header (`> Source PRD: ...`).
 
 <!-- end:local -->
 <!-- if:github -->
 
-Read the source PRD issue referenced in the plan body (`> Source PRD: #<number>`).
+Read source PRD issue referenced in plan body (`> Source PRD: #<number>`).
 
 <!-- end:github -->
 
 ### 3. Fast-path: check if implementation exists
 
-Before launching a subagent, check whether the primary module file(s) from Phase 1 exist. If none exist, skip the subagent entirely and report `0/N — not yet started`. List Phase 1's "Done when" items as next steps and jump to Step 5.
+If primary module file(s) from Phase 1 don't exist, skip subagent — report `0/N — not yet started`, list Phase 1 done-when items, jump to Step 5.
 
 ### 3b. Launch read-only review
 
@@ -139,7 +127,7 @@ Based on checks and findings, decide the status transition:
 
 ### 5. Report to user
 
-Count progress per phase using the Progress Algorithm above, then print the verdict report:
+Count progress per phase (Progress Algorithm), then print:
 
 ```markdown
 ## Verification: <slug>
@@ -193,35 +181,19 @@ If all checks pass and zero BLOCKERS:
 
 <!-- if:local -->
 
-Perform these steps in order:
+Archive to `.tracerkit/archives/<slug>/`:
 
-1. Create directory `.tracerkit/archives/<slug>/`
-2. If `.tracerkit/prds/<slug>.md` exists:
-   - Read the PRD file
-   - In the YAML frontmatter (between `---` fences), find the `status:` line and replace its value with `done`. If no `status:` line exists, add `status: done` as a new line inside the frontmatter block.
-   - Add a `completed: <current UTC ISO 8601 timestamp>` line inside the frontmatter block (e.g. `completed: 2025-06-15T14:30:00Z`)
-   - Write the updated content to `.tracerkit/archives/<slug>/prd.md`
-3. Read `.tracerkit/plans/<slug>.md`
-   - Append to the end: `\n## Archived\n\nArchived on YYYY-MM-DD.\n`
-   - Write the result to `.tracerkit/archives/<slug>/plan.md`
-4. Delete `.tracerkit/prds/<slug>.md` (if it exists)
-5. Delete `.tracerkit/plans/<slug>.md`
-
-Tell the user: archived to `.tracerkit/archives/<slug>/`, one-line summary of the feature.
+1. Copy PRD → `prd.md` (set `status: done`, add `completed` timestamp in frontmatter)
+2. Copy plan → `plan.md` (append `## Archived` with date)
+3. Delete originals
 
 <!-- end:local -->
 <!-- if:github -->
 
-Perform these steps in order:
-
-1. Update the PRD issue:
-   - Add `tk:done` label, remove `tk:in-progress` label
-   - Update the `<!-- tk:metadata -->` comment: set `status: done`, add `completed: <current UTC ISO 8601 timestamp>`
-2. Close the PRD issue with reason `completed`
-3. Close the plan issue with reason `completed`
-4. If there is a current PR associated with this work, reference it in a closing comment on the PRD issue
-
-Tell the user: issues closed (include issue numbers), one-line summary of the feature.
+1. PRD issue: add `tk:done`, remove `tk:in-progress`, set metadata `status: done` + `completed` timestamp
+2. Close PRD issue (reason: `completed`)
+3. Close plan issue (reason: `completed`)
+4. If current PR exists, reference it in closing comment on PRD issue
 
 <!-- end:github -->
 
@@ -239,15 +211,3 @@ List the blockers to fix, then re-run `/tk:check <slug>`.
 - The only file writes this skill makes are: checkboxes + verdict block in the plan, and the archive steps on `done`
 - Never modify implementation code — only observe and report
 - If the PRD file is missing but all checks pass, warn and proceed — archive the plan only (skip PRD steps in archive)
-
-## Error Handling
-
-- Plan not found — list available plans and ask
-- PRD referenced in plan not found — warn and continue with plan checks only
-<!-- if:local -->
-- `.tracerkit/plans/` missing — tell user to run `/tk:plan` first
-- `.tracerkit/archives/<slug>/` already exists — warn and ask whether to remove it first
-  <!-- end:local -->
-  <!-- if:github -->
-- Issue update fails — report the error and suggest checking `gh auth status`
-<!-- end:github -->

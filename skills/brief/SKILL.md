@@ -2,16 +2,11 @@
 description: Session briefing — shows active features, progress, and suggested focus. Use at the start of a session to orient.
 ---
 
-## Storage
-
-Read `.tracerkit/config.json` in the project root. If absent, use `local`.
-
-- **`local`** (default): follow `<!-- if:local -->` blocks, ignore `<!-- if:github -->` blocks
-- **`github`**: follow `<!-- if:github -->` blocks, ignore `<!-- if:local -->` blocks. Use `github.repo` from config (or auto-detect from git remote). Labels default to `tk:prd`/`tk:plan` but may be overridden in config.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
 
 # Session Briefing
 
-Get a quick overview of all active features, their progress, and what to focus on next.
+Overview of active features, progress, and suggested focus.
 
 ## Pre-loaded context
 
@@ -25,23 +20,16 @@ Get a quick overview of all active features, their progress, and what to focus o
 
 ## Algorithm
 
-Follow these steps exactly to build the briefing table:
-
 ### 1. Discover features
 
 <!-- if:local -->
 
-For each `.md` file in `.tracerkit/prds/`:
+For each `.md` file in `.tracerkit/prds/`: parse frontmatter, extract `status` and `created`. Skip `status: done`. Slug = filename without `.md`.
 
-1. Read the file
-2. Parse YAML frontmatter (the block between `---` fences at the top)
-3. Extract `status` and `created` fields
-4. Skip files where `status: done`
-5. The slug is the filename without `.md`
    <!-- end:local -->
    <!-- if:github -->
 
-   List open GitHub Issues with label `{{github.labels.prd}}`:
+List open GitHub Issues with label `{{github.labels.prd}}`:
 
 6. For each issue, parse the `<!-- tk:metadata -->` comment in the body
 7. Extract `status` and `created` fields from the metadata
@@ -54,38 +42,22 @@ For each `.md` file in `.tracerkit/prds/`:
 
 <!-- if:local -->
 
-For each slug, check if `.tracerkit/plans/<slug>.md` exists. If it does:
+For each slug with a plan at `.tracerkit/plans/<slug>.md`:
 
-1. Read the plan file
-2. Find every `## Phase N` heading (regex: `^## Phase \d+`)
-3. Within each phase section (until the next `## ` heading), count:
-   - Checked items: lines matching `^- \[x\] ` (case-insensitive)
-   - Unchecked items: lines matching `^- \[ \] `
-4. Sum checked and total across all phases → `checked/total`
-5. Find the first unchecked item (`^- \[ \] (.+)`) in the entire plan — that's the "Next" value. Strip any trailing `[tag]` markers.
-
-If no plan exists, progress is `—` and next is `—`.
+Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Sum → `checked/total`. First unchecked item → "Next" (strip trailing `[tag]`). No plan → `—`.
 
 <!-- end:local -->
 <!-- if:github -->
 
-For each slug, search for a GitHub Issue with label `{{github.labels.plan}}` and title matching `[{{github.labels.plan}}] <slug>:`. If found:
+For each slug, find plan issue with label `{{github.labels.plan}}` and matching title. If found:
 
-1. Read the plan issue body
-2. Find every `## Phase N` heading (regex: `^## Phase \d+`)
-3. Within each phase section (until the next `## ` heading), count:
-   - Checked items: lines matching `^- \[x\] ` (case-insensitive)
-   - Unchecked items: lines matching `^- \[ \] `
-4. Sum checked and total across all phases → `checked/total`
-5. Find the first unchecked item (`^- \[ \] (.+)`) in the entire plan — that's the "Next" value. Strip any trailing `[tag]` markers.
-
-If no plan issue exists, progress is `—` and next is `—`.
+Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Sum → `checked/total`. First unchecked item → "Next" (strip trailing `[tag]`). No plan → `—`.
 
 <!-- end:github -->
 
 ### 3. Build the table
 
-Sort features by `created` date ascending (no-date entries last). Calculate age from `created`:
+Sort by `created` ascending (no-date last). Age from `created`:
 
 - < 7 days → `Nd` (e.g. `3d`)
 - < 30 days → `Nw` (e.g. `2w`)
@@ -117,14 +89,13 @@ Append below the table:
 
 ### 5. Offer next steps
 
-Ask the user what they'd like to do:
-
 <!-- if:local -->
 
-- Continue the focused feature (read its plan at `.tracerkit/plans/<slug>.md`)
-  <!-- end:local -->
-  <!-- if:github -->
-- Continue the focused feature (read its plan issue)
+Options: continue focused feature (read plan at `.tracerkit/plans/<slug>.md`), `/tk:prd` for new feature, `/tk:check <slug>` for progress.
+
+<!-- end:local -->
+<!-- if:github -->
+
+Options: continue focused feature (read plan issue), `/tk:prd` for new feature, `/tk:check <slug>` for progress.
+
 <!-- end:github -->
-- Start a new feature with `/tk:prd`
-- Check progress on a feature with `/tk:check <slug>`
