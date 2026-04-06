@@ -24,7 +24,7 @@ Output: a GitHub Issue with label `{{github.labels.plan}}`.
 
 <!-- if:local -->
 
-- Available PRDs: !`ls .tracerkit/prds/ 2>&1`
+- Available PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
   <!-- end:local -->
   <!-- if:github -->
 - Available PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
@@ -102,7 +102,7 @@ Each phase: thin vertical slice through all layers (schema → service → API �
 
 **Phase naming:** use a goal phrase answering "what can we demo when this is done?" (e.g., "Phase 1 — Revenue visible end-to-end"), not a layer name.
 
-**Done when:** checkbox list of atomic, verifiable conditions (not prose). Test: "Can an agent verify by reading files, running a command, or checking a test?" Agent marks `[x]` during implementation.
+**Done when:** checkbox list of atomic, verifiable conditions. Each must name a test file/name, a shell command, or a file+content to verify. No prose-only conditions. Test: "Can an agent verify by reading files, running a command, or checking a test?"
 
 **Layer-by-layer exception:** if complex schema changes underpin all modules and no story stands alone, build data foundation first, then slice vertically.
 
@@ -131,15 +131,23 @@ Present breakdown (title, user stories covered, done-when per phase). Ask: granu
 Save to `.tracerkit/plans/<slug>.md` (create dir if missing).
 
 ```markdown
+---
+source_prd: .tracerkit/prds/<slug>.md
+slug: <slug>
+status: in_progress
+---
+
 # Plan: <Feature Name>
 
 > Source PRD: `.tracerkit/prds/<slug>.md`
 ```
 
+Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field.
+
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `{{github.labels.plan}}`, `tk:in-progress` (create if missing).
+Ensure labels exist: `gh label create {{github.labels.plan}} --repo {{github.repo}} --force`, `gh label create tk:in-progress --repo {{github.repo}} --force`.
 
 Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature Title>`, labels: `{{github.labels.plan}}`, `tk:in-progress`.
 
@@ -147,12 +155,26 @@ Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature 
 <!-- tk:metadata
 source_prd: #<PRD issue number>
 slug: <slug>
+status: in_progress
 -->
 
 # Plan: <Feature Name>
 
 > Source PRD: #<PRD issue number>
 ```
+
+<!-- end:github -->
+
+### 6b. Backlink PRD
+
+<!-- if:local -->
+
+Already linked via PRD frontmatter `plan:` field (set in step 6).
+
+<!-- end:local -->
+<!-- if:github -->
+
+Add comment on PRD issue: "Plan: #<plan-issue-number>" (creates cross-reference).
 
 <!-- end:github -->
 
@@ -194,6 +216,28 @@ Gaps found in the PRD needing resolution. Blank if none.
 ```
 
 Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "Run `/tk:check <slug>` when ready?"
+
+## Execution guidance
+
+When implementing this plan, **always offer to create a feature branch** before writing any code:
+
+> "Create branch `feat/<slug>` for this work? (Y/n)"
+
+If accepted, create the branch from the default branch.
+
+### During implementation
+
+Mark each "Done when" checkbox `[x]` **immediately after verifying** the condition.
+
+Always update the local plan file (`.tracerkit/plans/<slug>.md`): change `- [ ]` → `- [x]`. This file is the working copy for both local and GitHub modes.
+
+<!-- if:github -->
+
+**Sync to GitHub at phase boundaries**: after completing all items in a phase, update the plan issue body with `gh issue edit` to reflect the local state. This avoids per-item API calls.
+
+After all phases, open a PR with body containing `Closes #<prd-issue>, Closes #<plan-issue>`.
+
+<!-- end:github -->
 
 ## Rules
 

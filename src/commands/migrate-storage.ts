@@ -27,7 +27,6 @@ interface LocalArtifact {
   metadata: Record<string, string>;
   body: string;
   title: string;
-  archived: boolean;
 }
 
 const STATUS_MAP: Record<string, string> = {
@@ -41,8 +40,6 @@ const LABEL_MAP: Record<string, string> = {
   'tk:in-progress': 'in_progress',
   'tk:done': 'done',
 };
-
-// --- Pure functions ---
 
 export function parseFrontmatter(content: string): {
   metadata: Record<string, string>;
@@ -118,12 +115,9 @@ export function extractTitle(body: string): string {
   return match ? match[1].trim() : 'Untitled';
 }
 
-// --- Artifact discovery ---
-
 function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
   const artifacts: LocalArtifact[] = [];
 
-  // Discover PRDs
   const prdsDir = join(cwd, cfg.paths.prds);
   if (existsSync(prdsDir)) {
     for (const file of readdirSync(prdsDir)) {
@@ -137,78 +131,62 @@ function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
         metadata,
         body,
         title: extractTitle(body),
-        archived: false,
       });
     }
   }
 
-  // Discover plans
   const plansDir = join(cwd, cfg.paths.plans);
   if (existsSync(plansDir)) {
     for (const file of readdirSync(plansDir)) {
       if (!file.endsWith('.md')) continue;
       const slug = basename(file, '.md');
       const content = readFileSync(join(plansDir, file), 'utf8');
+      const { metadata, body } = parseFrontmatter(content);
       artifacts.push({
         slug,
         type: 'plan',
-        metadata: {},
-        body: content,
-        title: extractTitle(content),
-        archived: false,
+        metadata,
+        body,
+        title: extractTitle(body || content),
       });
-    }
-  }
-
-  // Discover archives
-  const archivesDir = join(cwd, cfg.paths.archives);
-  if (existsSync(archivesDir)) {
-    for (const entry of readdirSync(archivesDir, { withFileTypes: true })) {
-      if (!entry.isDirectory()) continue;
-      const slug = entry.name;
-      const prdPath = join(archivesDir, slug, 'prd.md');
-      const planPath = join(archivesDir, slug, 'plan.md');
-
-      if (existsSync(prdPath)) {
-        const content = readFileSync(prdPath, 'utf8');
-        const { metadata, body } = parseFrontmatter(content);
-        artifacts.push({
-          slug,
-          type: 'prd',
-          metadata: { ...metadata, status: 'done' },
-          body,
-          title: extractTitle(body),
-          archived: true,
-        });
-      }
-
-      if (existsSync(planPath)) {
-        const content = readFileSync(planPath, 'utf8');
-        artifacts.push({
-          slug,
-          type: 'plan',
-          metadata: { status: 'done' },
-          body: content,
-          title: extractTitle(content),
-          archived: true,
-        });
-      }
     }
   }
 
   return artifacts;
 }
 
-// --- GitHub helpers ---
+export function classifyGhError(err: unknown): Error {
+  const error = err as { code?: string; stderr?: string; message?: string };
+  if (error.code === 'ENOENT') {
+    return new Error('gh CLI not found — install it: https://cli.github.com');
+  }
+  const stderr = (error.stderr ?? error.message ?? '').toLowerCase();
+  if (stderr.includes('not logged in') || stderr.includes('authentication')) {
+    return new Error('Not authenticated with GitHub. Run: gh auth login');
+  }
+  if (stderr.includes('rate limit') || stderr.includes('403')) {
+    return new Error('GitHub rate limit exceeded. Wait and retry.');
+  }
+  if (stderr.includes('not found') || stderr.includes('404')) {
+    return new Error(
+      'Repository not found. Check github.repo in .tracerkit/config.json',
+    );
+  }
+  return err instanceof Error ? err : new Error(String(err));
+}
 
 function defaultRunGh(args: string[]): string {
-  return execSync(
-    `gh ${args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(' ')}`,
-    {
-      encoding: 'utf8',
-      stdio: ['pipe', 'pipe', 'pipe'],
-    },
-  ).trim();
+  try {
+    return execSync(
+      `gh ${args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(' ')}`,
+      {
+        encoding: 'utf8',
+        stdio: ['pipe', 'pipe', 'pipe'],
+      },
+    ).trim();
+  } catch (err: unknown) {
+    throw classifyGhError(err);
+  }
 }
 
 function resolveRepo(cfg: Config, runGh: RunGh): string {
@@ -255,8 +233,11 @@ function fetchExistingIssues(
 
 function issueExistsForSlug(slug: string, existing: ExistingIssue[]): boolean {
   return existing.some((issue) => {
-    const issueSlug = extractSlugFromTitle(issue.title);
-    return issueSlug === slug;
+    if (issue.body) {
+      const { metadata } = parseMetadata(issue.body);
+      if (metadata.slug) return metadata.slug === slug;
+    }
+    return extractSlugFromTitle(issue.title) === slug;
   });
 }
 
@@ -332,8 +313,6 @@ function addIssueComment(
   ]);
 }
 
-// --- GitHub → Local helpers ---
-
 function statusFromLabels(labels: string[]): string {
   for (const label of labels) {
     const status = LABEL_MAP[label];
@@ -346,8 +325,6 @@ function writeLocalFile(filePath: string, content: string): void {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, content);
 }
-
-// --- Main command ---
 
 export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
   const runGh = opts?.runGh ?? defaultRunGh;
@@ -410,7 +387,7 @@ function migrateLocalToGitHub(
       runGh,
     );
 
-    if (artifact.archived) {
+    if (status === 'done') {
       closeIssue(repo, issueNumber, runGh);
       linkPrToIssue(repo, artifact.slug, issueNumber, runGh);
       output.push(
@@ -465,58 +442,34 @@ function migrateGitHubToLocal(
   }
 
   for (const issue of allIssues) {
-    const slug = extractSlugFromTitle(issue.title);
+    const { metadata, body } = parseMetadata(issue.body ?? '');
+    const slug = metadata.slug ?? extractSlugFromTitle(issue.title);
     if (!slug) continue;
 
     const labels = issue.labels.map((l) => l.name);
-    const isDone = labels.includes('tk:done') && issue.state === 'CLOSED';
-    const { metadata, body } = parseMetadata(issue.body ?? '');
-
-    // Derive status from labels if not in metadata
     const status = metadata.status ?? statusFromLabels(labels);
 
-    if (isDone) {
-      // Route to archives
-      const archiveDir = join(cwd, cfg.paths.archives, slug);
-      const prdPath = join(archiveDir, 'prd.md');
-      const planPath = join(archiveDir, 'plan.md');
-      const targetPath = issue.type === 'prd' ? prdPath : planPath;
+    const dir = issue.type === 'prd' ? cfg.paths.prds : cfg.paths.plans;
+    const filePath = join(cwd, dir, `${slug}.md`);
 
-      if (existsSync(targetPath)) {
-        output.push(
-          `⚠ skip ${issue.type} "${slug}" — local file already exists`,
-        );
-        continue;
-      }
-
-      if (issue.type === 'prd') {
-        const fm = metadataToFrontmatter({ ...metadata, status });
-        writeLocalFile(targetPath, `${fm}\n${body}`);
-      } else {
-        writeLocalFile(targetPath, body);
-      }
-      output.push(`✓ ${issue.type} "${slug}" → ${targetPath} (archived)`);
-    } else {
-      // Route to active dirs
-      const dir = issue.type === 'prd' ? cfg.paths.prds : cfg.paths.plans;
-      const filePath = join(cwd, dir, `${slug}.md`);
-
-      if (existsSync(filePath)) {
-        output.push(
-          `⚠ skip ${issue.type} "${slug}" — local file already exists`,
-        );
-        continue;
-      }
-
-      if (issue.type === 'prd') {
-        const fm = metadataToFrontmatter({ ...metadata, status });
-        writeLocalFile(filePath, `${fm}\n${body}`);
-      } else {
-        // Plans stored without frontmatter locally
-        writeLocalFile(filePath, body);
-      }
-      output.push(`✓ ${issue.type} "${slug}" → ${filePath}`);
+    if (existsSync(filePath)) {
+      output.push(`⚠ skip ${issue.type} "${slug}" — local file already exists`);
+      continue;
     }
+
+    if (issue.type === 'prd') {
+      const fm = metadataToFrontmatter({ ...metadata, status });
+      writeLocalFile(filePath, `${fm}\n${body}`);
+    } else {
+      const planMeta: Record<string, string> = {};
+      if (metadata.source_prd) planMeta.source_prd = metadata.source_prd;
+      if (metadata.slug || slug) planMeta.slug = metadata.slug ?? slug;
+      if (status) planMeta.status = status;
+      if (metadata.completed) planMeta.completed = metadata.completed;
+      const fm = metadataToFrontmatter(planMeta);
+      writeLocalFile(filePath, `${fm}\n${body}`);
+    }
+    output.push(`✓ ${issue.type} "${slug}" → ${filePath}`);
   }
 
   saveConfig(cwd, { storage: STORAGE_LOCAL });

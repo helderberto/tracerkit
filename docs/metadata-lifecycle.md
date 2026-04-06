@@ -10,7 +10,7 @@ TracerKit uses three statuses across the entire workflow:
 | ------------- | ----------- | --------------------------------------- |
 | `created`     | `/tk:prd`   | PRD written, no plan yet                |
 | `in_progress` | `/tk:plan`  | Plan generated, implementation underway |
-| `done`        | `/tk:check` | All checks verified, archived           |
+| `done`        | `/tk:check` | All checks verified, marked complete    |
 
 These are the only statuses in TracerKit. The same vocabulary appears in the feature dashboard and check reports regardless of backend.
 
@@ -65,6 +65,29 @@ When using GitHub Issues, the same transitions apply via labels instead of front
 | Defined            | Issue created with `tk:created` label    |
 | Planning           | Label changed to `tk:in-progress`        |
 | Checked (all pass) | Label changed to `tk:done`, issue closed |
+
+On `done`, GitHub mode also:
+
+1. Opens (or updates) a PR with `Closes` references to both issues
+2. Searches merged PRs matching the slug and links them via comments
+3. Closes both issues with reason `completed`
+
+## Plan frontmatter
+
+Plans also carry frontmatter linking back to the PRD:
+
+```text
+---
+source_prd: .tracerkit/prds/dark-mode-support.md
+slug: dark-mode-support
+status: in_progress
+---
+```
+
+- `source_prd`: path (local) or issue reference (GitHub) to the parent PRD
+- `slug`: explicit slug for stable cross-referencing
+- `status`: mirrors the PRD status (`in_progress` or `done`)
+- `completed`: ISO 8601 UTC timestamp, set alongside the PRD when all checks pass
 
 ## Plan checks
 

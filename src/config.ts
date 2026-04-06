@@ -9,7 +9,6 @@ export type Storage = (typeof VALID_STORAGE)[number];
 export const DEFAULT_PATHS = {
   prds: '.tracerkit/prds',
   plans: '.tracerkit/plans',
-  archives: '.tracerkit/archives',
 } as const;
 
 export const DEFAULT_GITHUB = {
@@ -32,7 +31,6 @@ export interface Config {
   paths: {
     prds: string;
     plans: string;
-    archives: string;
   };
   github: GitHubConfig;
 }
@@ -73,8 +71,6 @@ function parsePaths(raw: unknown): Config['paths'] {
   return {
     prds: typeof obj.prds === 'string' ? obj.prds : DEFAULT_PATHS.prds,
     plans: typeof obj.plans === 'string' ? obj.plans : DEFAULT_PATHS.plans,
-    archives:
-      typeof obj.archives === 'string' ? obj.archives : DEFAULT_PATHS.archives,
   };
 }
 

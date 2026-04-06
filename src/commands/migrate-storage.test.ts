@@ -11,6 +11,7 @@ import {
   labelToStatus,
   extractSlugFromTitle,
   extractTitle,
+  classifyGhError,
   migrateStorage,
   type RunGh,
 } from './migrate-storage.ts';
@@ -58,6 +59,14 @@ describe('parseFrontmatter', () => {
 
     expect(result.metadata).toEqual({});
     expect(result.body).toBe('\nBody');
+  });
+
+  it('skips lines without a key', () => {
+    const content = '---\n: value-only\nstatus: created\n---\nBody';
+
+    const result = parseFrontmatter(content);
+
+    expect(result.metadata).toEqual({ status: 'created' });
   });
 });
 
@@ -170,6 +179,15 @@ describe('parseMetadata', () => {
     expect(result.metadata).toEqual({});
     expect(result.body).toBe('Body');
   });
+
+  it('skips lines without a key', () => {
+    const content =
+      '<!-- tk:metadata\n: value-only\nstatus: created\n-->\n\nBody';
+
+    const result = parseMetadata(content);
+
+    expect(result.metadata).toEqual({ status: 'created' });
+  });
 });
 
 describe('metadataToFrontmatter', () => {
@@ -241,6 +259,59 @@ describe('extractTitle', () => {
   });
 });
 
+describe('classifyGhError', () => {
+  it('returns gh CLI not found for ENOENT', () => {
+    const err = classifyGhError({ code: 'ENOENT' });
+    expect(err.message).toContain('gh CLI not found');
+  });
+
+  it('returns auth error for "not logged in"', () => {
+    const err = classifyGhError({ stderr: 'not logged in to any hosts' });
+    expect(err.message).toContain('Not authenticated');
+  });
+
+  it('returns auth error for "authentication" keyword', () => {
+    const err = classifyGhError({ stderr: 'authentication required' });
+    expect(err.message).toContain('Not authenticated');
+  });
+
+  it('returns rate limit error for "rate limit"', () => {
+    const err = classifyGhError({ stderr: 'API rate limit exceeded' });
+    expect(err.message).toContain('rate limit');
+  });
+
+  it('returns rate limit error for "403"', () => {
+    const err = classifyGhError({ stderr: 'HTTP 403' });
+    expect(err.message).toContain('rate limit');
+  });
+
+  it('returns repo not found for "not found"', () => {
+    const err = classifyGhError({ stderr: 'repository not found' });
+    expect(err.message).toContain('Repository not found');
+  });
+
+  it('returns repo not found for "404"', () => {
+    const err = classifyGhError({ stderr: 'HTTP 404' });
+    expect(err.message).toContain('Repository not found');
+  });
+
+  it('re-throws original Error for unknown errors', () => {
+    const original = new Error('something unexpected');
+    const err = classifyGhError(original);
+    expect(err).toBe(original);
+  });
+
+  it('wraps non-Error values in Error', () => {
+    const err = classifyGhError('string error');
+    expect(err.message).toBe('string error');
+  });
+
+  it('uses message when stderr is missing', () => {
+    const err = classifyGhError({ message: 'not logged in' });
+    expect(err.message).toContain('Not authenticated');
+  });
+});
+
 describe('migrateStorage', () => {
   const tmp = useTmpDir();
 
@@ -292,19 +363,6 @@ describe('migrateStorage', () => {
       body ??
       `# Plan: ${slug.replace(/-/g, ' ')}\n\n> Source PRD: .tracerkit/prds/${slug}.md\n\n- [ ] Task 1\n- [x] Task 2`;
     writeFileSync(join(dir, `${slug}.md`), content);
-  }
-
-  function writeArchive(cwd: string, slug: string): void {
-    const dir = join(cwd, '.tracerkit', 'archives', slug);
-    mkdirSync(dir, { recursive: true });
-    writeFileSync(
-      join(dir, 'prd.md'),
-      `---\ncreated: 2026-03-01T00:00:00Z\nstatus: done\ncompleted: 2026-04-01T00:00:00Z\n---\n\n# ${slug.replace(/-/g, ' ')}\n\nDone feature.`,
-    );
-    writeFileSync(
-      join(dir, 'plan.md'),
-      `# Plan: ${slug.replace(/-/g, ' ')}\n\n> Source PRD: .tracerkit/prds/${slug}.md\n\n- [x] All done\n\n## Archived\n\n[Timestamp: 2026-04-01]`,
-    );
   }
 
   function createMockGh(existingSlugs: string[] = []): {
@@ -497,9 +555,13 @@ describe('migrateStorage', () => {
       expect(body).toContain('created: 2026-04-06T10:00:00Z');
     });
 
-    it('creates closed issues with tk:done for archived features', () => {
+    it('creates closed issues with tk:done for done features', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'old-feature');
+      writePrd(tmp.get(), 'old-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
+      writePlan(tmp.get(), 'old-feature');
       const { runGh, calls } = createMockGh();
 
       migrateStorage(tmp.get(), { runGh });
@@ -510,15 +572,15 @@ describe('migrateStorage', () => {
       );
       expect(createCalls).toHaveLength(2); // prd + plan
 
+      // PRD with status done should trigger close
       const closeCalls = calls.filter(
         (c) => c.includes('issue') && c.includes('close'),
       );
-      expect(closeCalls).toHaveLength(2);
+      expect(closeCalls.length).toBeGreaterThanOrEqual(1);
 
-      // Verify tk:done label was used
-      createCalls.forEach((call) => {
-        expect(call.join(' ')).toContain('tk:done');
-      });
+      // Verify tk:done label was used on PRD
+      const prdCreate = createCalls.find((c) => c.join(' ').includes('tk:prd'));
+      expect(prdCreate!.join(' ')).toContain('tk:done');
     });
 
     it('skips existing issues with matching slug', () => {
@@ -694,7 +756,7 @@ describe('migrateStorage', () => {
       expect(output.some((l) => l.includes('my-feature'))).toBe(true);
     });
 
-    it('routes closed tk:done issues to archives', () => {
+    it('writes closed tk:done issues to prds/plans with status done', () => {
       setupConfig(tmp.get(), { storage: 'github' });
       const { runGh } = createGhToLocalMock({
         prdIssues: [
@@ -710,7 +772,7 @@ describe('migrateStorage', () => {
           {
             number: 11,
             title: '[tk:plan] done-feature: Plan: Done Feature',
-            body: '<!-- tk:metadata\nstatus: done\n-->\n\n# Plan: Done Feature\n\n- [x] All done',
+            body: '<!-- tk:metadata\nstatus: done\nslug: done-feature\n-->\n\n# Plan: Done Feature\n\n- [x] All done',
             labels: ['tk:plan', 'tk:done'],
             state: 'CLOSED',
           },
@@ -719,26 +781,22 @@ describe('migrateStorage', () => {
 
       migrateStorage(tmp.get(), { runGh });
 
-      const archivePrd = join(
+      const prdPath = join(tmp.get(), '.tracerkit', 'prds', 'done-feature.md');
+      const planPath = join(
         tmp.get(),
         '.tracerkit',
-        'archives',
-        'done-feature',
-        'prd.md',
+        'plans',
+        'done-feature.md',
       );
-      const archivePlan = join(
-        tmp.get(),
-        '.tracerkit',
-        'archives',
-        'done-feature',
-        'plan.md',
-      );
-      expect(existsSync(archivePrd)).toBe(true);
-      expect(existsSync(archivePlan)).toBe(true);
+      expect(existsSync(prdPath)).toBe(true);
+      expect(existsSync(planPath)).toBe(true);
 
-      const prdContent = readFileSync(archivePrd, 'utf8');
+      const prdContent = readFileSync(prdPath, 'utf8');
       expect(prdContent).toContain('status: done');
       expect(prdContent).toContain('completed: 2026-04-01T00:00:00Z');
+
+      const planContent = readFileSync(planPath, 'utf8');
+      expect(planContent).toContain('slug: done-feature');
     });
 
     it('skips when local file already exists', () => {
@@ -825,14 +883,14 @@ describe('migrateStorage', () => {
       expect(content).toContain('status: in_progress');
     });
 
-    it('uses plan body directly without frontmatter for active plans', () => {
+    it('writes plan with frontmatter for active plans', () => {
       setupConfig(tmp.get(), { storage: 'github' });
       const { runGh } = createGhToLocalMock({
         planIssues: [
           {
             number: 11,
             title: '[tk:plan] my-feature: Plan: My Feature',
-            body: '<!-- tk:metadata\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task',
+            body: '<!-- tk:metadata\nsource_prd: #10\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task',
             labels: ['tk:plan', 'tk:in-progress'],
             state: 'OPEN',
           },
@@ -847,14 +905,224 @@ describe('migrateStorage', () => {
       );
       expect(content).toContain('# Plan: My Feature');
       expect(content).not.toContain('<!-- tk:metadata');
-      expect(content).not.toContain('---');
+      expect(content).toContain('---');
+      expect(content).toContain('slug: my-feature');
+      expect(content).toContain('source_prd: #10');
     });
   });
 
-  describe('PR linking (local → github archives)', () => {
+  describe('edge cases', () => {
+    it('ignores non-.md files in prds and plans dirs', () => {
+      setupConfig(tmp.get());
+      writePrd(tmp.get(), 'my-feature');
+      // Add non-.md files
+      writeFileSync(join(tmp.get(), '.tracerkit', 'prds', '.DS_Store'), 'junk');
+      mkdirSync(join(tmp.get(), '.tracerkit', 'plans'), { recursive: true });
+      writeFileSync(
+        join(tmp.get(), '.tracerkit', 'plans', 'notes.txt'),
+        'junk',
+      );
+      const { runGh, calls } = createMockGh();
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const createCalls = calls.filter(
+        (c) =>
+          c.includes('issue') && c.includes('create') && !c.includes('label'),
+      );
+      expect(createCalls).toHaveLength(1);
+    });
+
+    it('uses custom labels from config', () => {
+      setupConfig(tmp.get(), {
+        github: { repo: 'owner/repo', labels: { prd: 'spec', plan: 'impl' } },
+      });
+      writePrd(tmp.get(), 'my-feature');
+      const { runGh, calls } = createMockGh();
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const createCall = calls.find(
+        (c) =>
+          c.includes('issue') && c.includes('create') && !c.includes('label'),
+      );
+      expect(createCall!.join(' ')).toContain('spec');
+    });
+
+    it('skips issues with slug in metadata matching existing', () => {
+      setupConfig(tmp.get());
+      writePrd(tmp.get(), 'slug-match');
+      const calls: string[][] = [];
+      const runGh: RunGh = (args: string[]) => {
+        calls.push(args);
+        const joined = args.join(' ');
+        if (joined.includes('issue list')) {
+          return JSON.stringify([
+            {
+              number: 1,
+              title: '[tk:prd] wrong-title: Wrong',
+              body: '<!-- tk:metadata\nslug: slug-match\n-->\n\n# Feature',
+              labels: [{ name: 'tk:prd' }],
+              state: 'OPEN',
+            },
+          ]);
+        }
+        if (joined.includes('label create')) return '';
+        return '';
+      };
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      expect(output.some((l) => l.includes('skip'))).toBe(true);
+    });
+
+    it('skips github→local issues with unparseable title (no slug)', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: 'Random title without slug format',
+            body: '<!-- tk:metadata\nstatus: created\n-->\n\n# Feature',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      expect(existsSync(join(tmp.get(), '.tracerkit', 'prds'))).toBe(false);
+      expect(output.some((l) => l.includes('switched'))).toBe(true);
+    });
+
+    it('github→local prefers metadata.slug over title-derived slug', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] wrong-slug: Edited Title',
+            body: '<!-- tk:metadata\nslug: correct-slug\nstatus: created\n-->\n\n# Feature',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const correctPath = join(
+        tmp.get(),
+        '.tracerkit',
+        'prds',
+        'correct-slug.md',
+      );
+      const wrongPath = join(tmp.get(), '.tracerkit', 'prds', 'wrong-slug.md');
+      expect(existsSync(correctPath)).toBe(true);
+      expect(existsSync(wrongPath)).toBe(false);
+    });
+
+    it('github→local plan includes completed in frontmatter', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] done-plan: Plan',
+            body: '<!-- tk:metadata\nslug: done-plan\nstatus: done\ncompleted: 2026-04-01T00:00:00Z\n-->\n\n# Plan',
+            labels: ['tk:plan', 'tk:done'],
+            state: 'CLOSED',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const content = readFileSync(
+        join(tmp.get(), '.tracerkit', 'plans', 'done-plan.md'),
+        'utf8',
+      );
+      expect(content).toContain('completed: 2026-04-01T00:00:00Z');
+      expect(content).toContain('status: done');
+    });
+
+    it('github→local handles issue with no body', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        prdIssues: [
+          {
+            number: 10,
+            title: '[tk:prd] no-body: No Body',
+            body: '',
+            labels: ['tk:prd', 'tk:created'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      const output = migrateStorage(tmp.get(), { runGh });
+
+      const prdPath = join(tmp.get(), '.tracerkit', 'prds', 'no-body.md');
+      expect(existsSync(prdPath)).toBe(true);
+      expect(output.some((l) => l.includes('no-body'))).toBe(true);
+    });
+
+    it('github→local plan without source_prd or slug in metadata', () => {
+      setupConfig(tmp.get(), { storage: 'github' });
+      const { runGh } = createGhToLocalMock({
+        planIssues: [
+          {
+            number: 11,
+            title: '[tk:plan] bare-plan: Plan',
+            body: '<!-- tk:metadata\n-->\n\n# Plan\n\n- [ ] Task',
+            labels: ['tk:plan', 'tk:in-progress'],
+            state: 'OPEN',
+          },
+        ],
+      });
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const content = readFileSync(
+        join(tmp.get(), '.tracerkit', 'plans', 'bare-plan.md'),
+        'utf8',
+      );
+      expect(content).toContain('slug: bare-plan');
+      expect(content).toContain('status: in_progress');
+      expect(content).not.toContain('source_prd');
+    });
+
+    it('github→local uses custom labels from config', () => {
+      setupConfig(tmp.get(), {
+        storage: 'github',
+        github: { repo: 'owner/repo', labels: { prd: 'spec', plan: 'impl' } },
+      });
+      const calls: string[][] = [];
+      const runGh: RunGh = (args: string[]) => {
+        calls.push(args);
+        const joined = args.join(' ');
+        if (joined.includes('issue list')) return '[]';
+        return '';
+      };
+
+      migrateStorage(tmp.get(), { runGh });
+
+      const listCalls = calls.filter(
+        (c) => c.includes('issue') && c.includes('list'),
+      );
+      expect(listCalls[0]).toContain('spec');
+      expect(listCalls[1]).toContain('impl');
+    });
+  });
+
+  describe('PR linking (local → github done features)', () => {
     it('adds PR reference when merged PR matches slug', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'linked-feature');
+      writePrd(tmp.get(), 'linked-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
 
       const calls: string[][] = [];
       const issueCounter = { current: 100 };
@@ -890,7 +1158,10 @@ describe('migrateStorage', () => {
 
     it('skips PR comment when no matching PR found', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'no-pr-feature');
+      writePrd(tmp.get(), 'no-pr-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
 
       const calls: string[][] = [];
       const issueCounter = { current: 100 };

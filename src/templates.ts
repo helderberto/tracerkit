@@ -56,9 +56,6 @@ export function renderTemplate(content: string, config: Config): string {
   if (config.paths.plans !== DEFAULT_PATHS.plans) {
     result = result.replaceAll(DEFAULT_PATHS.plans, config.paths.plans);
   }
-  if (config.paths.archives !== DEFAULT_PATHS.archives) {
-    result = result.replaceAll(DEFAULT_PATHS.archives, config.paths.archives);
-  }
 
   // GitHub template variables
   if (config.github?.repo) {

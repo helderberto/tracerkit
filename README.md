@@ -9,7 +9,7 @@
 [![npm downloads](https://img.shields.io/npm/dm/tracerkit)](https://www.npmjs.com/package/tracerkit)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified, archived spec.
+Replace ad-hoc AI prompts with a repeatable spec-driven workflow: from idea to verified spec.
 
 Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Tracer** + **Kit**.
 
@@ -19,9 +19,9 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Trace
 
 ## Why TracerKit?
 
-AI assistants work best with small, well-scoped tasks, not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
+AI assistants work best with small, well-scoped tasks — not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
 
-The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps. The AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
+Three skills drive the workflow: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). The AI reads your specs directly, counts progress, and marks completed work done. Pure Markdown, zero runtime deps.
 
 ## Get Started
 
@@ -75,10 +75,10 @@ You: # open the plan, implement each phase, write tests...
 
 You: /tk:check dark-mode-support
 AI:  Status: done | Total: 5/5
-     Archived to .tracerkit/archives/dark-mode-support/
+     Marked complete in .tracerkit/prds/dark-mode-support.md
 ```
 
-Use `/tk:brief` at the start of any session to see active features and pick up where you left off:
+Between sessions, `/tk:brief` shows active features and picks up where you left off:
 
 ```
 You: /tk:brief
@@ -101,7 +101,7 @@ tracerkit config storage github         # set current project to use GitHub
 tracerkit config github.repo org/repo   # set target repo
 ```
 
-PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
+PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed with `completed` reason and any related PRs are linked automatically. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
 
 To migrate existing artifacts between backends:
 
@@ -109,39 +109,18 @@ To migrate existing artifacts between backends:
 tracerkit migrate-storage           # local→github or github→local (auto-detected)
 ```
 
-Direction is inferred from the current `storage` config. All artifacts are migrated, existing duplicates are skipped, and the config is flipped to the target backend. Source artifacts are left intact as backup. For archived features migrating to GitHub, merged PRs matching the slug are linked automatically.
+Direction is inferred from the current `storage` config. All artifacts are migrated, existing duplicates are skipped, and the config is flipped to the target backend. Source artifacts are left intact as backup.
 
 </details>
 
 ## Skills
 
-TracerKit ships skills that take a feature from idea to verified archive.
-
-### `/tk:prd <idea>`: Write a PRD
-
-Interactive interview that explores your codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
-
-**Output:** `.tracerkit/prds/<slug>.md` (local) or GitHub Issue with `tk:prd` label
-
-### `/tk:plan <slug>`: Create an implementation plan
-
-Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
-
-**Output:** `.tracerkit/plans/<slug>.md` (local) or GitHub Issue with `tk:plan` label
-
-### `/tk:brief`: Session briefing
-
-Shows active features, their progress, and suggested focus. Use at the start of a session to orient.
-
-**Output:** Feature dashboard in the terminal. No files written.
-
-### `/tk:check [slug]`: Verify and archive
-
-Verifies the codebase against the plan's done-when checkboxes. Runs tests, validates user stories, updates phase progress, and transitions the PRD status. On `done`, archives the PRD and plan to `.tracerkit/archives/<slug>/` automatically.
-
-Without arguments, shows a feature dashboard with status and progress before asking which feature to check.
-
-**Output:** Verdict block appended to the plan. On `done`: archives to `.tracerkit/archives/<slug>/` (local) or closes both issues (GitHub).
+| Skill              | What it does                                           | Output                                                                                          |
+| ------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
+| `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md` or GitHub Issue                                                     |
+| `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md` or GitHub Issue                                                    |
+| `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files                                                                         |
+| `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Verdict block in plan. On `done`: status updated (local) or issues closed + PRs linked (GitHub) |
 
 ## Docs
 

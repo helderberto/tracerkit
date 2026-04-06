@@ -1,7 +1,7 @@
 {
   "name": "tracerkit",
   "version": "1.15.0",
-  "description": "Spec-driven workflow for Claude Code: replace ad-hoc prompts with PRD → plan → verify.",
+  "description": "Spec-driven workflow for AI coding agents — PRD → plan → verify. Pure Markdown skills, zero runtime deps.",
   "license": "MIT",
   "author": {
     "name": "helderberto",
