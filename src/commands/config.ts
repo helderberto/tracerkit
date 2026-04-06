@@ -24,7 +24,7 @@ function printConfig(cwd: string): string[] {
 
 function getKey(cwd: string, key: string): string[] {
   const cfg = loadConfig(cwd);
-  const val = resolve(cfg, key);
+  const val = resolve(cfg as unknown as Record<string, unknown>, key);
 
   if (val === undefined) {
     return [`Unknown key: ${key}`];
