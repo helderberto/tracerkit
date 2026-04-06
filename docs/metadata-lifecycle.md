@@ -12,7 +12,7 @@ TracerKit uses three statuses across the entire workflow:
 | `in_progress` | `/tk:plan`  | Plan generated, implementation underway |
 | `done`        | `/tk:check` | All checks verified, archived           |
 
-These are the only statuses in TracerKit. The same vocabulary is used in PRD frontmatter, the feature dashboard, and check reports.
+These are the only statuses in TracerKit. In local storage, statuses live in PRD frontmatter. In GitHub storage, they map to issue labels (`tk:created`, `tk:in-progress`, `tk:done`). The same vocabulary appears in the feature dashboard and check reports regardless of backend.
 
 ## Fields
 
@@ -44,6 +44,16 @@ completed: 2025-06-20T09:00:00Z      # set by /tk:check when done
 ```
 
 Partial checks (`/tk:check` with remaining items) leave `status: in_progress` unchanged.
+
+### GitHub storage
+
+When using GitHub Issues, the same transitions apply via labels instead of frontmatter:
+
+| Stage              | Label change                             |
+| ------------------ | ---------------------------------------- |
+| Defined            | Issue created with `tk:created` label    |
+| Planning           | Label changed to `tk:in-progress`        |
+| Checked (all pass) | Label changed to `tk:done`, issue closed |
 
 ## Plan checks
 

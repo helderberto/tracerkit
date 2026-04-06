@@ -58,6 +58,20 @@ Run `/reload-plugins` if needed. Skills are available immediately — no build s
 
 </details>
 
+<details>
+<summary>GitHub Issues as storage backend</summary>
+
+Store PRDs and plans as GitHub Issues instead of local files:
+
+```bash
+tracerkit init --storage github         # first install
+tracerkit config github.repo org/repo   # set target repo
+```
+
+Same skills, same workflow — artifacts live in GitHub Issues with `tk:prd` and `tk:plan` labels. See [Configuration](docs/configuration.md) for details.
+
+</details>
+
 ### Workflow
 
 ```
@@ -99,13 +113,13 @@ TracerKit ships skills that take a feature from idea to verified archive.
 
 Interactive interview that explores your codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
-**Output:** `.tracerkit/prds/<slug>.md`
+**Output:** `.tracerkit/prds/<slug>.md` (local) or GitHub Issue with `tk:prd` label
 
 ### `/tk:plan <slug>`: Create an implementation plan
 
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
-**Output:** `.tracerkit/plans/<slug>.md`
+**Output:** `.tracerkit/plans/<slug>.md` (local) or GitHub Issue with `tk:plan` label
 
 ### `/tk:brief`: Session briefing
 
@@ -119,7 +133,7 @@ Verifies the codebase against the plan's done-when checkboxes. Runs tests, valid
 
 Without arguments, shows a feature dashboard with status and progress before asking which feature to check.
 
-**Output:** Verdict block in `.tracerkit/plans/<slug>.md`. On `done`: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
+**Output:** Verdict block appended to the plan. On `done`: archives to `.tracerkit/archives/<slug>/` (local) or closes both issues (GitHub).
 
 ## Docs
 
@@ -127,7 +141,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | ------------------------------------------------ | -------------------------------------------------- |
 | [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
 | [CLI Reference](docs/cli-reference.md)           | Lifecycle commands: init, update, uninstall        |
-| [Configuration](docs/configuration.md)           | Configure custom artifact paths via `config.json`  |
+| [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths     |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
 
