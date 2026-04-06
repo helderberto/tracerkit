@@ -101,7 +101,7 @@ tracerkit config storage github         # set current project to use GitHub
 tracerkit config github.repo org/repo   # set target repo
 ```
 
-PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. Each project can use a different backend -- local is the default. See [Configuration](docs/configuration.md) for details.
+PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
 
 </details>
 

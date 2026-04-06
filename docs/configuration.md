@@ -1,6 +1,6 @@
 # Configuration
 
-Storage is configured **per-project** -- each project can use a different backend. Skills are installed globally and resolve the storage backend at runtime by reading `.tracerkit/config.json` from the project root. No config file means local storage.
+Storage is configured **per-project**. Each project can use a different backend. Skills are installed globally and resolve the storage backend at runtime by reading `.tracerkit/config.json` from the project root. No config file means local storage.
 
 ## Storage
 
