@@ -19,9 +19,9 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Trace
 
 ## Why TracerKit?
 
-AI assistants work best with small, well-scoped tasks — not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
+AI assistants work best with small, well-scoped tasks, not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
 
-The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps — the AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
+The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps. The AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
 
 ## Get Started
 
@@ -32,7 +32,7 @@ npm install -g tracerkit
 tracerkit init
 ```
 
-Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
+Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run: adds missing skills without overwriting ones you've modified.
 
 <details>
 <summary>Per-project install (team members get skills via git)</summary>
@@ -54,7 +54,7 @@ Inside Claude Code, run:
 /plugin install tk@claude-plugins-official
 ```
 
-Run `/reload-plugins` if needed. Skills are available immediately — no build step, no config.
+Run `/reload-plugins` if needed. Skills are available immediately, no build step, no config.
 
 </details>
 
@@ -94,7 +94,7 @@ See [Examples](docs/examples.md) for full walkthroughs.
 <details>
 <summary>GitHub Issues as storage backend</summary>
 
-Same skills, same workflow — artifacts live in GitHub Issues instead of local files:
+Same skills, same workflow. Artifacts live in GitHub Issues instead of local files:
 
 ```bash
 tracerkit init --storage github         # first install
@@ -125,7 +125,7 @@ Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each ph
 
 Shows active features, their progress, and suggested focus. Use at the start of a session to orient.
 
-**Output:** Feature dashboard in the terminal — no files written.
+**Output:** Feature dashboard in the terminal. No files written.
 
 ### `/tk:check [slug]`: Verify and archive
 

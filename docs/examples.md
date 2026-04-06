@@ -68,7 +68,7 @@ AI:  Loading plan... Loading PRD... Running tests...
 
 ## Session briefing
 
-Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional — skip it if you already know what to work on. Works the same regardless of storage backend.
+Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional. Skip it if you already know what to work on. Works the same regardless of storage backend.
 
 ```
 You: /tk:brief

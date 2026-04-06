@@ -45,7 +45,7 @@ When `storage` is `"local"` (default), customize file paths:
 }
 ```
 
-Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved — rename them manually if needed.
+Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved. Rename them manually if needed.
 
 ## GitHub options
 
@@ -78,8 +78,8 @@ tracerkit config github.repo org/repo  # set explicit repo
 
 The agent needs permission to create, edit, and close issues. This works via:
 
-- **`gh` CLI** — requires `gh auth login` with `repo` scope
-- **GitHub MCP server** — requires the MCP server configured with appropriate token scopes
+- **`gh` CLI**: requires `gh auth login` with `repo` scope
+- **GitHub MCP server**: requires the MCP server configured with appropriate token scopes
 
 Required GitHub token scopes: `repo` (for private repos) or `public_repo` (for public repos).
 
