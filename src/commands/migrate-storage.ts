@@ -1,0 +1,336 @@
+import { existsSync, readdirSync, readFileSync } from 'node:fs';
+import { join, basename } from 'node:path';
+import { execSync } from 'node:child_process';
+import {
+  loadConfig,
+  saveConfig,
+  STORAGE_LOCAL,
+  STORAGE_GITHUB,
+  type Config,
+} from '../config.ts';
+
+export type RunGh = (args: string[]) => string;
+
+interface MigrateOptions {
+  runGh?: RunGh;
+}
+
+interface LocalArtifact {
+  slug: string;
+  type: 'prd' | 'plan';
+  metadata: Record<string, string>;
+  body: string;
+  title: string;
+  archived: boolean;
+}
+
+const STATUS_MAP: Record<string, string> = {
+  created: 'tk:created',
+  in_progress: 'tk:in-progress',
+  done: 'tk:done',
+};
+
+const LABEL_MAP: Record<string, string> = {
+  'tk:created': 'created',
+  'tk:in-progress': 'in_progress',
+  'tk:done': 'done',
+};
+
+// --- Pure functions ---
+
+export function parseFrontmatter(content: string): {
+  metadata: Record<string, string>;
+  body: string;
+} {
+  const match = content.match(/^---\n([\s\S]*?)---\n([\s\S]*)$/);
+  if (!match) return { metadata: {}, body: content };
+
+  const metadata: Record<string, string> = {};
+  for (const line of match[1].split('\n')) {
+    const idx = line.indexOf(':');
+    if (idx === -1) continue;
+    const key = line.slice(0, idx).trim();
+    const value = line.slice(idx + 1).trim();
+    if (key) metadata[key] = value;
+  }
+
+  return { metadata, body: match[2] };
+}
+
+export function frontmatterToMetadata(
+  metadata: Record<string, string>,
+): string {
+  const entries = Object.entries(metadata);
+  if (entries.length === 0) return '<!-- tk:metadata\n-->';
+  const lines = entries.map(([k, v]) => `${k}: ${v}`);
+  return `<!-- tk:metadata\n${lines.join('\n')}\n-->`;
+}
+
+export function statusToLabel(status: string): string {
+  return STATUS_MAP[status] ?? 'tk:created';
+}
+
+export function labelToStatus(label: string): string {
+  return LABEL_MAP[label] ?? 'created';
+}
+
+export function extractSlugFromTitle(title: string): string | null {
+  const match = title.match(/\[[^\]]+\]\s+([^:]+):/);
+  return match ? match[1].trim() : null;
+}
+
+export function extractTitle(body: string): string {
+  const match = body.match(/^#\s+(.+)$/m);
+  return match ? match[1].trim() : 'Untitled';
+}
+
+// --- Artifact discovery ---
+
+function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
+  const artifacts: LocalArtifact[] = [];
+
+  // Discover PRDs
+  const prdsDir = join(cwd, cfg.paths.prds);
+  if (existsSync(prdsDir)) {
+    for (const file of readdirSync(prdsDir)) {
+      if (!file.endsWith('.md')) continue;
+      const slug = basename(file, '.md');
+      const content = readFileSync(join(prdsDir, file), 'utf8');
+      const { metadata, body } = parseFrontmatter(content);
+      artifacts.push({
+        slug,
+        type: 'prd',
+        metadata,
+        body,
+        title: extractTitle(body),
+        archived: false,
+      });
+    }
+  }
+
+  // Discover plans
+  const plansDir = join(cwd, cfg.paths.plans);
+  if (existsSync(plansDir)) {
+    for (const file of readdirSync(plansDir)) {
+      if (!file.endsWith('.md')) continue;
+      const slug = basename(file, '.md');
+      const content = readFileSync(join(plansDir, file), 'utf8');
+      artifacts.push({
+        slug,
+        type: 'plan',
+        metadata: {},
+        body: content,
+        title: extractTitle(content),
+        archived: false,
+      });
+    }
+  }
+
+  // Discover archives
+  const archivesDir = join(cwd, cfg.paths.archives);
+  if (existsSync(archivesDir)) {
+    for (const entry of readdirSync(archivesDir, { withFileTypes: true })) {
+      if (!entry.isDirectory()) continue;
+      const slug = entry.name;
+      const prdPath = join(archivesDir, slug, 'prd.md');
+      const planPath = join(archivesDir, slug, 'plan.md');
+
+      if (existsSync(prdPath)) {
+        const content = readFileSync(prdPath, 'utf8');
+        const { metadata, body } = parseFrontmatter(content);
+        artifacts.push({
+          slug,
+          type: 'prd',
+          metadata: { ...metadata, status: 'done' },
+          body,
+          title: extractTitle(body),
+          archived: true,
+        });
+      }
+
+      if (existsSync(planPath)) {
+        const content = readFileSync(planPath, 'utf8');
+        artifacts.push({
+          slug,
+          type: 'plan',
+          metadata: { status: 'done' },
+          body: content,
+          title: extractTitle(content),
+          archived: true,
+        });
+      }
+    }
+  }
+
+  return artifacts;
+}
+
+// --- GitHub helpers ---
+
+function defaultRunGh(args: string[]): string {
+  return execSync(
+    `gh ${args.map((a) => `'${a.replace(/'/g, "'\\''")}'`).join(' ')}`,
+    {
+      encoding: 'utf8',
+      stdio: ['pipe', 'pipe', 'pipe'],
+    },
+  ).trim();
+}
+
+function resolveRepo(cfg: Config, runGh: RunGh): string {
+  if (cfg.github.repo) return cfg.github.repo;
+  return runGh([
+    'repo',
+    'view',
+    '--json',
+    'nameWithOwner',
+    '-q',
+    '.nameWithOwner',
+  ]);
+}
+
+interface ExistingIssue {
+  number: number;
+  title: string;
+  labels: { name: string }[];
+  state: string;
+}
+
+function fetchExistingIssues(
+  repo: string,
+  label: string,
+  runGh: RunGh,
+): ExistingIssue[] {
+  const json = runGh([
+    'issue',
+    'list',
+    '--repo',
+    repo,
+    '--label',
+    label,
+    '--state',
+    'all',
+    '--json',
+    'number,title,labels,state',
+    '--limit',
+    '1000',
+  ]);
+  return JSON.parse(json || '[]');
+}
+
+function issueExistsForSlug(slug: string, existing: ExistingIssue[]): boolean {
+  return existing.some((issue) => {
+    const issueSlug = extractSlugFromTitle(issue.title);
+    return issueSlug === slug;
+  });
+}
+
+function ensureLabels(repo: string, labels: string[], runGh: RunGh): void {
+  for (const label of labels) {
+    runGh(['label', 'create', label, '--repo', repo, '--force']);
+  }
+}
+
+function createIssue(
+  repo: string,
+  opts: { title: string; body: string; labels: string[] },
+  runGh: RunGh,
+): number {
+  const args = [
+    'issue',
+    'create',
+    '--repo',
+    repo,
+    '--title',
+    opts.title,
+    '--body',
+    opts.body,
+  ];
+  for (const label of opts.labels) {
+    args.push('--label', label);
+  }
+  const url = runGh(args);
+  const match = url.match(/\/(\d+)\s*$/);
+  return match ? parseInt(match[1], 10) : 0;
+}
+
+function closeIssue(repo: string, issueNumber: number, runGh: RunGh): void {
+  runGh(['issue', 'close', String(issueNumber), '--repo', repo]);
+}
+
+// --- Main command ---
+
+export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
+  const runGh = opts?.runGh ?? defaultRunGh;
+  const cfg = loadConfig(cwd);
+  const output: string[] = [];
+
+  if (cfg.storage !== STORAGE_LOCAL) {
+    return [`Storage is already "${cfg.storage}". Nothing to migrate.`];
+  }
+
+  const repo = resolveRepo(cfg, runGh);
+  const artifacts = discoverLocalArtifacts(cwd, cfg);
+
+  if (artifacts.length === 0) {
+    saveConfig(cwd, { storage: STORAGE_GITHUB });
+    output.push('No artifacts found — nothing to migrate.');
+    output.push(`✓ Storage switched to "${STORAGE_GITHUB}".`);
+    return output;
+  }
+
+  // Collect all labels we'll need
+  const prdLabel = cfg.github.labels?.prd ?? 'tk:prd';
+  const planLabel = cfg.github.labels?.plan ?? 'tk:plan';
+  const statusLabels = [
+    ...new Set(
+      artifacts.map((a) => statusToLabel(a.metadata.status ?? 'created')),
+    ),
+  ];
+  const allLabels = [prdLabel, planLabel, ...statusLabels];
+  ensureLabels(repo, allLabels, runGh);
+
+  // Fetch existing issues for duplicate detection
+  const existingPrds = fetchExistingIssues(repo, prdLabel, runGh);
+  const existingPlans = fetchExistingIssues(repo, planLabel, runGh);
+
+  for (const artifact of artifacts) {
+    const typeLabel = artifact.type === 'prd' ? prdLabel : planLabel;
+    const existing = artifact.type === 'prd' ? existingPrds : existingPlans;
+
+    if (issueExistsForSlug(artifact.slug, existing)) {
+      output.push(
+        `⚠ skip ${artifact.type} "${artifact.slug}" — already exists on GitHub`,
+      );
+      continue;
+    }
+
+    const status = artifact.metadata.status ?? 'created';
+    const sLabel = statusToLabel(status);
+    const metadataBlock = frontmatterToMetadata(artifact.metadata);
+    const body = `${metadataBlock}\n\n${artifact.body.replace(/^\n/, '')}`;
+    const title = `[${typeLabel}] ${artifact.slug}: ${artifact.title}`;
+
+    const issueNumber = createIssue(
+      repo,
+      { title, body, labels: [typeLabel, sLabel] },
+      runGh,
+    );
+
+    if (artifact.archived) {
+      closeIssue(repo, issueNumber, runGh);
+      output.push(
+        `✓ ${artifact.type} "${artifact.slug}" → issue #${issueNumber} (closed)`,
+      );
+    } else {
+      output.push(
+        `✓ ${artifact.type} "${artifact.slug}" → issue #${issueNumber}`,
+      );
+    }
+  }
+
+  saveConfig(cwd, { storage: STORAGE_GITHUB });
+  output.push(`✓ Storage switched to "${STORAGE_GITHUB}".`);
+
+  return output;
+}

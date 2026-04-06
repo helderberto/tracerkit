@@ -36,4 +36,9 @@ export const COMMANDS = [
     args: '[path]',
     desc: 'Remove TracerKit skill directories, keep .tracerkit/ artifacts',
   },
+  {
+    name: 'migrate-storage',
+    args: '[path]',
+    desc: 'Migrate artifacts between local and GitHub storage backends',
+  },
 ] as const;

@@ -2,7 +2,13 @@ import { readFileSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { config, init, uninstall, update } from './commands/index.ts';
+import {
+  config,
+  init,
+  migrateStorage,
+  uninstall,
+  update,
+} from './commands/index.ts';
 import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
@@ -89,6 +95,10 @@ export function run(args: string[]): string[] {
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
+    case 'migrate-storage': {
+      const cwd = isDirectory(rest[0]) ? resolve(rest[0]) : process.cwd();
+      return migrateStorage(cwd);
+    }
     default:
       return USAGE;
   }
