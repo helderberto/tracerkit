@@ -1,3 +1,5 @@
+- [ ] Searched for existing PRs/issues related to this change
+
 ## Summary
 
 <!-- What does this PR do? 1-3 bullet points. -->
