@@ -19,9 +19,9 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Trace
 
 ## Why TracerKit?
 
-AI assistants work best with small, well-scoped tasks — not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
+AI assistants work best with small, well-scoped tasks, not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
 
-The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps — the AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
+The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). Skills are pure Markdown with zero runtime deps. The AI reads your specs directly, counts progress, and archives completed work. No build step, no CLI at runtime.
 
 ## Get Started
 
@@ -32,7 +32,7 @@ npm install -g tracerkit
 tracerkit init
 ```
 
-Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
+Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run: adds missing skills without overwriting ones you've modified.
 
 <details>
 <summary>Per-project install (team members get skills via git)</summary>
@@ -54,7 +54,7 @@ Inside Claude Code, run:
 /plugin install tk@claude-plugins-official
 ```
 
-Run `/reload-plugins` if needed. Skills are available immediately — no build step, no config.
+Run `/reload-plugins` if needed. Skills are available immediately, no build step, no config.
 
 </details>
 
@@ -91,6 +91,20 @@ AI:  | Feature           | Status      | Age | Progress | Next                  
 
 See [Examples](docs/examples.md) for full walkthroughs.
 
+<details>
+<summary>GitHub Issues as storage backend</summary>
+
+Same skills, same workflow. Artifacts live in GitHub Issues instead of local files:
+
+```bash
+tracerkit init --storage github         # first install
+tracerkit config github.repo org/repo   # set target repo
+```
+
+PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. See [Configuration](docs/configuration.md) for details.
+
+</details>
+
 ## Skills
 
 TracerKit ships skills that take a feature from idea to verified archive.
@@ -99,19 +113,19 @@ TracerKit ships skills that take a feature from idea to verified archive.
 
 Interactive interview that explores your codebase, asks scoping questions one at a time, designs deep modules, and writes a structured PRD.
 
-**Output:** `.tracerkit/prds/<slug>.md`
+**Output:** `.tracerkit/prds/<slug>.md` (local) or GitHub Issue with `tk:prd` label
 
 ### `/tk:plan <slug>`: Create an implementation plan
 
 Reads a PRD and breaks it into phased **tracer-bullet vertical slices**. Each phase is a thin but complete path through every layer (schema, service, API, UI, tests), demoable on its own.
 
-**Output:** `.tracerkit/plans/<slug>.md`
+**Output:** `.tracerkit/plans/<slug>.md` (local) or GitHub Issue with `tk:plan` label
 
 ### `/tk:brief`: Session briefing
 
 Shows active features, their progress, and suggested focus. Use at the start of a session to orient.
 
-**Output:** Feature dashboard in the terminal — no files written.
+**Output:** Feature dashboard in the terminal. No files written.
 
 ### `/tk:check [slug]`: Verify and archive
 
@@ -119,7 +133,7 @@ Verifies the codebase against the plan's done-when checkboxes. Runs tests, valid
 
 Without arguments, shows a feature dashboard with status and progress before asking which feature to check.
 
-**Output:** Verdict block in `.tracerkit/plans/<slug>.md`. On `done`: `.tracerkit/archives/<slug>/prd.md` + `.tracerkit/archives/<slug>/plan.md`
+**Output:** Verdict block appended to the plan. On `done`: archives to `.tracerkit/archives/<slug>/` (local) or closes both issues (GitHub).
 
 ## Docs
 
@@ -127,7 +141,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | ------------------------------------------------ | -------------------------------------------------- |
 | [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
 | [CLI Reference](docs/cli-reference.md)           | Lifecycle commands: init, update, uninstall        |
-| [Configuration](docs/configuration.md)           | Configure custom artifact paths via `config.json`  |
+| [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths     |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
 

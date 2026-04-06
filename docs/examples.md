@@ -68,7 +68,7 @@ AI:  Loading plan... Loading PRD... Running tests...
 
 ## Session briefing
 
-Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional — skip it if you already know what to work on.
+Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional. Skip it if you already know what to work on. Works the same regardless of storage backend.
 
 ```
 You: /tk:brief
@@ -79,8 +79,6 @@ AI:  | Feature           | Status      | Age | Progress | Next                  
 
      **Focus → dark-mode-support**
 ```
-
----
 
 <details>
 <summary>Check progress mid-implementation</summary>
@@ -212,3 +210,62 @@ AI:  Reading updated PRD...
 ```
 
 </details>
+
+---
+
+## GitHub Issues walkthrough
+
+Same workflow, but PRDs and plans are stored as GitHub Issues instead of local files. Set up once:
+
+```bash
+$ tracerkit config storage github
+✓ Set storage = github
+✓ Skills re-rendered
+```
+
+Then use the same skills:
+
+```
+You: /tk:prd add dark mode support
+AI:  Deriving slug: dark-mode-support
+     Exploring codebase...
+     ? What problem does this solve for users?
+     ...
+     Created issue #42: [tk:prd] dark-mode-support: Add Dark Mode Support
+     Summary: dark mode with system detection and manual toggle.
+     Run `/tk:plan dark-mode-support` next?
+
+You: /tk:plan dark-mode-support
+AI:  Reading PRD from issue #42...
+     Exploring codebase...
+
+     Phase 1 — Theme visible end-to-end
+     Phase 2 — User can toggle and persist preference
+     Phase 3 — System preference auto-detected
+
+     Does the granularity feel right?
+
+You: looks good
+
+AI:  Created issue #43: [tk:plan] dark-mode-support: Plan: Add Dark Mode Support
+     Run `/tk:check dark-mode-support` when ready?
+```
+
+After implementation:
+
+```
+You: /tk:check dark-mode-support
+AI:  Loading plan from issue #43... Loading PRD from issue #42...
+     Running tests...
+
+     ## Verification: dark-mode-support
+
+     ### Status: done
+     Total: 7/7
+     ### BLOCKERS
+     - None
+
+     Closed #42 (PRD) and #43 (plan).
+```
+
+Issues are closed with `completed` reason instead of archiving local files.

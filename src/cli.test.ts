@@ -1,12 +1,16 @@
-import { existsSync, writeFileSync } from 'node:fs';
+import { existsSync, readFileSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
 import { copyTemplates } from './templates.ts';
-import { DEFAULT_PATHS, type Config } from './config.ts';
+import { DEFAULT_PATHS, DEFAULT_GITHUB, type Config } from './config.ts';
 import { useTmpDir } from './test-setup.ts';
 
-const defaultConfig: Config = { paths: { ...DEFAULT_PATHS } };
+const defaultConfig: Config = {
+  storage: 'local',
+  paths: { ...DEFAULT_PATHS },
+  github: { ...DEFAULT_GITHUB },
+};
 
 describe('resolveTarget', () => {
   it('defaults to homedir when no args', () => {
@@ -48,6 +52,29 @@ describe('CLI', () => {
       true,
     );
     expect(output.some((l) => l.includes('tk:prd'))).toBe(true);
+  });
+
+  it('routes "config" to config command', () => {
+    const output = run(['config']);
+
+    expect(output.join('\n')).toContain('"storage"');
+  });
+
+  it('routes "config <path>" to config command with path', () => {
+    copyTemplates(tmp.get(), defaultConfig);
+    const output = run(['config', tmp.get()]);
+
+    expect(output.join('\n')).toContain('"storage"');
+  });
+
+  it('routes "config <path> <key> <value>" to set config at path', () => {
+    run(['config', tmp.get(), 'storage', 'github']);
+
+    const raw = readFileSync(
+      join(tmp.get(), '.tracerkit', 'config.json'),
+      'utf8',
+    );
+    expect(JSON.parse(raw).storage).toBe('github');
   });
 
   it('prints usage for unknown command', () => {

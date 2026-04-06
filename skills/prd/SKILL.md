@@ -9,7 +9,13 @@ Skip steps already satisfied. If user provided a description via arguments, skip
 
 ## Pre-loaded context
 
+<!-- if:local -->
+
 - Existing PRDs: !`ls .tracerkit/prds/ 2>&1`
+  <!-- end:local -->
+  <!-- if:github -->
+- Existing PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
+<!-- end:github -->
 
 ## Input
 
@@ -25,9 +31,20 @@ If the argument is provided, derive a slug using this exact algorithm:
 4. Take the first 4 remaining words (or fewer if less exist)
 5. Join with hyphens → `<slug>`
 
+<!-- if:local -->
+
 The output file is `.tracerkit/prds/<slug>.md`.
 
 If `.tracerkit/prds/<slug>.md` already exists, tell the user and ask whether to overwrite or pick a new name.
+
+<!-- end:local -->
+<!-- if:github -->
+
+The output is a GitHub Issue with label `{{github.labels.prd}}` and title `[{{github.labels.prd}}] <slug>: <Feature Title>`.
+
+Search for an existing open issue with title matching `[{{github.labels.prd}}] <slug>:`. If found, tell the user and ask whether to update it or pick a new slug.
+
+<!-- end:github -->
 
 ## Workflow
 
@@ -84,6 +101,8 @@ Present modules to user. Confirm which need tests.
 
 ### 5. Write PRD
 
+<!-- if:local -->
+
 Save to `.tracerkit/prds/<slug>.md` (create `.tracerkit/prds/` if missing).
 
 ```markdown
@@ -93,6 +112,38 @@ status: created
 ---
 
 # Feature Name
+
+...
+```
+
+<!-- end:local -->
+<!-- if:github -->
+
+Ensure the following labels exist in the repository (create them if missing):
+
+- `{{github.labels.prd}}` — TracerKit PRD
+- `tk:created` — PRD written, no plan yet
+
+Create a GitHub Issue with:
+
+- **Title**: `[{{github.labels.prd}}] <slug>: <Feature Title>`
+- **Labels**: `{{github.labels.prd}}`, `tk:created`
+- **Body**: the PRD content below, with metadata in an HTML comment
+
+```markdown
+<!-- tk:metadata
+created: <current UTC timestamp, ISO 8601>
+status: created
+-->
+
+# Feature Name
+
+...
+```
+
+<!-- end:github -->
+
+Use this structure for the PRD body (same for both local file and issue body):
 
 ## Problem Statement
 
@@ -155,11 +206,28 @@ Omit any section whose content would be "None required" — only include section
 ## Out of Scope
 
 Explicit list. Be specific — vague exclusions invite scope creep.
-```
+
+---
+
+<!-- if:local -->
 
 Tell the user: file created, one-line summary. Then ask: "Run `/tk:plan <slug>` next?"
 
+<!-- end:local -->
+<!-- if:github -->
+
+Tell the user: issue created (include issue number and URL), one-line summary. Then ask: "Run `/tk:plan <slug>` next?"
+
+<!-- end:github -->
+
 ## Error Handling
 
+<!-- if:local -->
+
 - `.tracerkit/prds/` missing — create it
+  <!-- end:local -->
+  <!-- if:github -->
+- Labels missing — create them before creating the issue
+- Issue creation fails — report the error and suggest checking `gh auth status`
+<!-- end:github -->
 - Scope larger than expected — surface and re-scope with user before continuing

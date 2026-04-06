@@ -1,8 +1,9 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
-import { init, uninstall, update } from './commands/index.ts';
+import { config, init, uninstall, update } from './commands/index.ts';
+import { type Storage } from './config.ts';
 import { COMMANDS, DEPRECATED_COMMANDS, FLAGS } from './constants.ts';
 
 const { version } = JSON.parse(
@@ -23,11 +24,21 @@ const USAGE = [
   '',
   'Options:',
   '  --force           Overwrite modified files during update',
+  '  --storage <type>  Set storage (local, github) during init',
   '  --help, -h        Show this help message',
   '  --version, -v     Print version',
   '',
   'All commands default to the home directory when no path is given.',
 ];
+
+function isDirectory(arg: string | undefined): boolean {
+  if (!arg) return false;
+  try {
+    return statSync(resolve(arg)).isDirectory();
+  } catch {
+    return false;
+  }
+}
 
 export function resolveTarget(args: string[], defaultDir = homedir()): string {
   const pathArg = args.find((a) => !a.startsWith('-'));
@@ -59,8 +70,15 @@ export function run(args: string[]): string[] {
   }
 
   switch (command) {
-    case 'init':
-      return init(resolveTarget(rest));
+    case 'init': {
+      const idx = rest.indexOf(FLAGS.storage);
+      const storage = idx >= 0 ? rest[idx + 1] : undefined;
+      const initArgs =
+        idx >= 0 ? rest.filter((_, i) => i !== idx && i !== idx + 1) : rest;
+      return init(resolveTarget(initArgs), {
+        storage: storage as Storage | undefined,
+      });
+    }
     case 'update': {
       const force = rest.includes(FLAGS.force);
       const targetArgs = rest.filter((a) => a !== FLAGS.force);
@@ -70,6 +88,11 @@ export function run(args: string[]): string[] {
         'If using Claude Code, restart your session to load changes.',
       );
       return output;
+    }
+    case 'config': {
+      const cwd = isDirectory(rest[0]) ? resolve(rest[0]) : homedir();
+      const configArgs = cwd === homedir() ? rest : rest.slice(1);
+      return config(cwd, configArgs);
     }
     case 'uninstall':
       return uninstall(resolveTarget(rest));

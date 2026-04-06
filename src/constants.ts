@@ -10,6 +10,7 @@ export const DEPRECATED_SKILLS = [`${SKILL_PREFIX}:verify`] as const;
 export const FLAGS = {
   force: '--force',
   help: '--help',
+  storage: '--storage',
   version: '--version',
 } as const;
 
@@ -25,6 +26,11 @@ export const COMMANDS = [
     name: 'update',
     args: '[path]',
     desc: 'Refresh unchanged files from latest version, skip modified',
+  },
+  {
+    name: 'config',
+    args: '[path] [key] [value]',
+    desc: 'Get or set TracerKit configuration',
   },
   {
     name: 'uninstall',
