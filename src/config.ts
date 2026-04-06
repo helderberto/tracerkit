@@ -46,62 +46,52 @@ export function loadConfig(cwd: string): Config {
     };
   }
 
-  let raw: string;
   let parsed: Record<string, unknown>;
   try {
-    raw = readFileSync(configPath, 'utf8');
-    parsed = JSON.parse(raw);
+    parsed = JSON.parse(readFileSync(configPath, 'utf8'));
   } catch {
     throw new Error('Invalid .tracerkit/config.json — expected valid JSON');
   }
 
-  const paths =
-    typeof parsed.paths === 'object' && parsed.paths !== null
-      ? (parsed.paths as Record<string, unknown>)
-      : {};
-
-  const storage =
-    typeof parsed.storage === 'string' &&
-    VALID_STORAGE.includes(parsed.storage as Storage)
-      ? (parsed.storage as Storage)
-      : 'local';
-
-  const ghRaw =
-    typeof parsed.github === 'object' && parsed.github !== null
-      ? (parsed.github as Record<string, unknown>)
-      : {};
-
-  const ghLabelsRaw =
-    typeof ghRaw.labels === 'object' && ghRaw.labels !== null
-      ? (ghRaw.labels as Record<string, unknown>)
-      : {};
-
-  const github: GitHubConfig = {
-    ...(typeof ghRaw.repo === 'string' ? { repo: ghRaw.repo } : {}),
-    labels: {
-      prd:
-        typeof ghLabelsRaw.prd === 'string'
-          ? ghLabelsRaw.prd
-          : DEFAULT_GITHUB.labels.prd,
-      plan:
-        typeof ghLabelsRaw.plan === 'string'
-          ? ghLabelsRaw.plan
-          : DEFAULT_GITHUB.labels.plan,
-    },
+  return {
+    storage: parseStorage(parsed.storage),
+    paths: parsePaths(parsed.paths),
+    github: parseGitHub(parsed.github),
   };
+}
+
+function parseStorage(raw: unknown): Storage {
+  return typeof raw === 'string' && VALID_STORAGE.includes(raw as Storage)
+    ? (raw as Storage)
+    : 'local';
+}
+
+function parsePaths(raw: unknown): Config['paths'] {
+  const obj = isPlainObject(raw) ? raw : {};
+  return {
+    prds: typeof obj.prds === 'string' ? obj.prds : DEFAULT_PATHS.prds,
+    plans: typeof obj.plans === 'string' ? obj.plans : DEFAULT_PATHS.plans,
+    archives:
+      typeof obj.archives === 'string' ? obj.archives : DEFAULT_PATHS.archives,
+  };
+}
+
+function parseGitHub(raw: unknown): GitHubConfig {
+  const obj = isPlainObject(raw) ? raw : {};
+  const labelsRaw = isPlainObject(obj.labels) ? obj.labels : {};
 
   return {
-    storage,
-    paths: {
-      prds: typeof paths.prds === 'string' ? paths.prds : DEFAULT_PATHS.prds,
-      plans:
-        typeof paths.plans === 'string' ? paths.plans : DEFAULT_PATHS.plans,
-      archives:
-        typeof paths.archives === 'string'
-          ? paths.archives
-          : DEFAULT_PATHS.archives,
+    ...(typeof obj.repo === 'string' ? { repo: obj.repo } : {}),
+    labels: {
+      prd:
+        typeof labelsRaw.prd === 'string'
+          ? labelsRaw.prd
+          : DEFAULT_GITHUB.labels.prd,
+      plan:
+        typeof labelsRaw.plan === 'string'
+          ? labelsRaw.plan
+          : DEFAULT_GITHUB.labels.plan,
     },
-    github,
   };
 }
 
