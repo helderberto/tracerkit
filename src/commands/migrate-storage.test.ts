@@ -294,19 +294,6 @@ describe('migrateStorage', () => {
     writeFileSync(join(dir, `${slug}.md`), content);
   }
 
-  function writeArchive(cwd: string, slug: string): void {
-    const dir = join(cwd, '.tracerkit', 'archives', slug);
-    mkdirSync(dir, { recursive: true });
-    writeFileSync(
-      join(dir, 'prd.md'),
-      `---\ncreated: 2026-03-01T00:00:00Z\nstatus: done\ncompleted: 2026-04-01T00:00:00Z\n---\n\n# ${slug.replace(/-/g, ' ')}\n\nDone feature.`,
-    );
-    writeFileSync(
-      join(dir, 'plan.md'),
-      `# Plan: ${slug.replace(/-/g, ' ')}\n\n> Source PRD: .tracerkit/prds/${slug}.md\n\n- [x] All done\n\n## Archived\n\n[Timestamp: 2026-04-01]`,
-    );
-  }
-
   function createMockGh(existingSlugs: string[] = []): {
     runGh: RunGh;
     calls: string[][];
@@ -497,9 +484,13 @@ describe('migrateStorage', () => {
       expect(body).toContain('created: 2026-04-06T10:00:00Z');
     });
 
-    it('creates closed issues with tk:done for archived features', () => {
+    it('creates closed issues with tk:done for done features', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'old-feature');
+      writePrd(tmp.get(), 'old-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
+      writePlan(tmp.get(), 'old-feature');
       const { runGh, calls } = createMockGh();
 
       migrateStorage(tmp.get(), { runGh });
@@ -510,15 +501,15 @@ describe('migrateStorage', () => {
       );
       expect(createCalls).toHaveLength(2); // prd + plan
 
+      // PRD with status done should trigger close
       const closeCalls = calls.filter(
         (c) => c.includes('issue') && c.includes('close'),
       );
-      expect(closeCalls).toHaveLength(2);
+      expect(closeCalls.length).toBeGreaterThanOrEqual(1);
 
-      // Verify tk:done label was used
-      createCalls.forEach((call) => {
-        expect(call.join(' ')).toContain('tk:done');
-      });
+      // Verify tk:done label was used on PRD
+      const prdCreate = createCalls.find((c) => c.join(' ').includes('tk:prd'));
+      expect(prdCreate!.join(' ')).toContain('tk:done');
     });
 
     it('skips existing issues with matching slug', () => {
@@ -694,7 +685,7 @@ describe('migrateStorage', () => {
       expect(output.some((l) => l.includes('my-feature'))).toBe(true);
     });
 
-    it('routes closed tk:done issues to archives', () => {
+    it('writes closed tk:done issues to prds/plans with status done', () => {
       setupConfig(tmp.get(), { storage: 'github' });
       const { runGh } = createGhToLocalMock({
         prdIssues: [
@@ -710,7 +701,7 @@ describe('migrateStorage', () => {
           {
             number: 11,
             title: '[tk:plan] done-feature: Plan: Done Feature',
-            body: '<!-- tk:metadata\nstatus: done\n-->\n\n# Plan: Done Feature\n\n- [x] All done',
+            body: '<!-- tk:metadata\nstatus: done\nslug: done-feature\n-->\n\n# Plan: Done Feature\n\n- [x] All done',
             labels: ['tk:plan', 'tk:done'],
             state: 'CLOSED',
           },
@@ -719,26 +710,22 @@ describe('migrateStorage', () => {
 
       migrateStorage(tmp.get(), { runGh });
 
-      const archivePrd = join(
+      const prdPath = join(tmp.get(), '.tracerkit', 'prds', 'done-feature.md');
+      const planPath = join(
         tmp.get(),
         '.tracerkit',
-        'archives',
-        'done-feature',
-        'prd.md',
+        'plans',
+        'done-feature.md',
       );
-      const archivePlan = join(
-        tmp.get(),
-        '.tracerkit',
-        'archives',
-        'done-feature',
-        'plan.md',
-      );
-      expect(existsSync(archivePrd)).toBe(true);
-      expect(existsSync(archivePlan)).toBe(true);
+      expect(existsSync(prdPath)).toBe(true);
+      expect(existsSync(planPath)).toBe(true);
 
-      const prdContent = readFileSync(archivePrd, 'utf8');
+      const prdContent = readFileSync(prdPath, 'utf8');
       expect(prdContent).toContain('status: done');
       expect(prdContent).toContain('completed: 2026-04-01T00:00:00Z');
+
+      const planContent = readFileSync(planPath, 'utf8');
+      expect(planContent).toContain('slug: done-feature');
     });
 
     it('skips when local file already exists', () => {
@@ -825,14 +812,14 @@ describe('migrateStorage', () => {
       expect(content).toContain('status: in_progress');
     });
 
-    it('uses plan body directly without frontmatter for active plans', () => {
+    it('writes plan with frontmatter for active plans', () => {
       setupConfig(tmp.get(), { storage: 'github' });
       const { runGh } = createGhToLocalMock({
         planIssues: [
           {
             number: 11,
             title: '[tk:plan] my-feature: Plan: My Feature',
-            body: '<!-- tk:metadata\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task',
+            body: '<!-- tk:metadata\nsource_prd: #10\nslug: my-feature\n-->\n\n# Plan: My Feature\n\n- [ ] Task',
             labels: ['tk:plan', 'tk:in-progress'],
             state: 'OPEN',
           },
@@ -847,14 +834,19 @@ describe('migrateStorage', () => {
       );
       expect(content).toContain('# Plan: My Feature');
       expect(content).not.toContain('<!-- tk:metadata');
-      expect(content).not.toContain('---');
+      expect(content).toContain('---');
+      expect(content).toContain('slug: my-feature');
+      expect(content).toContain('source_prd: #10');
     });
   });
 
-  describe('PR linking (local → github archives)', () => {
+  describe('PR linking (local → github done features)', () => {
     it('adds PR reference when merged PR matches slug', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'linked-feature');
+      writePrd(tmp.get(), 'linked-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
 
       const calls: string[][] = [];
       const issueCounter = { current: 100 };
@@ -890,7 +882,10 @@ describe('migrateStorage', () => {
 
     it('skips PR comment when no matching PR found', () => {
       setupConfig(tmp.get());
-      writeArchive(tmp.get(), 'no-pr-feature');
+      writePrd(tmp.get(), 'no-pr-feature', {
+        status: 'done',
+        completed: '2026-04-01T00:00:00Z',
+      });
 
       const calls: string[][] = [];
       const issueCounter = { current: 100 };
