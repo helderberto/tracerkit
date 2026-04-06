@@ -94,14 +94,14 @@ See [Examples](docs/examples.md) for full walkthroughs.
 <details>
 <summary>GitHub Issues as storage backend</summary>
 
-Same skills, same workflow. Artifacts live in GitHub Issues instead of local files:
+Same skills, same workflow. Storage is configured per-project:
 
 ```bash
-tracerkit init --storage github         # first install
+tracerkit config storage github         # set current project to use GitHub
 tracerkit config github.repo org/repo   # set target repo
 ```
 
-PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. See [Configuration](docs/configuration.md) for details.
+PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed instead of archived locally. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
 
 </details>
 
@@ -140,7 +140,7 @@ Without arguments, shows a feature dashboard with status and progress before ask
 | Document                                         | Description                                        |
 | ------------------------------------------------ | -------------------------------------------------- |
 | [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
-| [CLI Reference](docs/cli-reference.md)           | Lifecycle commands: init, update, uninstall        |
+| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, config, uninstall          |
 | [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths     |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |

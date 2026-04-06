@@ -1,10 +1,8 @@
 # Configuration
 
-TracerKit stores artifacts as local files by default. You can switch to GitHub Issues as the storage backend, or customize local paths.
+Storage is configured **per-project**. Each project can use a different backend. Skills are installed globally and resolve the storage backend at runtime by reading `.tracerkit/config.json` from the project root. No config file means local storage.
 
 ## Storage
-
-Set `storage` to choose where PRDs, plans, and status live:
 
 | Value               | Description                     |
 | ------------------- | ------------------------------- |
@@ -13,15 +11,19 @@ Set `storage` to choose where PRDs, plans, and status live:
 
 ### Via CLI
 
+The `config` command defaults to the current working directory:
+
 ```bash
-tracerkit init --storage github        # first install with GitHub
-tracerkit config storage github        # switch existing install (auto re-renders skills)
-tracerkit config storage local         # switch back
+tracerkit config storage github        # set current project to GitHub
+tracerkit config storage local         # switch back to local
+tracerkit config                       # print project config as JSON
+tracerkit config storage               # print specific key
+tracerkit config github.repo           # print nested key
 ```
 
 ### Via config file
 
-Create or edit `.tracerkit/config.json`:
+Create or edit `.tracerkit/config.json` in the project root:
 
 ```json
 {
@@ -29,7 +31,7 @@ Create or edit `.tracerkit/config.json`:
 }
 ```
 
-When editing the config file directly, run `tracerkit update --force` to re-render skills. The `tracerkit config` CLI does this automatically.
+Skills read this file at runtime. Changing storage does not require re-installing or re-rendering skills.
 
 ## Local paths
 
@@ -45,7 +47,7 @@ When `storage` is `"local"` (default), customize file paths:
 }
 ```
 
-Any missing key falls back to its default. Skills read paths from this config via `{{paths.*}}` template variables. Existing artifacts are not moved. Rename them manually if needed.
+Any missing key falls back to its default. The CLI substitutes default paths with custom values during `tracerkit init` and `tracerkit update`. Existing artifacts are not moved. Rename them manually if needed.
 
 ## GitHub options
 
@@ -96,12 +98,3 @@ Skills create these labels automatically at runtime:
 | `tk:done`        | green  | no           | All checks verified           |
 
 Override `tk:prd` and `tk:plan` via `github.labels.prd` and `github.labels.plan`. Status labels are managed by skills and cannot be renamed.
-
-## Reading current config
-
-```bash
-tracerkit config                       # print full config as JSON
-tracerkit config storage               # print specific key
-tracerkit config github.repo           # print nested key
-tracerkit config . storage             # print key for project install
-```

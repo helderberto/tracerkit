@@ -93,7 +93,7 @@ describe('copyTemplates', () => {
     }
   });
 
-  it('strips github blocks when storage is local', () => {
+  it('preserves both local and github conditional blocks', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
     const content = readFileSync(
@@ -101,55 +101,47 @@ describe('copyTemplates', () => {
       'utf8',
     );
 
-    expect(content).not.toContain('<!-- if:github -->');
-    expect(content).not.toContain('<!-- end:github -->');
-    expect(content).not.toContain('<!-- if:local -->');
-    expect(content).not.toContain('<!-- end:local -->');
-    expect(content).not.toContain('{{github.labels.');
+    expect(content).toContain('<!-- if:local -->');
+    expect(content).toContain('<!-- if:github -->');
+    expect(content).toContain('<!-- end:local -->');
+    expect(content).toContain('<!-- end:github -->');
   });
 
-  it('renders github skills with no unresolved placeholders', () => {
-    const ghConfig: Config = {
-      storage: 'github',
-      paths: { ...DEFAULT_PATHS },
-      github: {
-        repo: 'org/repo',
-        labels: { prd: 'tk:prd', plan: 'tk:plan' },
-      },
-    };
-    copyTemplates(tmp.get(), ghConfig);
+  it('substitutes github label vars with defaults', () => {
+    copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:check']) {
-      const content = readFileSync(
-        join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
-        'utf8',
-      );
+    const content = readFileSync(
+      join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
+      'utf8',
+    );
 
-      expect(content).not.toContain('<!-- if:github -->');
-      expect(content).not.toContain('<!-- if:local -->');
-      expect(content).not.toMatch(/\{\{github\.labels\./);
-      expect(content).not.toMatch(/\{\{github\.repo/);
-    }
+    expect(content).not.toMatch(/\{\{github\.labels\./);
+    expect(content).toContain('tk:prd');
   });
 
-  it('github skills contain issue creation instructions', () => {
-    const ghConfig: Config = {
-      storage: 'github',
-      paths: { ...DEFAULT_PATHS },
-      github: {
-        repo: 'org/repo',
-        labels: { prd: 'tk:prd', plan: 'tk:plan' },
-      },
-    };
-    copyTemplates(tmp.get(), ghConfig);
+  it('skills contain both local and github instructions', () => {
+    copyTemplates(tmp.get(), defaultConfig);
 
     const prd = readFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'utf8',
     );
     expect(prd).toContain('GitHub Issue');
-    expect(prd).toContain('tk:prd');
-    expect(prd).not.toContain('.tracerkit/prds/<slug>.md');
+    expect(prd).toContain('.tracerkit/prds/<slug>.md');
+  });
+
+  it('skills contain storage config preamble', () => {
+    copyTemplates(tmp.get(), defaultConfig);
+
+    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:check']) {
+      const content = readFileSync(
+        join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
+        'utf8',
+      );
+      expect(content).toContain('.tracerkit/config.json');
+      expect(content).toContain('<!-- if:local -->');
+      expect(content).toContain('<!-- if:github -->');
+    }
   });
 });
 
@@ -208,7 +200,7 @@ describe('diffTemplates', () => {
 });
 
 describe('renderTemplate', () => {
-  it('strips github blocks when storage is local', () => {
+  it('preserves both local and github conditional blocks', () => {
     const input = [
       'before',
       '<!-- if:local -->',
@@ -223,12 +215,14 @@ describe('renderTemplate', () => {
     const result = renderTemplate(input, defaultConfig);
 
     expect(result).toContain('local content');
-    expect(result).not.toContain('github content');
+    expect(result).toContain('github content');
+    expect(result).toContain('<!-- if:local -->');
+    expect(result).toContain('<!-- if:github -->');
     expect(result).toContain('before');
     expect(result).toContain('after');
   });
 
-  it('strips local blocks when storage is github', () => {
+  it('preserves conditional markers regardless of storage setting', () => {
     const ghConfig: Config = {
       storage: 'github',
       paths: { ...DEFAULT_PATHS },
@@ -245,22 +239,10 @@ describe('renderTemplate', () => {
 
     const result = renderTemplate(input, ghConfig);
 
-    expect(result).not.toContain('local content');
-    expect(result).toContain('github content');
-  });
-
-  it('removes conditional markers from active blocks', () => {
-    const input = [
-      '<!-- if:local -->',
-      'local content',
-      '<!-- end:local -->',
-    ].join('\n');
-
-    const result = renderTemplate(input, defaultConfig);
-
-    expect(result).not.toContain('<!-- if:local -->');
-    expect(result).not.toContain('<!-- end:local -->');
     expect(result).toContain('local content');
+    expect(result).toContain('github content');
+    expect(result).toContain('<!-- if:local -->');
+    expect(result).toContain('<!-- if:github -->');
   });
 
   it('injects github.labels template vars', () => {
@@ -297,7 +279,7 @@ describe('renderTemplate', () => {
     expect(result).toBe('repo: {{github.repo}}');
   });
 
-  it('handles trailing whitespace after conditional tags', () => {
+  it('preserves conditional blocks with trailing whitespace', () => {
     const input = [
       '<!-- if:local -->  ',
       'local content',
@@ -310,12 +292,12 @@ describe('renderTemplate', () => {
     const result = renderTemplate(input, defaultConfig);
 
     expect(result).toContain('local content');
-    expect(result).not.toContain('github content');
-    expect(result).not.toContain('<!-- if');
-    expect(result).not.toContain('<!-- end');
+    expect(result).toContain('github content');
+    expect(result).toContain('<!-- if:local -->');
+    expect(result).toContain('<!-- if:github -->');
   });
 
-  it('handles multiple conditional blocks', () => {
+  it('preserves multiple conditional blocks', () => {
     const input = [
       '<!-- if:local -->',
       'A',
@@ -331,5 +313,6 @@ describe('renderTemplate', () => {
     expect(result).toContain('A');
     expect(result).toContain('shared');
     expect(result).toContain('B');
+    expect(result).toContain('<!-- if:local -->');
   });
 });

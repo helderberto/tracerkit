@@ -1,28 +1,16 @@
 import { existsSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadConfig, saveConfig, type Storage } from '../config.ts';
+import { loadConfig } from '../config.ts';
 import { copyTemplates, SKILL_NAMES } from '../templates.ts';
 import { update } from './update.ts';
 
-interface InitOptions {
-  storage?: Storage;
-}
-
-export function init(cwd: string, opts?: InitOptions): string[] {
-  const currentConfig = loadConfig(cwd);
-  const storageChanged =
-    opts?.storage && opts.storage !== currentConfig.storage;
-
-  if (storageChanged) {
-    saveConfig(cwd, { storage: opts.storage });
-  }
-
+export function init(cwd: string): string[] {
   const hasAny = SKILL_NAMES.some((name) =>
     existsSync(join(cwd, '.claude', 'skills', name)),
   );
 
   if (hasAny) {
-    return update(cwd, { force: !!storageChanged });
+    return update(cwd, { force: false });
   }
 
   const config = loadConfig(cwd);
