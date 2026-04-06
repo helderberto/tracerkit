@@ -54,6 +54,12 @@ describe('CLI', () => {
     expect(output.some((l) => l.includes('tk:prd'))).toBe(true);
   });
 
+  it('routes "config" to config command', () => {
+    const output = run(['config']);
+
+    expect(output.join('\n')).toContain('"storage"');
+  });
+
   it('prints usage for unknown command', () => {
     const output = run(['foo']);
 

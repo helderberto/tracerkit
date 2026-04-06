@@ -29,6 +29,16 @@ describe('extractFlag', () => {
     expect(result.rest).toEqual(['a', 'b', 'c']);
   });
 
+  it('consumes only first occurrence of duplicate flag', () => {
+    const result = extractFlag(
+      ['--storage', 'github', '--storage', 'local'],
+      '--storage',
+    );
+
+    expect(result.value).toBe('github');
+    expect(result.rest).toEqual(['--storage', 'local']);
+  });
+
   it('handles flag without value', () => {
     const result = extractFlag(['--storage'], '--storage');
 

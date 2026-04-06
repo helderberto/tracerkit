@@ -57,6 +57,19 @@ describe('loadConfig', () => {
     );
   });
 
+  it('falls back to default paths when paths is not an object', () => {
+    const dir = join(tmp.get(), '.tracerkit');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(
+      join(dir, 'config.json'),
+      JSON.stringify({ paths: 'invalid' }),
+    );
+
+    const config = loadConfig(tmp.get());
+
+    expect(config.paths).toEqual(DEFAULT_PATHS);
+  });
+
   it('ignores unknown keys', () => {
     const dir = join(tmp.get(), '.tracerkit');
     mkdirSync(dir, { recursive: true });
@@ -198,6 +211,19 @@ describe('saveConfig', () => {
     );
 
     expect(JSON.parse(raw).storage).toBe('github');
+  });
+
+  it('overwrites corrupt existing config instead of crashing', () => {
+    const dir = join(tmp.get(), '.tracerkit');
+    mkdirSync(dir, { recursive: true });
+    writeFileSync(join(dir, 'config.json'), '{bad json');
+
+    saveConfig(tmp.get(), { storage: 'github' });
+
+    const raw = readFileSync(join(dir, 'config.json'), 'utf8');
+    const parsed = JSON.parse(raw);
+
+    expect(parsed).toEqual({ storage: 'github' });
   });
 
   it('deep-merges github config', () => {

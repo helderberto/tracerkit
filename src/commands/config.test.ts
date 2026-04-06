@@ -28,6 +28,19 @@ describe('config', () => {
       expect(output).toEqual(['local']);
     });
 
+    it('returns JSON for object value', () => {
+      const output = config(tmp.get(), ['github.labels']);
+
+      const parsed = JSON.parse(output[0]);
+      expect(parsed).toEqual({ prd: 'tk:prd', plan: 'tk:plan' });
+    });
+
+    it('returns unknown key message for invalid path', () => {
+      const output = config(tmp.get(), ['foo.bar.baz']);
+
+      expect(output).toEqual(['Unknown key: foo.bar.baz']);
+    });
+
     it('prints nested key value', () => {
       const dir = join(tmp.get(), '.tracerkit');
       mkdirSync(dir, { recursive: true });
