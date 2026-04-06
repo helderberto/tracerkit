@@ -1,3 +1,9 @@
+# [1.15.0](https://github.com/helderberto/tracerkit/compare/v1.14.0...v1.15.0) (2026-04-06)
+
+### Features
+
+- add github→local migration, PR linking, and docs ([#9](https://github.com/helderberto/tracerkit/issues/9)) ([d129469](https://github.com/helderberto/tracerkit/commit/d129469dd9cfb9394e3a7ac321e9855ff0d168c7))
+
 # [1.14.0](https://github.com/helderberto/tracerkit/compare/v1.13.1...v1.14.0) (2026-04-06)
 
 ### Features
