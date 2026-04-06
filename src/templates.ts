@@ -46,8 +46,10 @@ function toSourcePath(targetRel: string): string {
   return targetRel.slice(prefix.length);
 }
 
-function renderTemplate(content: string, config: Config): string {
+export function renderTemplate(content: string, config: Config): string {
   let result = content;
+
+  // Path substitutions
   if (config.paths.prds !== DEFAULT_PATHS.prds) {
     result = result.replaceAll(DEFAULT_PATHS.prds, config.paths.prds);
   }
@@ -57,6 +59,38 @@ function renderTemplate(content: string, config: Config): string {
   if (config.paths.archives !== DEFAULT_PATHS.archives) {
     result = result.replaceAll(DEFAULT_PATHS.archives, config.paths.archives);
   }
+
+  // Conditional blocks: strip inactive storage, unwrap active
+  const active = config.storage ?? 'local';
+  const inactive = active === 'local' ? 'github' : 'local';
+
+  result = result.replace(
+    new RegExp(
+      `<!-- if:${inactive} -->\\n[\\s\\S]*?<!-- end:${inactive} -->\\n?`,
+      'g',
+    ),
+    '',
+  );
+  result = result.replace(new RegExp(`<!-- if:${active} -->\\n`, 'g'), '');
+  result = result.replace(new RegExp(`<!-- end:${active} -->\\n?`, 'g'), '');
+
+  // GitHub template variables
+  if (config.github?.repo) {
+    result = result.replaceAll('{{github.repo}}', config.github.repo);
+  }
+  if (config.github?.labels?.prd) {
+    result = result.replaceAll(
+      '{{github.labels.prd}}',
+      config.github.labels.prd,
+    );
+  }
+  if (config.github?.labels?.plan) {
+    result = result.replaceAll(
+      '{{github.labels.plan}}',
+      config.github.labels.plan,
+    );
+  }
+
   return result;
 }
 
