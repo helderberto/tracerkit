@@ -25,7 +25,16 @@ The workflow is three skills: **define** (`/tk:prd`), **plan** (`/tk:plan`), **v
 
 ## Get Started
 
-### Install
+### Install as Claude Code plugin
+
+```bash
+claude plugin install tk
+```
+
+Skills are available immediately in every project — no build step, no config.
+
+<details>
+<summary>Alternative: install via npm CLI</summary>
 
 ```bash
 $ npm install -g tracerkit
@@ -33,6 +42,16 @@ $ tracerkit init
 ```
 
 Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run — adds missing skills without overwriting ones you've modified.
+
+Per-project usage (team members get skills via git):
+
+```bash
+$ tracerkit init .              # install to .claude/skills/ in current dir
+$ tracerkit update .            # update project-scoped skills
+$ tracerkit uninstall .         # remove project-scoped skills
+```
+
+</details>
 
 ### Workflow
 
@@ -66,19 +85,6 @@ AI:  | Feature           | Status      | Age | Progress | Next                  
 ```
 
 See [Examples](docs/examples.md) for full walkthroughs.
-
-<details>
-<summary>Per-project usage</summary>
-
-To scope skills to a single project (team members get them via git):
-
-```bash
-$ tracerkit init .              # install to .claude/skills/ in current dir
-$ tracerkit update .            # update project-scoped skills
-$ tracerkit uninstall .         # remove project-scoped skills
-```
-
-</details>
 
 ## Skills
 
