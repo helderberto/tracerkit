@@ -41,8 +41,6 @@ const LABEL_MAP: Record<string, string> = {
   'tk:done': 'done',
 };
 
-// --- Pure functions ---
-
 export function parseFrontmatter(content: string): {
   metadata: Record<string, string>;
   body: string;
@@ -117,12 +115,9 @@ export function extractTitle(body: string): string {
   return match ? match[1].trim() : 'Untitled';
 }
 
-// --- Artifact discovery ---
-
 function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
   const artifacts: LocalArtifact[] = [];
 
-  // Discover PRDs
   const prdsDir = join(cwd, cfg.paths.prds);
   if (existsSync(prdsDir)) {
     for (const file of readdirSync(prdsDir)) {
@@ -140,7 +135,6 @@ function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
     }
   }
 
-  // Discover plans
   const plansDir = join(cwd, cfg.paths.plans);
   if (existsSync(plansDir)) {
     for (const file of readdirSync(plansDir)) {
@@ -161,7 +155,25 @@ function discoverLocalArtifacts(cwd: string, cfg: Config): LocalArtifact[] {
   return artifacts;
 }
 
-// --- GitHub helpers ---
+export function classifyGhError(err: unknown): Error {
+  const error = err as { code?: string; stderr?: string; message?: string };
+  if (error.code === 'ENOENT') {
+    return new Error('gh CLI not found — install it: https://cli.github.com');
+  }
+  const stderr = (error.stderr ?? error.message ?? '').toLowerCase();
+  if (stderr.includes('not logged in') || stderr.includes('authentication')) {
+    return new Error('Not authenticated with GitHub. Run: gh auth login');
+  }
+  if (stderr.includes('rate limit') || stderr.includes('403')) {
+    return new Error('GitHub rate limit exceeded. Wait and retry.');
+  }
+  if (stderr.includes('not found') || stderr.includes('404')) {
+    return new Error(
+      'Repository not found. Check github.repo in .tracerkit/config.json',
+    );
+  }
+  return err instanceof Error ? err : new Error(String(err));
+}
 
 function defaultRunGh(args: string[]): string {
   try {
@@ -173,23 +185,7 @@ function defaultRunGh(args: string[]): string {
       },
     ).trim();
   } catch (err: unknown) {
-    const error = err as { code?: string; stderr?: string; message?: string };
-    if (error.code === 'ENOENT') {
-      throw new Error('gh CLI not found — install it: https://cli.github.com');
-    }
-    const stderr = (error.stderr ?? error.message ?? '').toLowerCase();
-    if (stderr.includes('not logged in') || stderr.includes('authentication')) {
-      throw new Error('Not authenticated with GitHub. Run: gh auth login');
-    }
-    if (stderr.includes('rate limit') || stderr.includes('403')) {
-      throw new Error('GitHub rate limit exceeded. Wait and retry.');
-    }
-    if (stderr.includes('not found') || stderr.includes('404')) {
-      throw new Error(
-        'Repository not found. Check github.repo in .tracerkit/config.json',
-      );
-    }
-    throw err;
+    throw classifyGhError(err);
   }
 }
 
@@ -237,7 +233,6 @@ function fetchExistingIssues(
 
 function issueExistsForSlug(slug: string, existing: ExistingIssue[]): boolean {
   return existing.some((issue) => {
-    // Check metadata slug first (stable), fall back to title extraction
     if (issue.body) {
       const { metadata } = parseMetadata(issue.body);
       if (metadata.slug) return metadata.slug === slug;
@@ -318,8 +313,6 @@ function addIssueComment(
   ]);
 }
 
-// --- GitHub → Local helpers ---
-
 function statusFromLabels(labels: string[]): string {
   for (const label of labels) {
     const status = LABEL_MAP[label];
@@ -332,8 +325,6 @@ function writeLocalFile(filePath: string, content: string): void {
   mkdirSync(dirname(filePath), { recursive: true });
   writeFileSync(filePath, content);
 }
-
-// --- Main command ---
 
 export function migrateStorage(cwd: string, opts?: MigrateOptions): string[] {
   const runGh = opts?.runGh ?? defaultRunGh;
@@ -457,7 +448,6 @@ function migrateGitHubToLocal(
     const labels = issue.labels.map((l) => l.name);
     const { metadata, body } = parseMetadata(issue.body ?? '');
 
-    // Derive status from labels if not in metadata
     const status = metadata.status ?? statusFromLabels(labels);
 
     const dir = issue.type === 'prd' ? cfg.paths.prds : cfg.paths.plans;
@@ -472,7 +462,6 @@ function migrateGitHubToLocal(
       const fm = metadataToFrontmatter({ ...metadata, status });
       writeLocalFile(filePath, `${fm}\n${body}`);
     } else {
-      // Plans now get frontmatter too
       const planMeta: Record<string, string> = {};
       if (metadata.source_prd) planMeta.source_prd = metadata.source_prd;
       if (metadata.slug || slug) planMeta.slug = metadata.slug ?? slug;
