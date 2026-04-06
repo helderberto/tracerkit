@@ -29,7 +29,7 @@ export const COMMANDS = [
   },
   {
     name: 'config',
-    args: '[key] [value]',
+    args: '[path] [key] [value]',
     desc: 'Get or set TracerKit configuration',
   },
   {

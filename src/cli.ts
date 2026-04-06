@@ -1,4 +1,4 @@
-import { readFileSync } from 'node:fs';
+import { readFileSync, statSync } from 'node:fs';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { homedir } from 'node:os';
@@ -29,6 +29,15 @@ const USAGE = [
   '',
   'All commands default to the home directory when no path is given.',
 ];
+
+function isDirectory(arg: string | undefined): boolean {
+  if (!arg) return false;
+  try {
+    return statSync(resolve(arg)).isDirectory();
+  } catch {
+    return false;
+  }
+}
 
 export function resolveTarget(args: string[], defaultDir = homedir()): string {
   const pathArg = args.find((a) => !a.startsWith('-'));
@@ -79,8 +88,11 @@ export function run(args: string[]): string[] {
       );
       return output;
     }
-    case 'config':
-      return config(homedir(), rest);
+    case 'config': {
+      const cwd = isDirectory(rest[0]) ? resolve(rest[0]) : homedir();
+      const configArgs = cwd === homedir() ? rest : rest.slice(1);
+      return config(cwd, configArgs);
+    }
     case 'uninstall':
       return uninstall(resolveTarget(rest));
     default:
