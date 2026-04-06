@@ -14,3 +14,4 @@
 ## Git
 
 - Always `git pull --rebase` before pushing — semantic-release adds automatic commits on every release.
+- `.tracerkit/` files (PRDs, plans, archives) are safe to commit in this repo — it dogfoods its own workflow.
