@@ -8,7 +8,8 @@ import {
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Config } from './config.ts';
+import { type Config, DEFAULT_PATHS } from './config.ts';
+import { SKILL_PREFIX } from './constants.ts';
 
 export { SKILL_NAMES, DEPRECATED_SKILLS } from './constants.ts';
 
@@ -23,7 +24,7 @@ export interface DiffResult {
 }
 
 const __dirname = dirname(fileURLToPath(import.meta.url));
-const TEMPLATES_DIR = join(__dirname, '..', 'templates');
+const SKILLS_DIR = join(__dirname, '..', 'skills');
 
 function walk(dir: string, prefix = ''): string[] {
   const entries = readdirSync(dir, { withFileTypes: true });
@@ -36,11 +37,27 @@ function walk(dir: string, prefix = ''): string[] {
   return files.sort();
 }
 
+function toTargetPath(srcRel: string): string {
+  return `.claude/skills/${SKILL_PREFIX}:${srcRel}`;
+}
+
+function toSourcePath(targetRel: string): string {
+  const prefix = `.claude/skills/${SKILL_PREFIX}:`;
+  return targetRel.slice(prefix.length);
+}
+
 function renderTemplate(content: string, config: Config): string {
-  return content
-    .replaceAll('{{paths.prds}}', config.paths.prds)
-    .replaceAll('{{paths.plans}}', config.paths.plans)
-    .replaceAll('{{paths.archives}}', config.paths.archives);
+  let result = content;
+  if (config.paths.prds !== DEFAULT_PATHS.prds) {
+    result = result.replaceAll(DEFAULT_PATHS.prds, config.paths.prds);
+  }
+  if (config.paths.plans !== DEFAULT_PATHS.plans) {
+    result = result.replaceAll(DEFAULT_PATHS.plans, config.paths.plans);
+  }
+  if (config.paths.archives !== DEFAULT_PATHS.archives) {
+    result = result.replaceAll(DEFAULT_PATHS.archives, config.paths.archives);
+  }
+  return result;
 }
 
 export function copyTemplates(
@@ -48,14 +65,15 @@ export function copyTemplates(
   config: Config,
   only?: string[],
 ): CopyResult {
-  const files = only ?? walk(TEMPLATES_DIR);
-  for (const rel of files) {
-    const src = join(TEMPLATES_DIR, rel);
-    const dest = join(targetDir, rel);
+  const targetFiles = only ?? walk(SKILLS_DIR).map(toTargetPath);
+  for (const targetRel of targetFiles) {
+    const srcRel = toSourcePath(targetRel);
+    const src = join(SKILLS_DIR, srcRel);
+    const dest = join(targetDir, targetRel);
     mkdirSync(dirname(dest), { recursive: true });
     writeFileSync(dest, renderTemplate(readFileSync(src, 'utf8'), config));
   }
-  return { copied: files };
+  return { copied: targetFiles };
 }
 
 function hash(buf: Buffer): string {
@@ -63,24 +81,25 @@ function hash(buf: Buffer): string {
 }
 
 export function diffTemplates(targetDir: string, config: Config): DiffResult {
-  const files = walk(TEMPLATES_DIR);
+  const targetFiles = walk(SKILLS_DIR).map(toTargetPath);
   const unchanged: string[] = [];
   const modified: string[] = [];
   const missing: string[] = [];
 
-  for (const rel of files) {
-    const dest = join(targetDir, rel);
+  for (const targetRel of targetFiles) {
+    const dest = join(targetDir, targetRel);
     if (!existsSync(dest)) {
-      missing.push(rel);
+      missing.push(targetRel);
     } else {
+      const srcRel = toSourcePath(targetRel);
       const rendered = renderTemplate(
-        readFileSync(join(TEMPLATES_DIR, rel), 'utf8'),
+        readFileSync(join(SKILLS_DIR, srcRel), 'utf8'),
         config,
       );
       const srcHash = hash(Buffer.from(rendered));
       const destHash = hash(readFileSync(dest));
-      if (srcHash === destHash) unchanged.push(rel);
-      else modified.push(rel);
+      if (srcHash === destHash) unchanged.push(targetRel);
+      else modified.push(targetRel);
     }
   }
 
