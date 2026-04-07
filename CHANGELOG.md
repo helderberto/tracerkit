@@ -1,3 +1,9 @@
+# [1.17.0](https://github.com/helderberto/tracerkit/compare/v1.16.0...v1.17.0) (2026-04-07)
+
+### Features
+
+- use AskUserQuestion for all interactive prompts ([9b21e7b](https://github.com/helderberto/tracerkit/commit/9b21e7b4b4f18e8e3ce75b2c3005d8416c3b32d2))
+
 # [1.16.0](https://github.com/helderberto/tracerkit/compare/v1.15.0...v1.16.0) (2026-04-06)
 
 ### Features
