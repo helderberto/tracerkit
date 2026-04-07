@@ -8,16 +8,23 @@ A feature goes through three steps: define it (`/tk:prd`), plan it (`/tk:plan`),
 You: /tk:prd add dark mode support
 AI:  Deriving slug: dark-mode-support
      Exploring codebase...
-     ? What problem does this solve for users?
-     ? Should it detect system preference or manual toggle only?
-     ? Which components need theming?
-     ...
-     Gray areas found:
-     1. Default theme — assumed "light", confirm?
+     ┌ Detection strategy?
+     │ ● System preference + manual toggle (Recommended)
+     │ ○ Manual toggle only
+     │ ○ Other
+     └
+     ┌ Default theme — assumed "light". Correct?
+     │ ● Yes, default to light (Recommended)
+     │ ○ Default to system preference
+     │ ○ Other
+     └
      ...
      Written .tracerkit/prds/dark-mode-support.md
      Summary: dark mode with system detection and manual toggle.
-     Run `/tk:plan dark-mode-support` next?
+     ┌ What's next?
+     │ ● Run `/tk:plan dark-mode-support` (Recommended)
+     │ ○ Done for now
+     └
 
 You: /tk:plan dark-mode-support
 AI:  Reading PRD...
@@ -27,15 +34,23 @@ AI:  Reading PRD...
      Phase 2 — User can toggle and persist preference
      Phase 3 — System preference auto-detected
 
-     Does the granularity feel right? Should any phases merge or split?
+     ┌ How's the granularity?
+     │ ● Looks good, proceed (Recommended)
+     │ ○ Merge some phases
+     │ ○ Split a phase
+     └
 
-You: looks good
+You: [selects "Looks good, proceed"]
 
 AI:  Written .tracerkit/plans/dark-mode-support.md
      Phase 1 — Theme visible end-to-end (CSS vars + ThemeProvider)
      Phase 2 — User can toggle and persist preference (toggle + localStorage)
      Phase 3 — System preference auto-detected (media query + sync)
-     Run `/tk:check dark-mode-support` when ready?
+     ┌ What's next?
+     │ ● Start implementing (Recommended)
+     │ ○ Run `/tk:check dark-mode-support`
+     │ ○ Done for now
+     └
 ```
 
 Now you build. Open the plan, work through each phase: write code, run tests, ask Claude for help. TracerKit doesn't implement for you; it keeps the spec sharp so you (and your AI assistant) stay on track.
@@ -155,9 +170,12 @@ AI:  | Feature           | Status      | Progress |
      | dark-mode-support | in_progress | 3/7      |
      | api-rate-limiting | created     | -        |
 
-     Which feature to check?
+     ┌ Which feature to check?
+     │ ○ dark-mode-support
+     │ ○ api-rate-limiting
+     └
 
-You: dark-mode-support
+You: [selects "dark-mode-support"]
 
 AI:  Loading plan... Running tests...
      ## Verification: dark-mode-support
@@ -179,7 +197,11 @@ You: users keep asking for dark mode
 
 AI:  Deriving slug: dark-mode
      Exploring codebase...
-     ? Where should this live — settings page or global toggle?
+     ┌ Where should this live?
+     │ ● Global toggle (Recommended)
+     │ ○ Settings page
+     │ ○ Both
+     └
      ...
 ```
 
@@ -194,9 +216,12 @@ When a PRD or plan file already exists, the skill asks before overwriting.
 You: /tk:prd dark mode support
 AI:  Deriving slug: dark-mode-support
      .tracerkit/prds/dark-mode-support.md already exists.
-     Overwrite or pick a new name?
+     ┌ PRD already exists
+     │ ○ Overwrite existing
+     │ ○ Pick a new name
+     └
 
-You: overwrite
+You: [selects "Overwrite existing"]
 AI:  Starting interview...
      ...
 ```
@@ -206,9 +231,12 @@ Same for plans:
 ```
 You: /tk:plan dark-mode-support
 AI:  .tracerkit/plans/dark-mode-support.md already exists.
-     Overwrite or pick a new name?
+     ┌ Plan already exists
+     │ ○ Overwrite existing
+     │ ○ Pick a new name
+     └
 
-You: overwrite
+You: [selects "Overwrite existing"]
 AI:  Reading updated PRD...
      ...
 ```
@@ -232,11 +260,17 @@ Then use the same skills:
 You: /tk:prd add dark mode support
 AI:  Deriving slug: dark-mode-support
      Exploring codebase...
-     ? What problem does this solve for users?
+     ┌ Detection strategy?
+     │ ● System preference + manual toggle (Recommended)
+     │ ○ Manual toggle only
+     └
      ...
      Created issue #42: [tk:prd] dark-mode-support: Add Dark Mode Support
      Summary: dark mode with system detection and manual toggle.
-     Run `/tk:plan dark-mode-support` next?
+     ┌ What's next?
+     │ ● Run `/tk:plan dark-mode-support` (Recommended)
+     │ ○ Done for now
+     └
 
 You: /tk:plan dark-mode-support
 AI:  Reading PRD from issue #42...
@@ -246,12 +280,20 @@ AI:  Reading PRD from issue #42...
      Phase 2 — User can toggle and persist preference
      Phase 3 — System preference auto-detected
 
-     Does the granularity feel right?
+     ┌ How's the granularity?
+     │ ● Looks good, proceed (Recommended)
+     │ ○ Merge some phases
+     │ ○ Split a phase
+     └
 
-You: looks good
+You: [selects "Looks good, proceed"]
 
 AI:  Created issue #43: [tk:plan] dark-mode-support: Plan: Add Dark Mode Support
-     Run `/tk:check dark-mode-support` when ready?
+     ┌ What's next?
+     │ ● Start implementing (Recommended)
+     │ ○ Run `/tk:check dark-mode-support`
+     │ ○ Done for now
+     └
 ```
 
 After implementation:
