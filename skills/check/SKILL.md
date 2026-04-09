@@ -3,7 +3,7 @@ description: Verify implementation against plan. Shows progress, finds blockers,
 argument-hint: '[slug]'
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
 
 # Check Implementation
 

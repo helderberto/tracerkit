@@ -59,19 +59,6 @@ describe('config', () => {
 
       expect(output).toEqual(['Unknown key: foo.bar.baz']);
     });
-
-    it('prints nested key value', () => {
-      const dir = join(tmp.get(), '.tracerkit');
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(
-        join(dir, 'config.json'),
-        JSON.stringify({ storage: 'github', github: { repo: 'org/repo' } }),
-      );
-
-      const output = config(tmp.get(), ['github.repo']);
-
-      expect(output).toEqual(['org/repo']);
-    });
   });
 
   describe('set (key + value)', () => {
@@ -83,16 +70,6 @@ describe('config', () => {
         'utf8',
       );
       expect(JSON.parse(raw).storage).toBe('github');
-    });
-
-    it('sets nested github.repo', () => {
-      config(tmp.get(), ['github.repo', 'org/repo']);
-
-      const raw = readFileSync(
-        join(tmp.get(), '.tracerkit', 'config.json'),
-        'utf8',
-      );
-      expect(JSON.parse(raw).github.repo).toBe('org/repo');
     });
 
     it('sets nested github.labels.prd', () => {

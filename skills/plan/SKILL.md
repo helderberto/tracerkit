@@ -3,7 +3,7 @@ description: Turn a PRD into a multi-phase implementation plan using tracer-bull
 argument-hint: '[slug]'
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
 
 # PRD to Plan
 
@@ -149,7 +149,7 @@ Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field.
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `gh label create {{github.labels.plan}} --repo {{github.repo}} --force`, `gh label create tk:in-progress --repo {{github.repo}} --force`.
+Ensure labels exist: `gh label create {{github.labels.plan}} --force`, `gh label create tk:in-progress --force`.
 
 Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature Title>`, labels: `{{github.labels.plan}}`, `tk:in-progress`.
 

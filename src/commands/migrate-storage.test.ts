@@ -288,11 +288,13 @@ describe('classifyGhError', () => {
   it('returns repo not found for "not found"', () => {
     const err = classifyGhError({ stderr: 'repository not found' });
     expect(err.message).toContain('Repository not found');
+    expect(err.message).toContain('git remote');
   });
 
   it('returns repo not found for "404"', () => {
     const err = classifyGhError({ stderr: 'HTTP 404' });
     expect(err.message).toContain('Repository not found');
+    expect(err.message).toContain('git remote');
   });
 
   it('re-throws original Error for unknown errors', () => {
@@ -326,7 +328,6 @@ describe('migrateStorage', () => {
       JSON.stringify(
         {
           storage: 'local',
-          github: { repo: 'owner/repo' },
           ...overrides,
         },
         null,
@@ -403,11 +404,6 @@ describe('migrateStorage', () => {
         return '';
       }
 
-      // gh repo view — return repo name
-      if (joined.includes('repo view')) {
-        return 'owner/repo';
-      }
-
       return '';
     };
 
@@ -463,10 +459,6 @@ describe('migrateStorage', () => {
 
       if (joined.includes('issue comment')) {
         return '';
-      }
-
-      if (joined.includes('repo view')) {
-        return 'owner/repo';
       }
 
       return '';
@@ -641,34 +633,6 @@ describe('migrateStorage', () => {
         (c) => c.includes('label') && c.includes('create'),
       );
       expect(labelCalls.length).toBeGreaterThan(0);
-    });
-
-    it('uses github.repo from config', () => {
-      setupConfig(tmp.get(), { github: { repo: 'custom/repo' } });
-      writePrd(tmp.get(), 'my-feature');
-      const { runGh, calls } = createMockGh();
-
-      migrateStorage(tmp.get(), { runGh });
-
-      const createCall = calls.find(
-        (c) =>
-          c.includes('issue') && c.includes('create') && !c.includes('label'),
-      );
-      expect(createCall).toBeDefined();
-      expect(createCall!.join(' ')).toContain('custom/repo');
-    });
-
-    it('auto-detects repo from git remote when not in config', () => {
-      setupConfig(tmp.get(), { github: {} });
-      writePrd(tmp.get(), 'my-feature');
-      const { runGh, calls } = createMockGh();
-
-      migrateStorage(tmp.get(), { runGh });
-
-      const repoViewCalls = calls.filter(
-        (c) => c.includes('repo') && c.includes('view'),
-      );
-      expect(repoViewCalls).toHaveLength(1);
     });
 
     it('sets correct title format for PRD issues', () => {
@@ -935,7 +899,7 @@ describe('migrateStorage', () => {
 
     it('uses custom labels from config', () => {
       setupConfig(tmp.get(), {
-        github: { repo: 'owner/repo', labels: { prd: 'spec', plan: 'impl' } },
+        github: { labels: { prd: 'spec', plan: 'impl' } },
       });
       writePrd(tmp.get(), 'my-feature');
       const { runGh, calls } = createMockGh();
@@ -1096,7 +1060,7 @@ describe('migrateStorage', () => {
     it('github→local uses custom labels from config', () => {
       setupConfig(tmp.get(), {
         storage: 'github',
-        github: { repo: 'owner/repo', labels: { prd: 'spec', plan: 'impl' } },
+        github: { labels: { prd: 'spec', plan: 'impl' } },
       });
       const calls: string[][] = [];
       const runGh: RunGh = (args: string[]) => {

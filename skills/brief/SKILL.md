@@ -2,7 +2,7 @@
 description: Session briefing — shows active features, progress, and suggested focus. Use at the start of a session to orient.
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
 
 # Session Briefing
 

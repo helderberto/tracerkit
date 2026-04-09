@@ -19,7 +19,6 @@ export const DEFAULT_GITHUB = {
 } as const;
 
 export interface GitHubConfig {
-  repo?: string;
   labels?: {
     prd?: string;
     plan?: string;
@@ -79,7 +78,6 @@ function parseGitHub(raw: unknown): GitHubConfig {
   const labelsRaw = isPlainObject(obj.labels) ? obj.labels : {};
 
   return {
-    ...(typeof obj.repo === 'string' ? { repo: obj.repo } : {}),
     labels: {
       prd:
         typeof labelsRaw.prd === 'string'

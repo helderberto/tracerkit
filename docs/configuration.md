@@ -18,7 +18,6 @@ tracerkit config storage github        # set current project to GitHub
 tracerkit config storage local         # switch back to local
 tracerkit config                       # print project config as JSON
 tracerkit config storage               # print specific key
-tracerkit config github.repo           # print nested key
 ```
 
 ### Via config file
@@ -56,7 +55,6 @@ When `storage` is `"github"`, you can configure:
 {
   "storage": "github",
   "github": {
-    "repo": "owner/repo",
     "labels": {
       "prd": "tk:prd",
       "plan": "tk:plan"
@@ -65,15 +63,12 @@ When `storage` is `"github"`, you can configure:
 }
 ```
 
-| Key                  | Default                       | Description                                     |
-| -------------------- | ----------------------------- | ----------------------------------------------- |
-| `github.repo`        | auto-detected from git remote | Explicit `owner/repo` for the target repository |
-| `github.labels.prd`  | `tk:prd`                      | Label for PRD issues                            |
-| `github.labels.plan` | `tk:plan`                     | Label for plan issues                           |
+The target repository is auto-detected from the git remote.
 
-```bash
-tracerkit config github.repo org/repo  # set explicit repo
-```
+| Key                  | Default   | Description           |
+| -------------------- | --------- | --------------------- |
+| `github.labels.prd`  | `tk:prd`  | Label for PRD issues  |
+| `github.labels.plan` | `tk:plan` | Label for plan issues |
 
 ### GitHub permissions
 

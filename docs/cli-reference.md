@@ -32,7 +32,6 @@ Storage is configured per-project. Skills resolve the backend at runtime:
 
 ```bash
 $ tracerkit config storage github       # set current project to GitHub
-$ tracerkit config github.repo org/repo # set target repo
 $ tracerkit config storage local        # switch back to local
 ```
 

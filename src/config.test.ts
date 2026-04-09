@@ -116,21 +116,21 @@ describe('loadConfig', () => {
     expect(config.github).toEqual(DEFAULT_GITHUB);
   });
 
-  it('parses partial github config', () => {
+  it('parses partial github config with custom prd label', () => {
     const dir = join(tmp.get(), '.tracerkit');
     mkdirSync(dir, { recursive: true });
     writeFileSync(
       join(dir, 'config.json'),
       JSON.stringify({
         storage: 'github',
-        github: { repo: 'org/repo' },
+        github: { labels: { prd: 'custom:prd' } },
       }),
     );
 
     const config = loadConfig(tmp.get());
 
-    expect(config.github.repo).toBe('org/repo');
-    expect(config.github.labels).toEqual(DEFAULT_GITHUB.labels);
+    expect(config.github.labels?.prd).toBe('custom:prd');
+    expect(config.github.labels?.plan).toBe(DEFAULT_GITHUB.labels.plan);
   });
 
   it('parses full github config', () => {
@@ -141,7 +141,6 @@ describe('loadConfig', () => {
       JSON.stringify({
         storage: 'github',
         github: {
-          repo: 'org/repo',
           labels: { prd: 'custom:prd', plan: 'custom:plan' },
         },
       }),
@@ -150,7 +149,6 @@ describe('loadConfig', () => {
     const config = loadConfig(tmp.get());
 
     expect(config.github).toEqual({
-      repo: 'org/repo',
       labels: { prd: 'custom:prd', plan: 'custom:plan' },
     });
   });
@@ -232,7 +230,7 @@ describe('saveConfig', () => {
       join(dir, 'config.json'),
       JSON.stringify({
         storage: 'github',
-        github: { repo: 'org/repo' },
+        github: { labels: { plan: 'my:plan' } },
       }),
     );
 
@@ -241,7 +239,7 @@ describe('saveConfig', () => {
     const raw = readFileSync(join(dir, 'config.json'), 'utf8');
     const parsed = JSON.parse(raw);
 
-    expect(parsed.github.repo).toBe('org/repo');
+    expect(parsed.github.labels.plan).toBe('my:plan');
     expect(parsed.github.labels.prd).toBe('my:prd');
   });
 });

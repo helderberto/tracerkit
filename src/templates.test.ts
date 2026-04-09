@@ -257,27 +257,6 @@ describe('renderTemplate', () => {
     expect(result).toBe('label: custom:prd and custom:plan');
   });
 
-  it('injects github.repo template var', () => {
-    const ghConfig: Config = {
-      storage: 'github',
-      paths: { ...DEFAULT_PATHS },
-      github: { repo: 'org/repo', labels: { prd: 'tk:prd', plan: 'tk:plan' } },
-    };
-    const input = 'repo: {{github.repo}}';
-
-    const result = renderTemplate(input, ghConfig);
-
-    expect(result).toBe('repo: org/repo');
-  });
-
-  it('leaves unresolved github vars when no value set', () => {
-    const input = 'repo: {{github.repo}}';
-
-    const result = renderTemplate(input, defaultConfig);
-
-    expect(result).toBe('repo: {{github.repo}}');
-  });
-
   it('preserves conditional blocks with trailing whitespace', () => {
     const input = [
       '<!-- if:local -->  ',

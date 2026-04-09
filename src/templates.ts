@@ -58,9 +58,6 @@ export function renderTemplate(content: string, config: Config): string {
   }
 
   // GitHub template variables
-  if (config.github?.repo) {
-    result = result.replaceAll('{{github.repo}}', config.github.repo);
-  }
   if (config.github?.labels?.prd) {
     result = result.replaceAll(
       '{{github.labels.prd}}',

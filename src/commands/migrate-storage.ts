@@ -169,7 +169,7 @@ export function classifyGhError(err: unknown): Error {
   }
   if (stderr.includes('not found') || stderr.includes('404')) {
     return new Error(
-      'Repository not found. Check github.repo in .tracerkit/config.json',
+      'Repository not found. Check your git remote configuration.',
     );
   }
   return err instanceof Error ? err : new Error(String(err));
@@ -189,18 +189,6 @@ function defaultRunGh(args: string[]): string {
   }
 }
 
-function resolveRepo(cfg: Config, runGh: RunGh): string {
-  if (cfg.github.repo) return cfg.github.repo;
-  return runGh([
-    'repo',
-    'view',
-    '--json',
-    'nameWithOwner',
-    '-q',
-    '.nameWithOwner',
-  ]);
-}
-
 interface ExistingIssue {
   number: number;
   title: string;
@@ -209,16 +197,10 @@ interface ExistingIssue {
   state: string;
 }
 
-function fetchExistingIssues(
-  repo: string,
-  label: string,
-  runGh: RunGh,
-): ExistingIssue[] {
+function fetchExistingIssues(label: string, runGh: RunGh): ExistingIssue[] {
   const json = runGh([
     'issue',
     'list',
-    '--repo',
-    repo,
     '--label',
     label,
     '--state',
@@ -241,27 +223,17 @@ function issueExistsForSlug(slug: string, existing: ExistingIssue[]): boolean {
   });
 }
 
-function ensureLabels(repo: string, labels: string[], runGh: RunGh): void {
+function ensureLabels(labels: string[], runGh: RunGh): void {
   for (const label of labels) {
-    runGh(['label', 'create', label, '--repo', repo, '--force']);
+    runGh(['label', 'create', label, '--force']);
   }
 }
 
 function createIssue(
-  repo: string,
   opts: { title: string; body: string; labels: string[] },
   runGh: RunGh,
 ): number {
-  const args = [
-    'issue',
-    'create',
-    '--repo',
-    repo,
-    '--title',
-    opts.title,
-    '--body',
-    opts.body,
-  ];
+  const args = ['issue', 'create', '--title', opts.title, '--body', opts.body];
   for (const label of opts.labels) {
     args.push('--label', label);
   }
@@ -270,20 +242,17 @@ function createIssue(
   return match ? parseInt(match[1], 10) : 0;
 }
 
-function closeIssue(repo: string, issueNumber: number, runGh: RunGh): void {
-  runGh(['issue', 'close', String(issueNumber), '--repo', repo]);
+function closeIssue(issueNumber: number, runGh: RunGh): void {
+  runGh(['issue', 'close', String(issueNumber)]);
 }
 
 function searchMergedPrs(
-  repo: string,
   slug: string,
   runGh: RunGh,
 ): { number: number; title: string }[] {
   const json = runGh([
     'pr',
     'list',
-    '--repo',
-    repo,
     '--search',
     slug,
     '--state',
@@ -297,20 +266,11 @@ function searchMergedPrs(
 }
 
 function addIssueComment(
-  repo: string,
   issueNumber: number,
   body: string,
   runGh: RunGh,
 ): void {
-  runGh([
-    'issue',
-    'comment',
-    String(issueNumber),
-    '--repo',
-    repo,
-    '--body',
-    body,
-  ]);
+  runGh(['issue', 'comment', String(issueNumber), '--body', body]);
 }
 
 function statusFromLabels(labels: string[]): string {
@@ -342,7 +302,6 @@ function migrateLocalToGitHub(
   runGh: RunGh,
 ): string[] {
   const output: string[] = [];
-  const repo = resolveRepo(cfg, runGh);
   const artifacts = discoverLocalArtifacts(cwd, cfg);
 
   if (artifacts.length === 0) {
@@ -359,10 +318,10 @@ function migrateLocalToGitHub(
       artifacts.map((a) => statusToLabel(a.metadata.status ?? 'created')),
     ),
   ];
-  ensureLabels(repo, [prdLabel, planLabel, ...statusLabels], runGh);
+  ensureLabels([prdLabel, planLabel, ...statusLabels], runGh);
 
-  const existingPrds = fetchExistingIssues(repo, prdLabel, runGh);
-  const existingPlans = fetchExistingIssues(repo, planLabel, runGh);
+  const existingPrds = fetchExistingIssues(prdLabel, runGh);
+  const existingPlans = fetchExistingIssues(planLabel, runGh);
 
   for (const artifact of artifacts) {
     const typeLabel = artifact.type === 'prd' ? prdLabel : planLabel;
@@ -382,14 +341,13 @@ function migrateLocalToGitHub(
     const title = `[${typeLabel}] ${artifact.slug}: ${artifact.title}`;
 
     const issueNumber = createIssue(
-      repo,
       { title, body, labels: [typeLabel, sLabel] },
       runGh,
     );
 
     if (status === 'done') {
-      closeIssue(repo, issueNumber, runGh);
-      linkPrToIssue(repo, artifact.slug, issueNumber, runGh);
+      closeIssue(issueNumber, runGh);
+      linkPrToIssue(artifact.slug, issueNumber, runGh);
       output.push(
         `✓ ${artifact.type} "${artifact.slug}" → issue #${issueNumber} (closed)`,
       );
@@ -405,16 +363,11 @@ function migrateLocalToGitHub(
   return output;
 }
 
-function linkPrToIssue(
-  repo: string,
-  slug: string,
-  issueNumber: number,
-  runGh: RunGh,
-): void {
-  const prs = searchMergedPrs(repo, slug, runGh);
+function linkPrToIssue(slug: string, issueNumber: number, runGh: RunGh): void {
+  const prs = searchMergedPrs(slug, runGh);
   if (prs.length === 0) return;
   const refs = prs.map((pr) => `#${pr.number}`).join(', ');
-  addIssueComment(repo, issueNumber, `Linked PR: ${refs}`, runGh);
+  addIssueComment(issueNumber, `Linked PR: ${refs}`, runGh);
 }
 
 function migrateGitHubToLocal(
@@ -423,12 +376,11 @@ function migrateGitHubToLocal(
   runGh: RunGh,
 ): string[] {
   const output: string[] = [];
-  const repo = resolveRepo(cfg, runGh);
   const prdLabel = cfg.github.labels?.prd ?? 'tk:prd';
   const planLabel = cfg.github.labels?.plan ?? 'tk:plan';
 
-  const prdIssues = fetchExistingIssues(repo, prdLabel, runGh);
-  const planIssues = fetchExistingIssues(repo, planLabel, runGh);
+  const prdIssues = fetchExistingIssues(prdLabel, runGh);
+  const planIssues = fetchExistingIssues(planLabel, runGh);
   const allIssues = [
     ...prdIssues.map((i) => ({ ...i, type: 'prd' as const })),
     ...planIssues.map((i) => ({ ...i, type: 'plan' as const })),

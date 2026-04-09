@@ -3,7 +3,7 @@ description: Create a PRD through user interview, codebase exploration, and modu
 argument-hint: <idea>
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks. GitHub: use `github.repo` from config or git remote.
+**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
 
 # PRD Writing
 
@@ -101,7 +101,7 @@ status: created
 <!-- end:local -->
 <!-- if:github -->
 
-Ensure labels exist: `gh label create {{github.labels.prd}} --repo {{github.repo}} --force`, `gh label create tk:created --repo {{github.repo}} --force`.
+Ensure labels exist: `gh label create {{github.labels.prd}} --force`, `gh label create tk:created --force`.
 
 Create GitHub Issue — title: `[{{github.labels.prd}}] <slug>: <Feature Title>`, labels: `{{github.labels.prd}}`, `tk:created`.
 
