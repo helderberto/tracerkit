@@ -1,3 +1,2 @@
 npx lint-staged
 npm run typecheck
-npx vitest related --run $(git diff --cached --name-only --diff-filter=ACMR -- '*.ts' | tr '\n' ' ')

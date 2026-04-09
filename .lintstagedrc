@@ -1,4 +1,5 @@
 {
   "*.{ts,js}": "eslint --fix",
-  "*": "prettier --ignore-unknown --write"
+  "*": "prettier --ignore-unknown --write",
+  "*.ts": "vitest related --run"
 }
