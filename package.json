@@ -51,17 +51,8 @@
     "format:check": "prettier --check .",
     "typecheck": "tsc --noEmit",
     "version": "node -e \"const f='.claude-plugin/plugin.json';const p=JSON.parse(require('fs').readFileSync(f,'utf8'));p.version=require('./package.json').version;require('fs').writeFileSync(f,JSON.stringify(p,null,2)+'\\n')\"",
-    "prepare": "husky || true && npm run build",
+    "prepare": "husky && npm run build",
     "release": "semantic-release"
-  },
-  "lint-staged": {
-    "*.{ts,js}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.{json,md}": [
-      "prettier --write"
-    ]
   },
   "devDependencies": {
     "@commitlint/cli": "20.5.0",
