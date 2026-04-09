@@ -9,7 +9,7 @@ argument-hint: '[slug]'
 
 Break a PRD into phased vertical slices (tracer bullets).
 
-**Interactive prompts**: use `AskUserQuestion` when available for selections, confirmations, and approval steps; otherwise present options as a numbered list.
+**Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
 <!-- if:local -->
 
@@ -36,7 +36,7 @@ Output: a GitHub Issue with label `{{github.labels.plan}}`.
 
 The argument (if provided) is: $ARGUMENTS
 
-Use argument as `<slug>`. If empty, list available PRDs and ask the user to select one (use `AskUserQuestion` when available; otherwise present as a numbered list).
+Use argument as `<slug>`. If empty, list available PRDs and ask the user to select one.
 
 ## Workflow
 
@@ -44,12 +44,12 @@ Use argument as `<slug>`. If empty, list available PRDs and ask the user to sele
 
 <!-- if:local -->
 
-Read `.tracerkit/prds/<slug>.md`. If missing, list PRDs and ask the user to select one. If `.tracerkit/plans/<slug>.md` exists, ask: "Overwrite existing" / "Pick a new name". Use `AskUserQuestion` when available; otherwise present as a numbered list.
+Read `.tracerkit/prds/<slug>.md`. If missing, list PRDs and ask the user to select one. If `.tracerkit/plans/<slug>.md` exists, ask: "Overwrite existing" / "Pick a new name".
 
 <!-- end:local -->
 <!-- if:github -->
 
-Find PRD issue: open issue with label `{{github.labels.prd}}`, title matching `[{{github.labels.prd}}] <slug>:`. If missing, list PRDs and ask the user to select one. If plan issue with label `{{github.labels.plan}}` and matching title exists, ask: "Update existing plan" / "Use a new name". Use `AskUserQuestion` when available; otherwise present as a numbered list.
+Find PRD issue: open issue with label `{{github.labels.prd}}`, title matching `[{{github.labels.prd}}] <slug>:`. If missing, list PRDs and ask the user to select one. If plan issue with label `{{github.labels.plan}}` and matching title exists, ask: "Update existing plan" / "Use a new name".
 
 <!-- end:github -->
 
@@ -112,7 +112,7 @@ Each phase: thin vertical slice through all layers (schema → service → API �
 
 - 1 module touched → 2–3 phases max
 - 2–3 modules touched → 3–5 phases max
-- 4+ modules or 6+ phases → stop and ask: "PRD touches 4+ modules. Split before planning?" with options: "Split the PRD" (Recommended) / "Continue anyway". Use `AskUserQuestion` when available.
+- 4+ modules or 6+ phases → stop and ask: "PRD touches 4+ modules. Split before planning?" with options: "Split the PRD" (Recommended) / "Continue anyway".
 
 Count "modules touched" by scanning the PRD's New Modules and Schema Changes sections.
 
@@ -124,7 +124,7 @@ Assign an agent tag to tasks where appropriate:
 
 ### 5. Quiz the user
 
-Present breakdown (title, user stories covered, done-when per phase). Ask: "How's the granularity?" with options: "Looks good, proceed" (Recommended) / "Merge some phases" / "Split a phase". Use `AskUserQuestion` when available; otherwise present as a numbered list. Iterate until approved.
+Present breakdown (title, user stories covered, done-when per phase). Ask: "How's the granularity?" with options: "Looks good, proceed" (Recommended) / "Merge some phases" / "Split a phase". Iterate until approved.
 
 ### 6. Save plan
 
@@ -217,11 +217,11 @@ Carried forward from PRD verbatim.
 Gaps found in the PRD needing resolution. Blank if none.
 ```
 
-Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "What's next?" with options: "Start implementing" (Recommended) / "Run `/tk:check <slug>`" / "Done for now". Use `AskUserQuestion` when available; otherwise present as a numbered list.
+Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "What's next?" with options: "Start implementing" (Recommended) / "Run `/tk:check <slug>`" / "Done for now".
 
 ## Execution guidance
 
-When implementing this plan, **always offer to create a feature branch** before writing any code. Ask: "Create branch `feat/<slug>`?" with options: "Yes, create branch" (Recommended) / "No, stay on current branch". Use `AskUserQuestion` when available. If accepted, create the branch from the default branch.
+When implementing this plan, **always offer to create a feature branch** before writing any code. Ask: "Create branch `feat/<slug>`?" with options: "Yes, create branch" (Recommended) / "No, stay on current branch". If accepted, create the branch from the default branch.
 
 ### During implementation
 

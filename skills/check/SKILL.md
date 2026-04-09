@@ -9,7 +9,7 @@ argument-hint: '[slug]'
 
 Check implementation against a plan. Update checks, stamp findings, transition status, and mark complete when done.
 
-**Interactive prompts**: use `AskUserQuestion` when available for selections and confirmations; otherwise present options as a numbered list.
+**Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
 ## Pre-loaded context
 
@@ -52,7 +52,7 @@ For each `.md` file in `.tracerkit/prds/`:
 6. If plan issue exists, count progress from checkboxes in its body (see Progress Algorithm below). Show `—` if no plan.
 <!-- end:github -->
 
-Present each feature as an option and let the user pick which to verify. Use `AskUserQuestion` when available; otherwise present as a numbered list.
+Present each feature as an option and let the user pick which to verify.
 
 ## Progress Algorithm
 
@@ -64,12 +64,12 @@ Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Per-phase: `Pha
 
 <!-- if:local -->
 
-Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one (use `AskUserQuestion` when available).
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one.
 
 <!-- end:local -->
 <!-- if:github -->
 
-Find plan issue: open issue with label `{{github.labels.plan}}`, title matching `[{{github.labels.plan}}] <slug>:`. If missing, list plans and ask the user to select one (use `AskUserQuestion` when available).
+Find plan issue: open issue with label `{{github.labels.plan}}`, title matching `[{{github.labels.plan}}] <slug>:`. If missing, list plans and ask the user to select one.
 
 <!-- end:github -->
 

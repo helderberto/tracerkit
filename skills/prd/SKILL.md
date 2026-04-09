@@ -9,7 +9,7 @@ argument-hint: <idea>
 
 Skip satisfied steps. If argument provided, skip to Step 2.
 
-**Interactive prompts**: use `AskUserQuestion` when available for choices, confirmations, and interview questions (structured selection UI); otherwise present options as a numbered list.
+**Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
 ## Pre-loaded context
 
@@ -36,12 +36,12 @@ If empty, go to Step 1; derive slug after gathering the idea. If provided, deriv
 
 <!-- if:local -->
 
-Output: `.tracerkit/prds/<slug>.md`. If exists, ask: "Overwrite existing" / "Pick a new name" (use `AskUserQuestion` when available).
+Output: `.tracerkit/prds/<slug>.md`. If exists, ask: "Overwrite existing" / "Pick a new name".
 
 <!-- end:local -->
 <!-- if:github -->
 
-Output: GitHub Issue with label `{{github.labels.prd}}`, title `[{{github.labels.prd}}] <slug>: <Feature Title>`. If matching issue exists, ask: "Update existing issue" / "Use a new slug" (use `AskUserQuestion` when available).
+Output: GitHub Issue with label `{{github.labels.prd}}`, title `[{{github.labels.prd}}] <slug>: <Feature Title>`. If matching issue exists, ask: "Update existing issue" / "Use a new slug".
 
 <!-- end:github -->
 
@@ -59,7 +59,7 @@ Map current state: data models, services, API routes, frontend, tests. Note exis
 
 ### 3. Interview
 
-One question at a time. Lead with your recommended answer (mark it `(Recommended)` and list first). Explore code instead of asking when possible. Present 2–4 options for each question — structured choices are faster than free-text. Use `AskUserQuestion` when available; otherwise present as a numbered list.
+One question at a time. Lead with your recommended answer (mark it `(Recommended)` and list first). Explore code instead of asking when possible. Present 2–4 options for each question — structured choices are faster than free-text.
 
 | Branch           | Key questions                           | Skip when                        |
 | ---------------- | --------------------------------------- | -------------------------------- |
@@ -73,7 +73,7 @@ One question at a time. Lead with your recommended answer (mark it `(Recommended
 
 ### 3b. Gray areas
 
-Surface ambiguities, contradictions, unstated assumptions. For each gray area, present proposed resolution options (use `AskUserQuestion` when available). Resolve all before continuing.
+Surface ambiguities, contradictions, unstated assumptions. For each gray area, present proposed resolution options. Resolve all before continuing.
 
 ### 4. Design modules
 
@@ -81,7 +81,7 @@ Sketch modules. Favor **deep modules** — simple interface (1-3 entry points) h
 
 Shallow signals: many small 1:1 functions, callers compose multiple calls, feature changes require interface changes.
 
-Present modules. Confirm which need tests (multiSelect). Use `AskUserQuestion` when available; otherwise present as a checklist for the user to confirm.
+Present modules. Confirm which need tests.
 
 ### 5. Write PRD
 
@@ -136,4 +136,4 @@ PRD body structure (same for local file and issue body). Omit empty sections. No
 
 ---
 
-Then ask: "What's next?" with options: "Run `/tk:plan <slug>`" (Recommended) / "Done for now". Use `AskUserQuestion` when available; otherwise present as a numbered list.
+Then ask: "What's next?" with options: "Run `/tk:plan <slug>`" (Recommended) / "Done for now".
