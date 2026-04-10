@@ -8,47 +8,37 @@ Overview of active features, progress, and suggested focus.
 
 ## Pre-loaded context
 
-- Available PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
+- Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
 
 ## Algorithm
 
-### 1. Discover features
+### 1. Discover plans
 
-For each `.md` file in `.tracerkit/prds/`: parse frontmatter, extract `status` and `created`. Skip `status: done`. Slug = filename without `.md`.
+Glob `.tracerkit/plans/*.md`. Slug = filename without `.md`. If no plans found, output: `No plans found — run /tk:prd to start one.`
 
-### 2. Count progress from plans
+### 2. Count progress
 
-For each slug with a plan at `.tracerkit/plans/<slug>.md`:
+For each plan, count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Per-phase: `checked/total`. Sum across phases → total progress. First phase with unchecked items → cursor.
 
-Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Sum → `checked/total`. First unchecked item → "Next" (strip trailing `[tag]`). No plan → `—`.
+Skip plans where all items are checked (fully complete).
 
-### 3. Build the table
+### 3. Show progress
 
-Sort by `created` ascending (no-date last). Age from `created`:
-
-- < 7 days → `Nd` (e.g. `3d`)
-- < 30 days → `Nw` (e.g. `2w`)
-- 30+ days → `Nmo` (e.g. `1mo`)
-
-Output this exact table format:
+For each incomplete plan:
 
 ```
-| Feature | Status | Age | Progress | Next |
-|---------|--------|-----|----------|------|
-| <slug>  | <status> | <age> | <checked>/<total> | <next item> |
+<slug> (checked/total)
+  Phase 1 — title: checked/total
+> Phase 2 — title: checked/total
+  Phase 3 — title: checked/total
 ```
 
-If no features found, output: `No features found — run /tk:prd to start one.`
+The `>` marks the first incomplete phase (cursor). Completed phases show without `>`.
 
-### 4. Determine focus
+### 4. Suggest focus
 
-Apply these rules in order:
-
-1. Exactly 1 feature with `status: in_progress` → auto-select it
-2. Multiple `in_progress` features → select the oldest by `created`
-3. Zero `in_progress` features → select the oldest overall
-
-Append below the table:
+If exactly one incomplete plan → auto-select it.
+If multiple incomplete plans → select the one closest to completion.
 
 ```
 **Focus → <slug>**
@@ -58,6 +48,6 @@ Append below the table:
 
 Present options and wait for the user's choice:
 
-1. Continue focused feature — read plan at `.tracerkit/plans/<slug>.md` (Recommended)
+1. Continue focused feature — `/tk:build <slug>` (Recommended)
 2. Start new feature — `/tk:prd`
 3. Check progress — `/tk:check <slug>`

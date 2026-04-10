@@ -32,10 +32,6 @@ If `.tracerkit/plans/<slug>.md` exists, present options and wait:
 1. Overwrite existing (Recommended)
 2. Pick a new name
 
-### 1b. Update PRD status
-
-Set `status: in_progress` in `.tracerkit/prds/<slug>.md` frontmatter. Change only `status`.
-
 ### 2. Explore the codebase
 
 Map architecture, patterns, integration points. Skip if codebase context exists from prior step.
@@ -107,18 +103,8 @@ Iterate until approved.
 Save to `.tracerkit/plans/<slug>.md` (create dir if missing).
 
 ```markdown
----
-source_prd: .tracerkit/prds/<slug>.md
-slug: <slug>
-status: in_progress
----
-
 # Plan: <Feature Name>
-
-> Source PRD: `.tracerkit/prds/<slug>.md`
 ```
-
-Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field (creates backlink).
 
 Use this structure for the plan body:
 
@@ -173,5 +159,5 @@ To implement this plan phase by phase, run `/tk:build <slug>`. It handles branch
 - Each phase must be demoable end-to-end on its own
 - "Done when" must be a checkbox list of testable conditions, not prose
 - **Safety valve**: if a phase has >5 "Done when" items, stop and split it into smaller phases before continuing
-- Never modify the source PRD content — only update frontmatter status fields
+- Never modify the source PRD content
 - Carry PRD's Out of Scope forward verbatim

@@ -74,11 +74,6 @@ Present modules. Confirm which need tests.
 Save to `.tracerkit/prds/<slug>.md` (create dir if missing).
 
 ```markdown
----
-created: <UTC ISO 8601>
-status: created
----
-
 # Feature Name
 ```
 

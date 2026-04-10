@@ -1,8 +1,3 @@
----
-created: 2026-04-06T15:30:00Z
-status: in_progress
----
-
 # Skill Token Optimization
 
 ## Problem

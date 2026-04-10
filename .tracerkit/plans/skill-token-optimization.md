@@ -1,7 +1,5 @@
 # Plan: Skill Token Optimization
 
-> Source PRD: `.tracerkit/prds/skill-token-optimization.md`
-
 ## Architectural Decisions
 
 Durable decisions that apply across all phases:

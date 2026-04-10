@@ -29,7 +29,7 @@ DEFINE          PLAN           BUILD            VERIFY
   │               │               │                 │
   ▼               ▼               ▼                 ▼
 PRD doc       Phased plan    Implement phase    Pass/fail
-                              + feedback loops   + status
+                              + feedback loops
 ```
 
 ## Get Started
@@ -125,17 +125,17 @@ AI:  Phase 1 — Theme visible end-to-end (3 remaining)
      Implementing... all checks pass. Commit?
 
 You: /tk:check dark-mode-support
-AI:  Status: done | Total: 5/5
-     Marked complete in .tracerkit/prds/dark-mode-support.md
+AI:  Total: 7/7
+     All phases complete — implementation verified.
 ```
 
 Between sessions, `/tk:brief` shows active features and picks up where you left off:
 
 ```
 You: /tk:brief
-AI:  | Feature           | Status      | Age | Progress | Next                         |
-     |-------------------|-------------|-----|----------|------------------------------|
-     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ... |
+AI:  dark-mode-support (3/7)
+       Phase 1 — Theme visible end-to-end: 3/3
+     > Phase 2 — User can toggle and persist preference: 0/4
 
      **Focus → dark-mode-support**
 ```
@@ -144,26 +144,25 @@ See [Examples](docs/examples.md) for full walkthroughs.
 
 ## Skills
 
-| Skill              | What it does                                           | Output                                              |
-| ------------------ | ------------------------------------------------------ | --------------------------------------------------- |
-| `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md`                         |
-| `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md`                        |
-| `/tk:build <slug>` | Implement next incomplete phase, run feedback loops    | Code changes + checked items in plan                |
-| `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files                             |
-| `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Verdict block in plan, status updated when all pass |
+| Skill              | What it does                                           | Output                               |
+| ------------------ | ------------------------------------------------------ | ------------------------------------ |
+| `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md`          |
+| `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md`         |
+| `/tk:build <slug>` | Implement next incomplete phase, run feedback loops    | Code changes + checked items in plan |
+| `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files              |
+| `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Checkboxes updated in plan           |
 
 ## Docs
 
-| Document                                         | Description                                        |
-| ------------------------------------------------ | -------------------------------------------------- |
-| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
-| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, uninstall                  |
-| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
-| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
-| [Cursor Setup](docs/cursor-setup.md)             | Use TracerKit skills in Cursor                     |
-| [Gemini CLI Setup](docs/gemini-cli-setup.md)     | Use TracerKit skills in Gemini CLI                 |
-| [Copilot Setup](docs/copilot-setup.md)           | Use TracerKit skills in GitHub Copilot             |
-| [OpenCode Setup](docs/opencode-setup.md)         | Use TracerKit skills in OpenCode                   |
+| Document                                     | Description                                       |
+| -------------------------------------------- | ------------------------------------------------- |
+| [Examples](docs/examples.md)                 | Walk through end-to-end usage scenarios           |
+| [CLI Reference](docs/cli-reference.md)       | Commands: init, update, uninstall                 |
+| [Comparison](docs/comparison.md)             | Compare TracerKit to Spec Kit, Kiro, and OpenSpec |
+| [Cursor Setup](docs/cursor-setup.md)         | Use TracerKit skills in Cursor                    |
+| [Gemini CLI Setup](docs/gemini-cli-setup.md) | Use TracerKit skills in Gemini CLI                |
+| [Copilot Setup](docs/copilot-setup.md)       | Use TracerKit skills in GitHub Copilot            |
+| [OpenCode Setup](docs/opencode-setup.md)     | Use TracerKit skills in OpenCode                  |
 
 ## Contributing
 

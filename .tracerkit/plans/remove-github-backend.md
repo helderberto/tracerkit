@@ -1,13 +1,4 @@
----
-source_prd: .tracerkit/prds/remove-github-backend.md
-slug: remove-github-backend
-status: done
-completed: 2026-04-10T18:35:00Z
----
-
 # Plan: Remove GitHub Issues Backend
-
-> Source PRD: `.tracerkit/prds/remove-github-backend.md`
 
 ## Architectural Decisions
 
@@ -125,12 +116,3 @@ Update README to lead with marketplace install (CLI collapsed). Remove all GitHu
 ## Open Questions
 
 None — all resolved during PRD.
-
----
-
-## Verdict
-
-- **Date**: 2026-04-10
-- **Checks**: 36/36
-- **BLOCKERS**: 0
-- **SUGGESTIONS**: 2
