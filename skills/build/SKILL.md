@@ -3,8 +3,6 @@ description: Implement one phase of a plan. Reads plan, finds next incomplete ph
 argument-hint: '[slug]'
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
-
 # Build Phase
 
 Implement the next incomplete phase of a plan — one phase per invocation.
@@ -15,19 +13,13 @@ Implement the next incomplete phase of a plan — one phase per invocation.
 
 ## Pre-loaded context
 
-<!-- if:local -->
-
 - Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
-  <!-- end:local -->
-  <!-- if:github -->
-- Available plans: list open GitHub Issues with label `{{github.labels.plan}}`
-<!-- end:github -->
 
 ## Input
 
 The argument (if provided) is: $ARGUMENTS
 
-Use argument as `<slug>`. If empty, list available plans and ask the user to select one.
+Use argument as `<slug>`. If empty, list plans as numbered options and wait for the user's choice.
 
 Accepts slug or `@file` reference:
 
@@ -42,16 +34,7 @@ If argument starts with `@`, treat it as a file path — read that file directly
 
 ### 1. Load the plan
 
-<!-- if:local -->
-
-Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one.
-
-<!-- end:local -->
-<!-- if:github -->
-
-Find plan issue: open issue with label `{{github.labels.plan}}`, title matching `[{{github.labels.plan}}] <slug>:`. If missing, list plans and ask the user to select one.
-
-<!-- end:github -->
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans as numbered options and wait for the user's choice.
 
 ### 2. Find the next incomplete phase
 
@@ -134,18 +117,7 @@ Wait for the user's response before continuing.
 
 ### 7. Mark checkboxes
 
-After all feedback loops pass, update checkboxes in the plan file:
-
-<!-- if:local -->
-
-For each completed item, change `- [ ]` → `- [x]` in `.tracerkit/plans/<slug>.md`.
-
-<!-- end:local -->
-<!-- if:github -->
-
-For each completed item, change `- [ ]` → `- [x]` in the plan issue body using `gh issue edit`.
-
-<!-- end:github -->
+After all feedback loops pass, for each completed item change `- [ ]` → `- [x]` in `.tracerkit/plans/<slug>.md`.
 
 ### 8. Offer commit
 

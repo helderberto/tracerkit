@@ -3,8 +3,6 @@ description: Verify implementation against plan. Shows progress, finds blockers,
 argument-hint: '[slug]'
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
-
 # Check Implementation
 
 Check implementation against a plan. Update checks, stamp findings, transition status, and mark complete when done.
@@ -13,13 +11,7 @@ Check implementation against a plan. Update checks, stamp findings, transition s
 
 ## Pre-loaded context
 
-<!-- if:local -->
-
 - Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
-  <!-- end:local -->
-  <!-- if:github -->
-- Available plans: list open GitHub Issues with label `{{github.labels.plan}}`
-<!-- end:github -->
 
 ## Input
 
@@ -35,24 +27,13 @@ If no argument is provided, build a summary table before asking which one to che
 | <slug>  | ...    | 3/7      |
 ```
 
-<!-- if:local -->
-
 For each `.md` file in `.tracerkit/prds/`:
 
 1. Read the file, parse YAML frontmatter (block between `---` fences)
 2. Extract `status` — use `unknown` if missing
 3. If `.tracerkit/plans/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
-   <!-- end:local -->
-   <!-- if:github -->
 
-   List open GitHub Issues with label `{{github.labels.prd}}`:
-
-4. For each PRD issue, extract `status` from labels (`tk:created`, `tk:in-progress`)
-5. Find matching plan issue with label `{{github.labels.plan}}` and same slug in title
-6. If plan issue exists, count progress from checkboxes in its body (see Progress Algorithm below). Show `—` if no plan.
-<!-- end:github -->
-
-Present each feature as an option and let the user pick which to verify.
+Present each feature as a numbered option and wait for the user's choice.
 
 ## Progress Algorithm
 
@@ -62,29 +43,11 @@ Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Per-phase: `Pha
 
 ### 1. Load the plan
 
-<!-- if:local -->
-
-Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one.
-
-<!-- end:local -->
-<!-- if:github -->
-
-Find plan issue: open issue with label `{{github.labels.plan}}`, title matching `[{{github.labels.plan}}] <slug>:`. If missing, list plans and ask the user to select one.
-
-<!-- end:github -->
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans as numbered options and wait for the user's choice.
 
 ### 2. Load the PRD
 
-<!-- if:local -->
-
 Read source PRD referenced in plan header (`> Source PRD: ...`).
-
-<!-- end:local -->
-<!-- if:github -->
-
-Read source PRD issue referenced in plan body (`> Source PRD: #<number>`).
-
-<!-- end:github -->
 
 ### 3. Fast-path: check if implementation exists
 
@@ -108,16 +71,7 @@ Collect findings into two categories:
 
 ### 3c. Update checkboxes
 
-<!-- if:local -->
-
 Using the subagent's report, update each checkbox in `.tracerkit/plans/<slug>.md` to `[x]` or `[ ]`.
-
-<!-- end:local -->
-<!-- if:github -->
-
-Using the subagent's report, update each checkbox in the plan issue body to `[x]` or `[ ]` by editing the issue.
-
-<!-- end:github -->
 
 ### 4. Determine outcome
 
@@ -153,16 +107,7 @@ Total: checked/total
 
 ### 6. Stamp the plan
 
-<!-- if:local -->
-
 Append a verdict block at the bottom of `.tracerkit/plans/<slug>.md`:
-
-<!-- end:local -->
-<!-- if:github -->
-
-Append a verdict block at the bottom of the plan issue body by editing the issue:
-
-<!-- end:github -->
 
 ```markdown
 ---
@@ -181,23 +126,8 @@ If a previous verdict block exists, replace it with the new one.
 
 If all checks pass and zero BLOCKERS:
 
-<!-- if:local -->
-
 1. Update PRD frontmatter: `status: done`, add `completed: <UTC ISO 8601>`
 2. Update plan frontmatter: `status: done`, add `completed: <UTC ISO 8601>`
-
-<!-- end:local -->
-<!-- if:github -->
-
-1. If on a feature branch with commits ahead of default:
-   a. Push branch if not pushed
-   b. Open PR with `Closes #<prd-number>, Closes #<plan-number>` (or update existing PR body)
-2. Search merged PRs matching slug: `gh pr list --search <slug> --state merged` — add comment on PRD issue linking found PRs
-3. PRD issue: add `tk:done`, remove `tk:in-progress`, update metadata `status: done` + `completed` timestamp
-4. Close PRD issue (reason: `completed`)
-5. Close plan issue (reason: `completed`)
-
-<!-- end:github -->
 
 ### 8. On `in_progress` (no blockers)
 

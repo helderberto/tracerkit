@@ -8,14 +8,7 @@ import {
 import { join } from 'node:path';
 import { update } from './update.ts';
 import { copyTemplates, DEPRECATED_SKILLS } from '../templates.ts';
-import { DEFAULT_PATHS, type Config } from '../config.ts';
 import { useTmpDir } from '../test-setup.ts';
-
-const defaultConfig: Config = {
-  storage: 'local',
-  paths: { ...DEFAULT_PATHS },
-  github: { labels: { prd: 'tk:prd', plan: 'tk:plan' } },
-};
 
 describe('update', () => {
   const tmp = useTmpDir();
@@ -25,7 +18,7 @@ describe('update', () => {
   });
 
   it('overwrites unchanged files', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     const before = readFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'utf8',
@@ -42,7 +35,7 @@ describe('update', () => {
   });
 
   it('skips modified files with warning and suggests --force', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -60,7 +53,7 @@ describe('update', () => {
   });
 
   it('overwrites modified files when force is true', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -78,7 +71,7 @@ describe('update', () => {
   });
 
   it('reports all files as unchanged when nothing changed', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
 
     const output = update(tmp.get());
 
@@ -87,7 +80,7 @@ describe('update', () => {
   });
 
   it('outputs only warnings when all files are modified without force', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     for (const name of [
       'tk:brief',
       'tk:prd',
@@ -108,7 +101,7 @@ describe('update', () => {
   });
 
   it('removes deprecated skills', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     for (const name of DEPRECATED_SKILLS) {
       const dir = join(tmp.get(), '.claude', 'skills', name);
       mkdirSync(dir, { recursive: true });
@@ -128,7 +121,7 @@ describe('update', () => {
   });
 
   it('skips deprecated removal when none exist', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
 
     const output = update(tmp.get());
 
@@ -136,7 +129,7 @@ describe('update', () => {
   });
 
   it('adds missing files', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     rmSync(join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'));
 
     const output = update(tmp.get());

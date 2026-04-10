@@ -8,7 +8,6 @@ import {
 import { createHash } from 'node:crypto';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { type Config, DEFAULT_PATHS } from './config.ts';
 import { SKILL_PREFIX } from './constants.ts';
 
 export { SKILL_NAMES, DEPRECATED_SKILLS } from './constants.ts';
@@ -46,46 +45,14 @@ function toSourcePath(targetRel: string): string {
   return targetRel.slice(prefix.length);
 }
 
-export function renderTemplate(content: string, config: Config): string {
-  let result = content;
-
-  // Path substitutions
-  if (config.paths.prds !== DEFAULT_PATHS.prds) {
-    result = result.replaceAll(DEFAULT_PATHS.prds, config.paths.prds);
-  }
-  if (config.paths.plans !== DEFAULT_PATHS.plans) {
-    result = result.replaceAll(DEFAULT_PATHS.plans, config.paths.plans);
-  }
-
-  // GitHub template variables
-  if (config.github?.labels?.prd) {
-    result = result.replaceAll(
-      '{{github.labels.prd}}',
-      config.github.labels.prd,
-    );
-  }
-  if (config.github?.labels?.plan) {
-    result = result.replaceAll(
-      '{{github.labels.plan}}',
-      config.github.labels.plan,
-    );
-  }
-
-  return result;
-}
-
-export function copyTemplates(
-  targetDir: string,
-  config: Config,
-  only?: string[],
-): CopyResult {
+export function copyTemplates(targetDir: string, only?: string[]): CopyResult {
   const targetFiles = only ?? walk(SKILLS_DIR).map(toTargetPath);
   for (const targetRel of targetFiles) {
     const srcRel = toSourcePath(targetRel);
     const src = join(SKILLS_DIR, srcRel);
     const dest = join(targetDir, targetRel);
     mkdirSync(dirname(dest), { recursive: true });
-    writeFileSync(dest, renderTemplate(readFileSync(src, 'utf8'), config));
+    writeFileSync(dest, readFileSync(src, 'utf8'));
   }
   return { copied: targetFiles };
 }
@@ -94,7 +61,7 @@ function hash(buf: Buffer): string {
   return createHash('sha256').update(buf).digest('hex');
 }
 
-export function diffTemplates(targetDir: string, config: Config): DiffResult {
+export function diffTemplates(targetDir: string): DiffResult {
   const targetFiles = walk(SKILLS_DIR).map(toTargetPath);
   const unchanged: string[] = [];
   const modified: string[] = [];
@@ -106,11 +73,8 @@ export function diffTemplates(targetDir: string, config: Config): DiffResult {
       missing.push(targetRel);
     } else {
       const srcRel = toSourcePath(targetRel);
-      const rendered = renderTemplate(
-        readFileSync(join(SKILLS_DIR, srcRel), 'utf8'),
-        config,
-      );
-      const srcHash = hash(Buffer.from(rendered));
+      const srcContent = readFileSync(join(SKILLS_DIR, srcRel), 'utf8');
+      const srcHash = hash(Buffer.from(srcContent));
       const destHash = hash(readFileSync(dest));
       if (srcHash === destHash) unchanged.push(targetRel);
       else modified.push(targetRel);
