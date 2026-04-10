@@ -46,10 +46,10 @@ Review `skills/build/SKILL.md`: confirm no frontmatter references. Update if nee
 
 ### Done when
 
-- [ ] `skills/prd/SKILL.md` generates PRDs with zero frontmatter
-- [ ] `skills/plan/SKILL.md` contains zero references to status transitions, PRD frontmatter updates, or `source_prd`/`slug`/`status` fields
-- [ ] `skills/build/SKILL.md` contains zero frontmatter references
-- [ ] Plan output format uses `## Phase N — <Goal>` headings with checkbox lists
+- [x] `skills/prd/SKILL.md` generates PRDs with zero frontmatter
+- [x] `skills/plan/SKILL.md` contains zero references to status transitions, PRD frontmatter updates, or `source_prd`/`slug`/`status` fields
+- [x] `skills/build/SKILL.md` contains zero frontmatter references
+- [x] Plan output format uses `## Phase N — <Goal>` headings with checkbox lists
 
 ---
 
