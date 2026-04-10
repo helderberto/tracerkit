@@ -31,9 +31,7 @@ describe('copyTemplates', () => {
   });
 
   it('copies only specified files when only filter is provided', () => {
-    const result = copyTemplates(tmp.get(), [
-      '.claude/skills/tk:prd/SKILL.md',
-    ]);
+    const result = copyTemplates(tmp.get(), ['.claude/skills/tk:prd/SKILL.md']);
 
     expect(result.copied).toEqual(['.claude/skills/tk:prd/SKILL.md']);
     expect(

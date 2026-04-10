@@ -45,10 +45,7 @@ function toSourcePath(targetRel: string): string {
   return targetRel.slice(prefix.length);
 }
 
-export function copyTemplates(
-  targetDir: string,
-  only?: string[],
-): CopyResult {
+export function copyTemplates(targetDir: string, only?: string[]): CopyResult {
   const targetFiles = only ?? walk(SKILLS_DIR).map(toTargetPath);
   for (const targetRel of targetFiles) {
     const srcRel = toSourcePath(targetRel);

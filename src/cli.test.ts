@@ -1,4 +1,4 @@
-import { existsSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, writeFileSync } from 'node:fs';
 import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
@@ -45,29 +45,6 @@ describe('CLI', () => {
       true,
     );
     expect(output.some((l) => l.includes('tk:prd'))).toBe(true);
-  });
-
-  it('routes "config" to config command', () => {
-    const output = run(['config']);
-
-    expect(output.join('\n')).toContain('"storage"');
-  });
-
-  it('routes "config <path>" to config command with path', () => {
-    copyTemplates(tmp.get());
-    const output = run(['config', tmp.get()]);
-
-    expect(output.join('\n')).toContain('"storage"');
-  });
-
-  it('routes "config <path> <key> <value>" to set config at path', () => {
-    run(['config', tmp.get(), 'storage', 'github']);
-
-    const raw = readFileSync(
-      join(tmp.get(), '.tracerkit', 'config.json'),
-      'utf8',
-    );
-    expect(JSON.parse(raw).storage).toBe('github');
   });
 
   it('prints usage for unknown command', () => {
@@ -151,7 +128,7 @@ describe('CLI', () => {
     expect(output[0]).toMatch(/^tracerkit\/\d+\.\d+\.\d+/);
   });
 
-  it.each(['brief', 'progress', 'archive'])(
+  it.each(['brief', 'progress', 'archive', 'config', 'migrate-storage'])(
     'returns deprecation message for "%s"',
     (cmd) => {
       const output = run([cmd]);

@@ -75,19 +75,19 @@ Remove config module, config command, and migrate-storage command. Simplify init
 
 ### Done when
 
-- [ ] `src/config.ts` deleted
-- [ ] `src/commands/config.ts` deleted
-- [ ] `src/commands/migrate-storage.ts` deleted
-- [ ] `src/config.test.ts` deleted
-- [ ] `src/commands/config.test.ts` deleted
-- [ ] `src/commands/migrate-storage.test.ts` deleted
-- [ ] `src/commands/init.ts` has no `loadConfig` import — `grep 'loadConfig' src/commands/init.ts` returns nothing
-- [ ] `src/commands/update.ts` has no `loadConfig` import — `grep 'loadConfig' src/commands/update.ts` returns nothing
-- [ ] `src/constants.ts` lists `config` and `migrate-storage` as deprecated commands
-- [ ] `tracerkit config` prints deprecation message — verified by `cli.test.ts`
-- [ ] `tracerkit migrate-storage` prints deprecation message — verified by `cli.test.ts`
-- [ ] `tracerkit init /tmp/test-dir && tracerkit update /tmp/test-dir` succeeds — verified by `init.test.ts` and `update.test.ts`
-- [ ] All tests pass — `npm test`
+- [x] `src/config.ts` deleted
+- [x] `src/commands/config.ts` deleted
+- [x] `src/commands/migrate-storage.ts` deleted
+- [x] `src/config.test.ts` deleted
+- [x] `src/commands/config.test.ts` deleted
+- [x] `src/commands/migrate-storage.test.ts` deleted
+- [x] `src/commands/init.ts` has no `loadConfig` import — `grep 'loadConfig' src/commands/init.ts` returns nothing
+- [x] `src/commands/update.ts` has no `loadConfig` import — `grep 'loadConfig' src/commands/update.ts` returns nothing
+- [x] `src/constants.ts` lists `config` and `migrate-storage` as deprecated commands
+- [x] `tracerkit config` prints deprecation message — verified by `cli.test.ts`
+- [x] `tracerkit migrate-storage` prints deprecation message — verified by `cli.test.ts`
+- [x] `tracerkit init /tmp/test-dir && tracerkit update /tmp/test-dir` succeeds — verified by `init.test.ts` and `update.test.ts`
+- [x] All tests pass — `npm test`
 
 ---
 

@@ -14,7 +14,13 @@ export const FLAGS = {
   version: '--version',
 } as const;
 
-export const DEPRECATED_COMMANDS = ['brief', 'progress', 'archive'] as const;
+export const DEPRECATED_COMMANDS = [
+  'brief',
+  'progress',
+  'archive',
+  'config',
+  'migrate-storage',
+] as const;
 
 export const COMMANDS = [
   {
@@ -28,18 +34,8 @@ export const COMMANDS = [
     desc: 'Refresh unchanged files from latest version, skip modified',
   },
   {
-    name: 'config',
-    args: '[path] [key] [value]',
-    desc: 'Get or set TracerKit configuration',
-  },
-  {
     name: 'uninstall',
     args: '[path]',
     desc: 'Remove TracerKit skill directories, keep .tracerkit/ artifacts',
-  },
-  {
-    name: 'migrate-storage',
-    args: '[path]',
-    desc: 'Migrate artifacts between local and GitHub storage backends',
   },
 ] as const;
