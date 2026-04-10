@@ -56,7 +56,7 @@ describe('init', () => {
 
     const output = init(tmp.get());
 
-    expect(output.length).toBe(4);
+    expect(output.length).toBe(5);
   });
 
   it('reports each copied file with check prefix', () => {
