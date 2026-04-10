@@ -1,15 +1,8 @@
 import { mkdirSync, writeFileSync, readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import { config } from './config.ts';
-import { DEFAULT_PATHS, DEFAULT_GITHUB, type Config } from '../config.ts';
 import { copyTemplates } from '../templates.ts';
 import { useTmpDir } from '../test-setup.ts';
-
-const defaultConfig: Config = {
-  storage: 'local',
-  paths: { ...DEFAULT_PATHS },
-  github: { ...DEFAULT_GITHUB },
-};
 
 describe('config', () => {
   const tmp = useTmpDir();
@@ -82,8 +75,8 @@ describe('config', () => {
       expect(JSON.parse(raw).github.labels.prd).toBe('my:prd');
     });
 
-    it('re-renders skills when storage changes', () => {
-      copyTemplates(tmp.get(), defaultConfig);
+    it('re-renders skills when config changes', () => {
+      copyTemplates(tmp.get());
 
       config(tmp.get(), ['storage', 'github']);
 
@@ -91,49 +84,13 @@ describe('config', () => {
         join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
         'utf8',
       );
-      expect(skill).toContain('<!-- if:github -->');
-      expect(skill).toContain('<!-- if:local -->');
+      expect(skill).toContain('# PRD Writing');
     });
 
     it('returns confirmation message', () => {
       const output = config(tmp.get(), ['storage', 'github']);
 
       expect(output.some((l) => l.includes('storage'))).toBe(true);
-    });
-
-    it('re-renders skills when labels change', () => {
-      const ghConfig: Config = {
-        ...defaultConfig,
-        storage: 'github',
-        github: { labels: { prd: 'tk:prd', plan: 'tk:plan' } },
-      };
-      copyTemplates(tmp.get(), ghConfig);
-      const dir = join(tmp.get(), '.tracerkit');
-      mkdirSync(dir, { recursive: true });
-      writeFileSync(
-        join(dir, 'config.json'),
-        JSON.stringify({ storage: 'github' }),
-      );
-
-      config(tmp.get(), ['github.labels.prd', 'custom:prd']);
-
-      const skill = readFileSync(
-        join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
-        'utf8',
-      );
-      expect(skill).toContain('custom:prd');
-    });
-
-    it('re-renders skills when paths change', () => {
-      copyTemplates(tmp.get(), defaultConfig);
-
-      config(tmp.get(), ['paths.prds', 'custom/prds']);
-
-      const skill = readFileSync(
-        join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
-        'utf8',
-      );
-      expect(skill).toContain('custom/prds');
     });
   });
 });

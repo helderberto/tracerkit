@@ -60,8 +60,7 @@ function reRenderSkills(cwd: string, output: string[]): void {
     return;
   }
 
-  const cfg = loadConfig(cwd);
-  copyTemplates(cwd, cfg);
+  copyTemplates(cwd);
   output.push('✓ Skills re-rendered');
 }
 

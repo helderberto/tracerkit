@@ -3,34 +3,17 @@ description: Turn a PRD into a multi-phase implementation plan using tracer-bull
 argument-hint: '[slug]'
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
-
 # PRD to Plan
 
 Break a PRD into phased vertical slices (tracer bullets).
 
 **Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
-<!-- if:local -->
-
 Output: `.tracerkit/plans/<slug>.md`.
-
-<!-- end:local -->
-<!-- if:github -->
-
-Output: a GitHub Issue with label `{{github.labels.plan}}`.
-
-<!-- end:github -->
 
 ## Pre-loaded context
 
-<!-- if:local -->
-
 - Available PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
-  <!-- end:local -->
-  <!-- if:github -->
-- Available PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
-<!-- end:github -->
 
 ## Input
 
@@ -42,31 +25,11 @@ Use argument as `<slug>`. If empty, list available PRDs and ask the user to sele
 
 ### 1. Read the PRD
 
-<!-- if:local -->
-
 Read `.tracerkit/prds/<slug>.md`. If missing, list PRDs and ask the user to select one. If `.tracerkit/plans/<slug>.md` exists, ask: "Overwrite existing" / "Pick a new name".
-
-<!-- end:local -->
-<!-- if:github -->
-
-Find PRD issue: open issue with label `{{github.labels.prd}}`, title matching `[{{github.labels.prd}}] <slug>:`. If missing, list PRDs and ask the user to select one. If plan issue with label `{{github.labels.plan}}` and matching title exists, ask: "Update existing plan" / "Use a new name".
-
-<!-- end:github -->
 
 ### 1b. Update PRD status
 
-<!-- if:local -->
-
 Set `status: in_progress` in `.tracerkit/prds/<slug>.md` frontmatter. Change only `status`.
-
-<!-- end:local -->
-<!-- if:github -->
-
-Update the PRD issue:
-
-- Remove `tk:created` label, add `tk:in-progress` label
-- Update the `<!-- tk:metadata -->` comment in the issue body to `status: in_progress`
-<!-- end:github -->
 
 ### 2. Explore the codebase
 
@@ -128,8 +91,6 @@ Present breakdown (title, user stories covered, done-when per phase). Ask: "How'
 
 ### 6. Save plan
 
-<!-- if:local -->
-
 Save to `.tracerkit/plans/<slug>.md` (create dir if missing).
 
 ```markdown
@@ -146,39 +107,9 @@ status: in_progress
 
 Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field.
 
-<!-- end:local -->
-<!-- if:github -->
-
-Ensure labels exist: `gh label create {{github.labels.plan}} --force`, `gh label create tk:in-progress --force`.
-
-Create GitHub Issue — title: `[{{github.labels.plan}}] <slug>: Plan: <Feature Title>`, labels: `{{github.labels.plan}}`, `tk:in-progress`.
-
-```markdown
-<!-- tk:metadata
-source_prd: #<PRD issue number>
-slug: <slug>
-status: in_progress
--->
-
-# Plan: <Feature Name>
-
-> Source PRD: #<PRD issue number>
-```
-
-<!-- end:github -->
-
 ### 6b. Backlink PRD
 
-<!-- if:local -->
-
 Already linked via PRD frontmatter `plan:` field (set in step 6).
-
-<!-- end:local -->
-<!-- if:github -->
-
-Add comment on PRD issue: "Plan: #<plan-issue-number>" (creates cross-reference).
-
-<!-- end:github -->
 
 Use this structure for the plan body:
 
@@ -229,10 +160,5 @@ To implement this plan phase by phase, run `/tk:build <slug>`. It handles branch
 - Each phase must be demoable end-to-end on its own
 - "Done when" must be a checkbox list of testable conditions, not prose
 - **Safety valve**: if a phase has >5 "Done when" items, stop and split it into smaller phases before continuing
-<!-- if:local -->
 - Never modify the source PRD content — only update frontmatter status fields
-  <!-- end:local -->
-  <!-- if:github -->
-- Never modify the source PRD content — only update metadata and labels
-<!-- end:github -->
 - Carry PRD's Out of Scope forward verbatim

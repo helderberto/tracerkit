@@ -3,8 +3,6 @@ description: Create a PRD through user interview, codebase exploration, and modu
 argument-hint: <idea>
 ---
 
-**Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
-
 # PRD Writing
 
 Skip satisfied steps. If argument provided, skip to Step 2.
@@ -13,13 +11,7 @@ Skip satisfied steps. If argument provided, skip to Step 2.
 
 ## Pre-loaded context
 
-<!-- if:local -->
-
 - Existing PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
-  <!-- end:local -->
-  <!-- if:github -->
-- Existing PRDs: list open GitHub Issues with label `{{github.labels.prd}}`
-<!-- end:github -->
 
 ## Input
 
@@ -34,16 +26,7 @@ If empty, go to Step 1; derive slug after gathering the idea. If provided, deriv
 5. Take the first 4 remaining words (or fewer if less exist)
 6. Join with hyphens → `<slug>`
 
-<!-- if:local -->
-
 Output: `.tracerkit/prds/<slug>.md`. If exists, ask: "Overwrite existing" / "Pick a new name".
-
-<!-- end:local -->
-<!-- if:github -->
-
-Output: GitHub Issue with label `{{github.labels.prd}}`, title `[{{github.labels.prd}}] <slug>: <Feature Title>`. If matching issue exists, ask: "Update existing issue" / "Use a new slug".
-
-<!-- end:github -->
 
 ## Workflow
 
@@ -85,8 +68,6 @@ Present modules. Confirm which need tests.
 
 ### 5. Write PRD
 
-<!-- if:local -->
-
 Save to `.tracerkit/prds/<slug>.md` (create dir if missing).
 
 ```markdown
@@ -98,26 +79,7 @@ status: created
 # Feature Name
 ```
 
-<!-- end:local -->
-<!-- if:github -->
-
-Ensure labels exist: `gh label create {{github.labels.prd}} --force`, `gh label create tk:created --force`.
-
-Create GitHub Issue — title: `[{{github.labels.prd}}] <slug>: <Feature Title>`, labels: `{{github.labels.prd}}`, `tk:created`.
-
-```markdown
-<!-- tk:metadata
-slug: <slug>
-created: <UTC ISO 8601>
-status: created
--->
-
-# Feature Name
-```
-
-<!-- end:github -->
-
-PRD body structure (same for local file and issue body). Omit empty sections. No file paths or code snippets.
+PRD body structure. Omit empty sections. No file paths or code snippets.
 
 ```
 ## Problem Statement

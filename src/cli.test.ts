@@ -3,14 +3,7 @@ import { join, resolve } from 'node:path';
 import { homedir } from 'node:os';
 import { run, resolveTarget } from './cli.ts';
 import { copyTemplates } from './templates.ts';
-import { DEFAULT_PATHS, DEFAULT_GITHUB, type Config } from './config.ts';
 import { useTmpDir } from './test-setup.ts';
-
-const defaultConfig: Config = {
-  storage: 'local',
-  paths: { ...DEFAULT_PATHS },
-  github: { ...DEFAULT_GITHUB },
-};
 
 describe('resolveTarget', () => {
   it('defaults to homedir when no args', () => {
@@ -61,7 +54,7 @@ describe('CLI', () => {
   });
 
   it('routes "config <path>" to config command with path', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     const output = run(['config', tmp.get()]);
 
     expect(output.join('\n')).toContain('"storage"');
@@ -102,7 +95,7 @@ describe('CLI', () => {
   });
 
   it('routes "update <path>" to update command', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     const output = run(['update', tmp.get()]);
 
     expect(output.some((l) => l.startsWith('✓'))).toBe(true);
@@ -113,7 +106,7 @@ describe('CLI', () => {
   });
 
   it('passes --force to update command', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     writeFileSync(
       join(tmp.get(), '.claude/skills/tk:prd/SKILL.md'),
       'user modified',
@@ -127,7 +120,7 @@ describe('CLI', () => {
   });
 
   it('routes "uninstall <path>" to uninstall command', () => {
-    copyTemplates(tmp.get(), defaultConfig);
+    copyTemplates(tmp.get());
     const output = run(['uninstall', tmp.get()]);
 
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);

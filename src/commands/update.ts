@@ -1,6 +1,5 @@
 import { existsSync, rmSync } from 'node:fs';
 import { join } from 'node:path';
-import { loadConfig } from '../config.ts';
 import {
   copyTemplates,
   diffTemplates,
@@ -16,8 +15,7 @@ export function update(cwd: string, opts?: { force?: boolean }): string[] {
     throw new Error('TracerKit not initialized — run `tracerkit init` first');
   }
 
-  const config = loadConfig(cwd);
-  const { unchanged, modified, missing } = diffTemplates(cwd, config);
+  const { unchanged, modified, missing } = diffTemplates(cwd);
   const output: string[] = [];
 
   for (const name of DEPRECATED_SKILLS) {
@@ -31,7 +29,7 @@ export function update(cwd: string, opts?: { force?: boolean }): string[] {
   const force = opts?.force ?? false;
   const toCopy = [...unchanged, ...missing, ...(force ? modified : [])];
   if (toCopy.length > 0) {
-    copyTemplates(cwd, config, toCopy);
+    copyTemplates(cwd, toCopy);
     for (const f of unchanged) output.push(`✓ ${f}`);
     for (const f of missing) output.push(`✓ ${f} (added)`);
     if (force) {
