@@ -21,7 +21,7 @@ cp -r tracerkit/skills/ .agents/skills/
 ```markdown
 # Workflow Skills
 
-When the user asks to define, plan, or verify a feature, use the matching skill:
+When the user asks to define, plan, build, or verify a feature, use the matching skill:
 
 | Intent                                 | Skill                   |
 | -------------------------------------- | ----------------------- |
@@ -54,6 +54,10 @@ Create a PRD for: add dark mode support
 
 ```
 Plan the dark-mode-support feature using vertical slices
+```
+
+```
+Implement the next phase of dark-mode-support
 ```
 
 ```

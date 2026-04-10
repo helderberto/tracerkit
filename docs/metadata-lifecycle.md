@@ -37,7 +37,7 @@ These are the only statuses in TracerKit. The same vocabulary appears in the fea
 | ------------------ | ----------- | ---------------------------------------------------- |
 | Defined            | `/tk:prd`   | `created: 2025-06-15T14:30:00Z`<br>`status: created` |
 | Planning           | `/tk:plan`  | `status: in_progress`                                |
-| Implementation     | (user)      | no change (stays `in_progress`)                      |
+| Implementation     | `/tk:build` | no change (stays `in_progress`)                      |
 | Checked (partial)  | `/tk:check` | no change (stays `in_progress`)                      |
 | Checked (all pass) | `/tk:check` | `status: done`<br>`completed: 2025-06-20T09:00:00Z`  |
 
@@ -102,4 +102,4 @@ The plan file uses markdown checkboxes as progress markers:
 - [ ] Tests pass for service + API + component
 ```
 
-The AI assistant marks `[x]` during implementation. `/tk:check` verifies each item against the codebase and updates them. Progress is reported as checked/total (e.g. "2/4").
+`/tk:build` marks `[x]` during implementation. `/tk:check` verifies each item against the codebase and updates them. Progress is reported as checked/total (e.g. "2/4").

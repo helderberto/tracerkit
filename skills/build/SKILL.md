@@ -1,6 +1,6 @@
 ---
-description: Implement one phase of a plan. Reads plan, finds next incomplete phase, implements it, runs feedback loops, marks checkboxes, offers commit. One phase per invocation.
-argument-hint: '<slug>'
+description: Implement one phase of a plan. Reads plan, finds next incomplete phase, implements it, runs feedback loops, marks checkboxes, offers commit. One phase per invocation. Use when the user wants to implement, code, build, or work on the next phase of a plan.
+argument-hint: '[slug]'
 ---
 
 **Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.
