@@ -1,6 +1,7 @@
 ---
 created: 2026-04-10T00:00:00Z
-status: in_progress
+status: done
+completed: 2026-04-10T18:35:00Z
 plan: .tracerkit/plans/remove-github-backend.md
 ---
 
