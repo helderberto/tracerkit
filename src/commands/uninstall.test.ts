@@ -28,16 +28,16 @@ describe('uninstall', () => {
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:check'))).toBe(false);
   });
 
-  it('leaves prds/, plans/, and archive/ untouched', () => {
+  it('leaves prds/ and plans/ untouched', () => {
     copyTemplates(tmp.get(), defaultConfig);
-    for (const dir of ['prds', 'plans', 'archive']) {
+    for (const dir of ['prds', 'plans']) {
       mkdirSync(join(tmp.get(), dir));
       writeFileSync(join(tmp.get(), dir, 'test.md'), 'keep');
     }
 
     uninstall(tmp.get());
 
-    for (const dir of ['prds', 'plans', 'archive']) {
+    for (const dir of ['prds', 'plans']) {
       expect(existsSync(join(tmp.get(), dir, 'test.md'))).toBe(true);
     }
   });

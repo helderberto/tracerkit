@@ -1,6 +1,6 @@
 {
   "name": "tk",
-  "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and archive features using tracer-bullet vertical slices.",
+  "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and track features using tracer-bullet vertical slices.",
   "version": "1.17.5",
   "author": {
     "name": "Helder Burato Berto",
