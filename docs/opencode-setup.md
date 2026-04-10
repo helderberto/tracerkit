@@ -23,11 +23,11 @@ cp -r tracerkit/skills/ .agents/skills/
 
 When the user asks to define, plan, or verify a feature, use the matching skill:
 
-| Intent | Skill |
-|--------|-------|
-| Define a feature, write a PRD | `skills/prd/SKILL.md` |
-| Plan implementation phases | `skills/plan/SKILL.md` |
-| Verify implementation, check progress | `skills/check/SKILL.md` |
+| Intent                                 | Skill                   |
+| -------------------------------------- | ----------------------- |
+| Define a feature, write a PRD          | `skills/prd/SKILL.md`   |
+| Plan implementation phases             | `skills/plan/SKILL.md`  |
+| Verify implementation, check progress  | `skills/check/SKILL.md` |
 | Session briefing, show active features | `skills/brief/SKILL.md` |
 
 Always check if a skill applies before acting. If a skill applies, follow it exactly.

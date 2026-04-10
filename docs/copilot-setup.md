@@ -30,17 +30,20 @@ Add workflow rules to `.github/copilot-instructions.md`:
 # TracerKit Workflow
 
 ## Feature Development
+
 - Always start with a PRD before writing code
 - Break PRDs into phased vertical slices (tracer-bullet approach)
 - Each phase cuts through every layer and is demoable on its own
 - Verify implementation against done-when checkboxes before marking complete
 
 ## Artifacts
+
 - PRDs: `.tracerkit/prds/<slug>.md`
 - Plans: `.tracerkit/plans/<slug>.md`
 - Status lifecycle: created → in_progress → done
 
 ## Rules
+
 - Never skip the PRD step for non-trivial features
 - Each plan phase must have done-when checkboxes
 - Verify against codebase and tests, not assumptions
