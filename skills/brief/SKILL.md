@@ -56,4 +56,8 @@ Append below the table:
 
 ### 5. Offer next steps
 
-Options: continue focused feature (read plan at `.tracerkit/plans/<slug>.md`), `/tk:prd` for new feature, `/tk:check <slug>` for progress.
+Present options and wait for the user's choice:
+
+1. Continue focused feature — read plan at `.tracerkit/plans/<slug>.md` (Recommended)
+2. Start new feature — `/tk:prd`
+3. Check progress — `/tk:check <slug>`

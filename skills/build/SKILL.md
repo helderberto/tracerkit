@@ -19,7 +19,7 @@ Implement the next incomplete phase of a plan — one phase per invocation.
 
 The argument (if provided) is: $ARGUMENTS
 
-Use argument as `<slug>`. If empty, list available plans and ask the user to select one.
+Use argument as `<slug>`. If empty, list plans as numbered options and wait for the user's choice.
 
 Accepts slug or `@file` reference:
 
@@ -34,7 +34,7 @@ If argument starts with `@`, treat it as a file path — read that file directly
 
 ### 1. Load the plan
 
-Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one.
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans as numbered options and wait for the user's choice.
 
 ### 2. Find the next incomplete phase
 

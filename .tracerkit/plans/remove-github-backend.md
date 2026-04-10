@@ -56,12 +56,12 @@ Now that skills are pure local-only markdown, improve them across all 5 files:
 
 ### Done when
 
-- [ ] All 5 skills reviewed and improved — `skills/{brief,prd,plan,build,check}/SKILL.md`
-- [ ] No skill references agent-specific tools for user interaction (no `AskUserQuestion`, no `AskUser`) — `grep -ri 'AskUser' skills/` returns nothing
-- [ ] All interactive prompts use numbered option lists with `(Recommended)` marker on default choice
-- [ ] Each skill has explicit "present options and wait for choice" pattern for user decisions
-- [ ] Token count reduced — each skill file is shorter than its pre-cleanup version
-- [ ] Skills reviewed with `/revise` for prose quality
+- [x] All 5 skills reviewed and improved — `skills/{brief,prd,plan,build,check}/SKILL.md`
+- [x] No skill references agent-specific tools for user interaction (no `AskUserQuestion`, no `AskUser`) — `grep -ri 'AskUser' skills/` returns nothing
+- [x] All interactive prompts use numbered option lists with `(Recommended)` marker on default choice
+- [x] Each skill has explicit "present options and wait for choice" pattern for user decisions
+- [x] Token count reduced — each skill file is shorter than its pre-cleanup version
+- [x] Skills reviewed with `/revise` for prose quality
 
 ---
 

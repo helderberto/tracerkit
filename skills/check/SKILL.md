@@ -33,7 +33,7 @@ For each `.md` file in `.tracerkit/prds/`:
 2. Extract `status` — use `unknown` if missing
 3. If `.tracerkit/plans/<slug>.md` exists, count progress (see Progress Algorithm below). Show `—` if no plan.
 
-Present each feature as an option and let the user pick which to verify.
+Present each feature as a numbered option and wait for the user's choice.
 
 ## Progress Algorithm
 
@@ -43,7 +43,7 @@ Count `- [x]` and `- [ ]` lines under each `## Phase N` heading. Per-phase: `Pha
 
 ### 1. Load the plan
 
-Read `.tracerkit/plans/<slug>.md`. If missing, list plans and ask the user to select one.
+Read `.tracerkit/plans/<slug>.md`. If missing, list plans as numbered options and wait for the user's choice.
 
 ### 2. Load the PRD
 

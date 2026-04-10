@@ -26,7 +26,10 @@ If empty, go to Step 1; derive slug after gathering the idea. If provided, deriv
 5. Take the first 4 remaining words (or fewer if less exist)
 6. Join with hyphens → `<slug>`
 
-Output: `.tracerkit/prds/<slug>.md`. If exists, ask: "Overwrite existing" / "Pick a new name".
+Output: `.tracerkit/prds/<slug>.md`. If file exists, present options and wait:
+
+1. Overwrite existing (Recommended)
+2. Pick a new name
 
 ## Workflow
 
@@ -98,4 +101,7 @@ PRD body structure. Omit empty sections. No file paths or code snippets.
 
 ---
 
-Then ask: "What's next?" with options: "Run `/tk:plan <slug>`" (Recommended) / "Done for now".
+Present options and wait for the user's choice:
+
+1. Run `/tk:plan <slug>` (Recommended)
+2. Done for now

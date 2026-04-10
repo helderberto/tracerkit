@@ -19,13 +19,18 @@ Output: `.tracerkit/plans/<slug>.md`.
 
 The argument (if provided) is: $ARGUMENTS
 
-Use argument as `<slug>`. If empty, list available PRDs and ask the user to select one.
+Use argument as `<slug>`. If empty, list PRDs as numbered options and wait for the user's choice.
 
 ## Workflow
 
 ### 1. Read the PRD
 
-Read `.tracerkit/prds/<slug>.md`. If missing, list PRDs and ask the user to select one. If `.tracerkit/plans/<slug>.md` exists, ask: "Overwrite existing" / "Pick a new name".
+Read `.tracerkit/prds/<slug>.md`. If missing, list PRDs as numbered options and wait for the user's choice.
+
+If `.tracerkit/plans/<slug>.md` exists, present options and wait:
+
+1. Overwrite existing (Recommended)
+2. Pick a new name
 
 ### 1b. Update PRD status
 
@@ -75,7 +80,9 @@ Each phase: thin vertical slice through all layers (schema → service → API �
 
 - 1 module touched → 2–3 phases max
 - 2–3 modules touched → 3–5 phases max
-- 4+ modules or 6+ phases → stop and ask: "PRD touches 4+ modules. Split before planning?" with options: "Split the PRD" (Recommended) / "Continue anyway".
+- 4+ modules or 6+ phases → stop and present options:
+  1. Split the PRD (Recommended)
+  2. Continue anyway
 
 Count "modules touched" by scanning the PRD's New Modules and Schema Changes sections.
 
@@ -87,7 +94,13 @@ Assign an agent tag to tasks where appropriate:
 
 ### 5. Quiz the user
 
-Present breakdown (title, user stories covered, done-when per phase). Ask: "How's the granularity?" with options: "Looks good, proceed" (Recommended) / "Merge some phases" / "Split a phase". Iterate until approved.
+Present breakdown (title, user stories covered, done-when per phase). Present options and wait:
+
+1. Looks good, proceed (Recommended)
+2. Merge some phases
+3. Split a phase
+
+Iterate until approved.
 
 ### 6. Save plan
 
@@ -105,11 +118,7 @@ status: in_progress
 > Source PRD: `.tracerkit/prds/<slug>.md`
 ```
 
-Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field.
-
-### 6b. Backlink PRD
-
-Already linked via PRD frontmatter `plan:` field (set in step 6).
+Then update PRD frontmatter: add `plan: .tracerkit/plans/<slug>.md` field (creates backlink).
 
 Use this structure for the plan body:
 
@@ -148,7 +157,11 @@ Carried forward from PRD verbatim.
 Gaps found in the PRD needing resolution. Blank if none.
 ```
 
-Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "What's next?" with options: "Run `/tk:build <slug>`" (Recommended) / "Run `/tk:check <slug>`" / "Done for now".
+Print one line per phase: `Phase N — <title> (<condition summary>)`. Present options and wait:
+
+1. Run `/tk:build <slug>` (Recommended)
+2. Run `/tk:check <slug>`
+3. Done for now
 
 ## Execution guidance
 
