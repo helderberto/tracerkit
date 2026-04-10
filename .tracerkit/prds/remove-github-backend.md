@@ -27,6 +27,7 @@ The GitHub Issues backend is responsible for ~80% of project complexity: CLI con
 Remove the GitHub Issues storage backend entirely. Skills become pure markdown with no conditional blocks or template variables. The CLI is simplified (keeps init/update/uninstall) but loses config and migrate-storage.
 
 User experience after:
+
 - Skills work identically whether installed via CLI or plugin marketplace
 - No config file needed — artifacts always live in `.tracerkit/prds/` and `.tracerkit/plans/`
 - README leads with Claude Code marketplace install; CLI install in collapsed section
@@ -51,30 +52,36 @@ User experience after:
 ### Simplified Modules
 
 **`src/templates.ts`**
+
 - Remove `renderTemplate()` — files copied as-is, no substitution
 - `copyTemplates(targetDir)` and `diffTemplates(targetDir)` lose the `config` parameter
 - SHA256 diff logic stays (needed for smart update)
 
 **`src/commands/init.ts`**
+
 - Remove `loadConfig` call
 - `init(cwd)` copies skills directly
 
 **`src/commands/update.ts`**
+
 - Remove `loadConfig` call
 - `update(cwd, opts)` diffs and copies without config
 
 **`src/cli.ts`**
+
 - Remove `config` and `migrate-storage` switch cases
 - Remove config-related imports
 - Simplify help text
 
 **`src/constants.ts`**
+
 - Remove config-related constants if any
 - Add `config` and `migrate-storage` to deprecated commands list
 
 ### Skill Files (all 5)
 
 For each skill in `skills/`:
+
 - Remove all `<!-- if:local -->` / `<!-- end:local -->` markers (keep content inside)
 - Remove all `<!-- if:github -->` ... `<!-- end:github -->` blocks entirely (content and markers)
 - Remove all `{{github.labels.*}}` template variables
@@ -84,6 +91,7 @@ For each skill in `skills/`:
 ### Documentation Updates
 
 **README.md:**
+
 - Claude Code marketplace install as primary (open, not in details)
 - CLI install in `<details>` collapsed section
 - Remove "GitHub Issues as storage backend" section
@@ -92,6 +100,7 @@ For each skill in `skills/`:
 - Update skills table if needed
 
 **Docs to update:**
+
 - `docs/cli-reference.md` — remove config and migrate-storage commands
 - `docs/configuration.md` — remove or replace with note about removal
 - `docs/metadata-lifecycle.md` — simplify to local-only lifecycle
@@ -99,6 +108,7 @@ For each skill in `skills/`:
 - `docs/comparison.md` — update if it references GitHub backend
 
 **Docs for other agents:**
+
 - `docs/cursor-setup.md` — no conditional blocks to mention
 - `docs/copilot-setup.md` — same
 - `docs/gemini-cli-setup.md` — same
@@ -107,6 +117,7 @@ For each skill in `skills/`:
 ### Migration Guide
 
 Add a short section in README or docs for existing GitHub Issues users:
+
 - TracerKit no longer supports GitHub Issues as storage backend
 - To migrate: copy issue body content to `.tracerkit/prds/<slug>.md` and `.tracerkit/plans/<slug>.md`
 - Add frontmatter with `status` field
