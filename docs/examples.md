@@ -102,7 +102,7 @@ Completed features stay in `.tracerkit/prds/` and `.tracerkit/plans/` with `stat
 
 ## Session briefing
 
-Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional. Skip it if you already know what to work on. Works the same regardless of storage backend.
+Use `/tk:brief` at the start of a session to see what's active and where to focus. It's optional. Skip it if you already know what to work on.
 
 ```
 You: /tk:brief
@@ -258,96 +258,3 @@ AI:  Reading updated PRD...
 ```
 
 </details>
-
----
-
-## GitHub Issues walkthrough
-
-Same workflow, but PRDs and plans are stored as GitHub Issues instead of local files. Storage is per-project; other projects stay local unless configured otherwise:
-
-```bash
-$ tracerkit config storage github
-✓ Set storage = github
-```
-
-Then use the same skills:
-
-```
-You: /tk:prd add dark mode support
-AI:  Deriving slug: dark-mode-support
-     Exploring codebase...
-     ┌ Detection strategy?
-     │ ● System preference + manual toggle (Recommended)
-     │ ○ Manual toggle only
-     └
-     ...
-     Created issue #42: [tk:prd] dark-mode-support: Add Dark Mode Support
-     Summary: dark mode with system detection and manual toggle.
-     ┌ What's next?
-     │ ● Run `/tk:plan dark-mode-support` (Recommended)
-     │ ○ Done for now
-     └
-
-You: /tk:plan dark-mode-support
-AI:  Reading PRD from issue #42...
-     Exploring codebase...
-
-     Phase 1 — Theme visible end-to-end
-     Phase 2 — User can toggle and persist preference
-     Phase 3 — System preference auto-detected
-
-     ┌ How's the granularity?
-     │ ● Looks good, proceed (Recommended)
-     │ ○ Merge some phases
-     │ ○ Split a phase
-     └
-
-You: [selects "Looks good, proceed"]
-
-AI:  Created issue #43: [tk:plan] dark-mode-support: Plan: Add Dark Mode Support
-     ┌ What's next?
-     │ ● Start implementing (Recommended)
-     │ ○ Run `/tk:check dark-mode-support`
-     │ ○ Done for now
-     └
-```
-
-Build phase by phase, then verify:
-
-```
-You: /tk:build dark-mode-support
-AI:  Phase 1 — Theme visible end-to-end (3 remaining)
-     Implementing... all checks pass. Committed.
-
-You: /tk:build dark-mode-support
-AI:  Phase 2 — User can toggle and persist preference (2 remaining)
-     Implementing... all checks pass. Committed.
-
-You: /tk:build dark-mode-support
-AI:  Phase 3 — System preference auto-detected (2 remaining)
-     Implementing... all checks pass. Committed.
-     All phases complete — run `/tk:check dark-mode-support` to verify.
-
-You: /tk:check dark-mode-support
-AI:  Loading plan from issue #43... Loading PRD from issue #42...
-     Running tests...
-
-     ## Verification: dark-mode-support
-
-     ### Status: done
-     Total: 7/7
-     ### BLOCKERS
-     - None
-
-     Pushed branch feat/dark-mode-support.
-     Opened PR #44 with Closes #42, Closes #43.
-     Linked merged PR #44 to PRD and plan issues.
-     Closed #42 (PRD) and #43 (plan) — reason: completed.
-```
-
-On `done`, GitHub mode:
-
-1. Pushes the feature branch and opens (or updates) a PR with `Closes` references to both issues
-2. Searches merged PRs matching the slug and links them via comments
-3. Updates metadata and labels on both issues
-4. Closes both issues with reason `completed`

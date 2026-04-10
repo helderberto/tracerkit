@@ -142,50 +142,28 @@ AI:  | Feature           | Status      | Age | Progress | Next                  
 
 See [Examples](docs/examples.md) for full walkthroughs.
 
-<details>
-<summary>GitHub Issues as storage backend</summary>
-
-Same skills, same workflow. Storage is configured per-project:
-
-```bash
-tracerkit config storage github         # set current project to use GitHub
-```
-
-PRDs and plans become GitHub Issues with `tk:prd` and `tk:plan` labels. On `/tk:check` pass, issues are closed with `completed` reason and any related PRs are linked automatically. Each project can use a different backend; local is the default. See [Configuration](docs/configuration.md) for details.
-
-To migrate existing artifacts between backends:
-
-```bash
-tracerkit migrate-storage           # local→github or github→local (auto-detected)
-```
-
-Direction is inferred from the current `storage` config. All artifacts are migrated, existing duplicates are skipped, and the config is flipped to the target backend. Source artifacts are left intact as backup.
-
-</details>
-
 ## Skills
 
-| Skill              | What it does                                           | Output                                                                                          |
-| ------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
-| `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md` or GitHub Issue                                                     |
-| `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md` or GitHub Issue                                                    |
-| `/tk:build <slug>` | Implement next incomplete phase, run feedback loops    | Code changes + checked items in plan                                                            |
-| `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files                                                                         |
-| `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Verdict block in plan. On `done`: status updated (local) or issues closed + PRs linked (GitHub) |
+| Skill              | What it does                                           | Output                                              |
+| ------------------ | ------------------------------------------------------ | --------------------------------------------------- |
+| `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md`                         |
+| `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md`                        |
+| `/tk:build <slug>` | Implement next incomplete phase, run feedback loops    | Code changes + checked items in plan                |
+| `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files                             |
+| `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Verdict block in plan, status updated when all pass |
 
 ## Docs
 
-| Document                                         | Description                                                |
-| ------------------------------------------------ | ---------------------------------------------------------- |
-| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios                    |
-| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, config, migrate-storage, uninstall |
-| [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths             |
-| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions         |
-| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec          |
-| [Cursor Setup](docs/cursor-setup.md)             | Use TracerKit skills in Cursor                             |
-| [Gemini CLI Setup](docs/gemini-cli-setup.md)     | Use TracerKit skills in Gemini CLI                         |
-| [Copilot Setup](docs/copilot-setup.md)           | Use TracerKit skills in GitHub Copilot                     |
-| [OpenCode Setup](docs/opencode-setup.md)         | Use TracerKit skills in OpenCode                           |
+| Document                                         | Description                                        |
+| ------------------------------------------------ | -------------------------------------------------- |
+| [Examples](docs/examples.md)                     | Walk through end-to-end usage scenarios            |
+| [CLI Reference](docs/cli-reference.md)           | Commands: init, update, uninstall                  |
+| [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions |
+| [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec  |
+| [Cursor Setup](docs/cursor-setup.md)             | Use TracerKit skills in Cursor                     |
+| [Gemini CLI Setup](docs/gemini-cli-setup.md)     | Use TracerKit skills in Gemini CLI                 |
+| [Copilot Setup](docs/copilot-setup.md)           | Use TracerKit skills in GitHub Copilot             |
+| [OpenCode Setup](docs/opencode-setup.md)         | Use TracerKit skills in OpenCode                   |
 
 ## Contributing
 

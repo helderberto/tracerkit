@@ -101,16 +101,16 @@ Update README to lead with marketplace install (CLI collapsed). Remove all GitHu
 
 ### Done when
 
-- [ ] README: marketplace install is primary (not inside `<details>`), CLI install is inside collapsed `<details>`
-- [ ] README: no mention of `tracerkit config`, `migrate-storage`, or GitHub Issues storage
-- [ ] `docs/cli-reference.md` updated — only `init`, `update`, `uninstall` commands
-- [ ] `docs/configuration.md` removed or replaced with migration note
-- [ ] `docs/metadata-lifecycle.md` has no GitHub Issues references
-- [ ] `docs/examples.md` has no GitHub Issues examples
-- [ ] `docs/comparison.md` updated if it references GitHub backend
-- [ ] Agent setup docs (`cursor-setup.md`, `copilot-setup.md`, `gemini-cli-setup.md`, `opencode-setup.md`) have no conditional block references
-- [ ] Migration guide exists for existing GitHub Issues users
-- [ ] All docs reviewed with `/revise`
+- [x] README: marketplace install is primary (not inside `<details>`), CLI install is inside collapsed `<details>`
+- [x] README: no mention of `tracerkit config`, `migrate-storage`, or GitHub Issues storage
+- [x] `docs/cli-reference.md` updated — only `init`, `update`, `uninstall` commands
+- [x] `docs/configuration.md` removed or replaced with migration note
+- [x] `docs/metadata-lifecycle.md` has no GitHub Issues references
+- [x] `docs/examples.md` has no GitHub Issues examples
+- [x] `docs/comparison.md` updated if it references GitHub backend
+- [x] Agent setup docs (`cursor-setup.md`, `copilot-setup.md`, `gemini-cli-setup.md`, `opencode-setup.md`) have no conditional block references
+- [x] Migration guide exists for existing GitHub Issues users
+- [x] All docs reviewed with `/revise`
 
 ---
 
