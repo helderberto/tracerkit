@@ -17,5 +17,6 @@
     "developer-tools",
     "markdown",
     "plugin"
-  ]
+  ],
+  "skills": "./skills"
 }

@@ -1,0 +1,20 @@
+{
+  "name": "tracerkit-marketplace",
+  "owner": {
+    "name": "Helder Burato Berto",
+    "email": "helder.burato@gmail.com"
+  },
+  "metadata": {
+    "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and track features using tracer-bullet vertical slices."
+  },
+  "plugins": [
+    {
+      "name": "tk",
+      "source": {
+        "source": "github",
+        "repo": "helderberto/tracerkit"
+      },
+      "description": "Spec-driven workflow for AI coding agents: PRD, plan, verify, and track features using tracer-bullet vertical slices."
+    }
+  ]
+}
