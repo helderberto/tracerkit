@@ -1,3 +1,9 @@
+## [1.18.2](https://github.com/helderberto/tracerkit/compare/v1.18.1...v1.18.2) (2026-04-10)
+
+### Bug Fixes
+
+- format copilot and opencode setup docs ([9615013](https://github.com/helderberto/tracerkit/commit/9615013b9df091c3834f90c0baee20f450fc2e5d))
+
 ## [1.18.1](https://github.com/helderberto/tracerkit/compare/v1.18.0...v1.18.1) (2026-04-10)
 
 # [1.18.0](https://github.com/helderberto/tracerkit/compare/v1.17.6...v1.18.0) (2026-04-10)
