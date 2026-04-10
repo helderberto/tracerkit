@@ -1,5 +1,5 @@
 ---
-description: Session briefing — shows active features, progress, and suggested focus. Use at the start of a session to orient.
+description: Session briefing — shows active features, progress, and suggested focus. Use at the start of a session, when asking what to work on, or when checking active features.
 ---
 
 **Config**: read `.tracerkit/config.json` (default: `local`). Follow matching `<!-- if:local/github -->` blocks.

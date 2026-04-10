@@ -21,7 +21,16 @@ Named after the tracer-bullet technique from _The Pragmatic Programmer_: **Trace
 
 AI assistants work best with small, well-scoped tasks — not sprawling layers or flat task lists. TracerKit structures every feature as **tracer-bullet vertical slices**: each phase cuts through every layer (schema → service → API → UI → tests) and is demoable on its own. Integration problems surface early, not at the end.
 
-Three skills drive the workflow: **define** (`/tk:prd`), **plan** (`/tk:plan`), **verify** (`/tk:check`). The AI reads your specs directly, counts progress, and marks completed work done. Pure Markdown, zero runtime deps.
+Four skills drive the workflow: **define** (`/tk:prd`), **plan** (`/tk:plan`), **build** (`/tk:build`), **verify** (`/tk:check`). The AI reads your specs directly, counts progress, and marks completed work done. Pure Markdown, zero runtime deps.
+
+```
+DEFINE          PLAN           BUILD            VERIFY
+/tk:prd  ───▶  /tk:plan  ───▶  /tk:build  ───▶  /tk:check
+  │               │               │                 │
+  ▼               ▼               ▼                 ▼
+PRD doc       Phased plan    Implement phase    Pass/fail
+                              + feedback loops   + status
+```
 
 ## Get Started
 
@@ -111,7 +120,9 @@ AI:  Phase 1 — Theme visible end-to-end
      Written .tracerkit/plans/dark-mode-support.md
      Run `/tk:check dark-mode-support` when ready?
 
-You: # open the plan, implement each phase, write tests...
+You: /tk:build dark-mode-support
+AI:  Phase 1 — Theme visible end-to-end (3 remaining)
+     Implementing... all checks pass. Commit?
 
 You: /tk:check dark-mode-support
 AI:  Status: done | Total: 5/5
@@ -158,6 +169,7 @@ Direction is inferred from the current `storage` config. All artifacts are migra
 | ------------------ | ------------------------------------------------------ | ----------------------------------------------------------------------------------------------- |
 | `/tk:prd <idea>`   | Interview → codebase scan → structured PRD             | `.tracerkit/prds/<slug>.md` or GitHub Issue                                                     |
 | `/tk:plan <slug>`  | PRD → phased vertical slices, each demoable on its own | `.tracerkit/plans/<slug>.md` or GitHub Issue                                                    |
+| `/tk:build <slug>` | Implement next incomplete phase, run feedback loops    | Code changes + checked items in plan                                                            |
 | `/tk:brief`        | Feature dashboard with progress and suggested focus    | Terminal only, no files                                                                         |
 | `/tk:check [slug]` | Verify done-when checkboxes against codebase and tests | Verdict block in plan. On `done`: status updated (local) or issues closed + PRs linked (GitHub) |
 

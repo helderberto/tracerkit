@@ -25,6 +25,7 @@ describe('uninstall', () => {
 
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:prd'))).toBe(false);
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:plan'))).toBe(false);
+    expect(existsSync(join(tmp.get(), '.claude/skills/tk:build'))).toBe(false);
     expect(existsSync(join(tmp.get(), '.claude/skills/tk:check'))).toBe(false);
   });
 
@@ -64,6 +65,9 @@ describe('uninstall', () => {
       true,
     );
     expect(output.some((l) => l.includes('✗') && l.includes('tk:plan'))).toBe(
+      true,
+    );
+    expect(output.some((l) => l.includes('✗') && l.includes('tk:build'))).toBe(
       true,
     );
     expect(output.some((l) => l.includes('✗') && l.includes('tk:check'))).toBe(

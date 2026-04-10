@@ -2,7 +2,7 @@
 
 ## Full walkthrough
 
-A feature goes through three steps: define it (`/tk:prd`), plan it (`/tk:plan`), verify it (`/tk:check`). Optionally, start with `/tk:brief` to orient.
+A feature goes through four steps: define it (`/tk:prd`), plan it (`/tk:plan`), build it (`/tk:build`), verify it (`/tk:check`). Optionally, start with `/tk:brief` to orient.
 
 ```
 You: /tk:prd add dark mode support
@@ -53,10 +53,26 @@ AI:  Written .tracerkit/plans/dark-mode-support.md
      └
 ```
 
-Now you build. Open the plan, work through each phase: write code, run tests, ask Claude for help. TracerKit doesn't implement for you; it keeps the spec sharp so you (and your AI assistant) stay on track.
+Now build phase by phase. `/tk:build` picks the next incomplete phase, implements it, runs feedback loops, and offers to commit — one phase per invocation.
 
 ```
-You: # implement Phase 1, Phase 2, Phase 3...
+You: /tk:build dark-mode-support
+AI:  Phase 1 — Theme visible end-to-end (3 remaining)
+     Implementing... running feedback loops... all checks pass.
+     ┌ Phase 1 complete. Commit?
+     │ ● Yes, commit
+     │ ○ No, I'll review first
+     └
+
+You: /tk:build dark-mode-support
+AI:  Phase 2 — User can toggle and persist preference (2 remaining)
+     Implementing... all checks pass.
+     Committed. Run `/tk:build dark-mode-support` for Phase 3.
+
+You: /tk:build dark-mode-support
+AI:  Phase 3 — System preference auto-detected (2 remaining)
+     Implementing... all checks pass.
+     Committed. All phases complete — run `/tk:check dark-mode-support` to verify.
 
 You: /tk:check dark-mode-support
 AI:  Loading plan... Loading PRD... Running tests...
@@ -296,9 +312,22 @@ AI:  Created issue #43: [tk:plan] dark-mode-support: Plan: Add Dark Mode Support
      └
 ```
 
-After implementation:
+Build phase by phase, then verify:
 
 ```
+You: /tk:build dark-mode-support
+AI:  Phase 1 — Theme visible end-to-end (3 remaining)
+     Implementing... all checks pass. Committed.
+
+You: /tk:build dark-mode-support
+AI:  Phase 2 — User can toggle and persist preference (2 remaining)
+     Implementing... all checks pass. Committed.
+
+You: /tk:build dark-mode-support
+AI:  Phase 3 — System preference auto-detected (2 remaining)
+     Implementing... all checks pass. Committed.
+     All phases complete — run `/tk:check dark-mode-support` to verify.
+
 You: /tk:check dark-mode-support
 AI:  Loading plan from issue #43... Loading PRD from issue #42...
      Running tests...

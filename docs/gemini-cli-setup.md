@@ -44,6 +44,7 @@ For always-loaded context, add skills to your project's `GEMINI.md`:
 
 @skills/prd/SKILL.md
 @skills/plan/SKILL.md
+@skills/build/SKILL.md
 @skills/check/SKILL.md
 @skills/brief/SKILL.md
 ```
@@ -58,6 +59,7 @@ Skills activate automatically based on intent:
 
 - "Create a PRD for dark mode" → `tk:prd`
 - "Plan the dark-mode-support feature" → `tk:plan`
+- "Implement the next phase of dark-mode-support" → `tk:build`
 - "Check if dark-mode-support is done" → `tk:check`
 - "Show me active features" → `tk:brief`
 

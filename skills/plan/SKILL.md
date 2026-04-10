@@ -217,25 +217,11 @@ Carried forward from PRD verbatim.
 Gaps found in the PRD needing resolution. Blank if none.
 ```
 
-Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "What's next?" with options: "Start implementing" (Recommended) / "Run `/tk:check <slug>`" / "Done for now".
+Print one line per phase: `Phase N — <title> (<condition summary>)`. Then ask: "What's next?" with options: "Run `/tk:build <slug>`" (Recommended) / "Run `/tk:check <slug>`" / "Done for now".
 
 ## Execution guidance
 
-When implementing this plan, **always offer to create a feature branch** before writing any code. Ask: "Create branch `feat/<slug>`?" with options: "Yes, create branch" (Recommended) / "No, stay on current branch". If accepted, create the branch from the default branch.
-
-### During implementation
-
-Mark each "Done when" checkbox `[x]` **immediately after verifying** the condition.
-
-Always update the local plan file (`.tracerkit/plans/<slug>.md`): change `- [ ]` → `- [x]`. This file is the working copy for both local and GitHub modes.
-
-<!-- if:github -->
-
-**Sync to GitHub at phase boundaries**: after completing all items in a phase, update the plan issue body with `gh issue edit` to reflect the local state. This avoids per-item API calls.
-
-After all phases, open a PR with body containing `Closes #<prd-issue>, Closes #<plan-issue>`.
-
-<!-- end:github -->
+To implement this plan phase by phase, run `/tk:build <slug>`. It handles branch creation, implementation, feedback loops, checkbox marking, and commits — one phase per invocation.
 
 ## Rules
 

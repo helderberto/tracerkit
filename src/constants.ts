@@ -3,6 +3,7 @@ export const SKILL_NAMES = [
   `${SKILL_PREFIX}:brief`,
   `${SKILL_PREFIX}:prd`,
   `${SKILL_PREFIX}:plan`,
+  `${SKILL_PREFIX}:build`,
   `${SKILL_PREFIX}:check`,
 ] as const;
 export const DEPRECATED_SKILLS = [`${SKILL_PREFIX}:verify`] as const;

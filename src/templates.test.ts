@@ -19,8 +19,9 @@ describe('copyTemplates', () => {
     expect(result.copied).toContain('.claude/skills/tk:brief/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:prd/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:plan/SKILL.md');
+    expect(result.copied).toContain('.claude/skills/tk:build/SKILL.md');
     expect(result.copied).toContain('.claude/skills/tk:check/SKILL.md');
-    expect(result.copied).toHaveLength(4);
+    expect(result.copied).toHaveLength(5);
   });
 
   it('preserves file contents', () => {
@@ -84,7 +85,13 @@ describe('copyTemplates', () => {
   it('leaves no unresolved placeholders in any template', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:check']) {
+    for (const skill of [
+      'tk:brief',
+      'tk:prd',
+      'tk:plan',
+      'tk:build',
+      'tk:check',
+    ]) {
       const content = readFileSync(
         join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
         'utf8',
@@ -133,7 +140,13 @@ describe('copyTemplates', () => {
   it('skills contain storage config preamble', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:check']) {
+    for (const skill of [
+      'tk:brief',
+      'tk:prd',
+      'tk:plan',
+      'tk:build',
+      'tk:check',
+    ]) {
       const content = readFileSync(
         join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
         'utf8',
@@ -151,7 +164,7 @@ describe('diffTemplates', () => {
   it('reports all files as missing on empty target', () => {
     const result = diffTemplates(tmp.get(), defaultConfig);
 
-    expect(result.missing).toHaveLength(4);
+    expect(result.missing).toHaveLength(5);
     expect(result.unchanged).toHaveLength(0);
     expect(result.modified).toHaveLength(0);
   });
@@ -160,7 +173,7 @@ describe('diffTemplates', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
     const result = diffTemplates(tmp.get(), defaultConfig);
-    expect(result.unchanged).toHaveLength(4);
+    expect(result.unchanged).toHaveLength(5);
     expect(result.modified).toHaveLength(0);
     expect(result.missing).toHaveLength(0);
   });
@@ -194,7 +207,7 @@ describe('diffTemplates', () => {
       github: { ...DEFAULT_GITHUB },
     };
     const result = diffTemplates(tmp.get(), newConfig);
-    expect(result.modified).toHaveLength(4);
+    expect(result.modified).toHaveLength(5);
   });
 });
 
