@@ -51,10 +51,11 @@ tracerkit uninstall .         # remove project-scoped skills
 Inside Claude Code, run:
 
 ```
-/plugin install tk@claude-plugins-official
+/plugin marketplace add helderberto/tracerkit
+/plugin install tk@tracerkit-marketplace
 ```
 
-Run `/reload-plugins` if needed. Skills are available immediately, no build step, no config.
+Skills are available immediately, no build step, no config.
 
 </details>
 
