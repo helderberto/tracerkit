@@ -24,3 +24,4 @@
 
 - Always `git pull --rebase` before pushing — semantic-release adds automatic commits on every release.
 - `.tracerkit/` files (PRDs, plans) are safe to commit in this repo — it dogfoods its own workflow.
+- Before pushing or creating PRs, run the full feedback loop: `npm test`, `npm run typecheck`, `npm run lint`, `npm run format:check`. Fix all failures before proceeding.
