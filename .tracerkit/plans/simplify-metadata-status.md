@@ -63,13 +63,13 @@ Delete `docs/metadata-lifecycle.md`. Update `README.md` (workflow example, skill
 
 ### Done when
 
-- [ ] `docs/metadata-lifecycle.md` does not exist
-- [ ] `README.md` workflow example shows `@` references, no status fields
-- [ ] `README.md` skills table has no mention of "status updated"
-- [ ] `README.md` docs table has no metadata lifecycle link
-- [ ] `docs/examples.md` walkthroughs show no frontmatter
-- [ ] All `.tracerkit/prds/*.md` files have zero `---` frontmatter blocks
-- [ ] All `.tracerkit/plans/*.md` files have zero `---` frontmatter blocks or verdict blocks
+- [x] `docs/metadata-lifecycle.md` does not exist
+- [x] `README.md` workflow example shows `@` references, no status fields
+- [x] `README.md` skills table has no mention of "status updated"
+- [x] `README.md` docs table has no metadata lifecycle link
+- [x] `docs/examples.md` walkthroughs show no frontmatter
+- [x] All `.tracerkit/prds/*.md` files have zero `---` frontmatter blocks
+- [x] All `.tracerkit/plans/*.md` files have zero `---` frontmatter blocks or verdict blocks
 
 ---
 

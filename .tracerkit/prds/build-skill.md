@@ -1,10 +1,3 @@
----
-created: 2026-04-10T17:15:00Z
-status: done
-completed: 2026-04-10T17:30:00Z
-plan: .tracerkit/plans/build-skill.md
----
-
 # /tk:build Skill
 
 ## Problem Statement

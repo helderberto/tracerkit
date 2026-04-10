@@ -75,18 +75,16 @@ AI:  Phase 3 — System preference auto-detected (2 remaining)
      Committed. All phases complete — run `/tk:check dark-mode-support` to verify.
 
 You: /tk:check dark-mode-support
-AI:  Loading plan... Loading PRD... Running tests...
+AI:  Loading plan... Running tests...
      Checking each "Done when" item against codebase...
 
      ## Verification: dark-mode-support
 
-     ### Status: done
-
      ### Progress
-     Phase 1 — Theme visible end-to-end: 3/3
-     Phase 2 — User can toggle and persist preference: 2/2
-     Phase 3 — System preference auto-detected: 2/2
-     Total: 7/7
+       Phase 1 — Theme visible end-to-end: 3/3
+       Phase 2 — User can toggle and persist preference: 2/2
+       Phase 3 — System preference auto-detected: 2/2
+       Total: 7/7
 
      ### BLOCKERS
      - None
@@ -94,11 +92,10 @@ AI:  Loading plan... Loading PRD... Running tests...
      ### SUGGESTIONS
      - None
 
-     Marked complete — PRD and plan updated to status: done
-     with completed: 2025-06-20T09:00:00Z timestamp.
+     All phases complete — implementation verified.
 ```
 
-Completed features stay in `.tracerkit/prds/` and `.tracerkit/plans/` with `status: done`. They are excluded from `/tk:brief` and future checks.
+Completed features (all checkboxes checked) are excluded from `/tk:brief`.
 
 ## Session briefing
 
@@ -106,10 +103,12 @@ Use `/tk:brief` at the start of a session to see what's active and where to focu
 
 ```
 You: /tk:brief
-AI:  | Feature           | Status      | Age | Progress | Next                          |
-     |-------------------|-------------|-----|----------|-------------------------------|
-     | dark-mode-support | in_progress | 3d  | 3/7      | Toggle component renders ...  |
-     | api-rate-limiting | created     | 1w  | —        | —                             |
+AI:  dark-mode-support (3/7)
+       Phase 1 — Theme visible end-to-end: 3/3
+     > Phase 2 — User can toggle and persist preference: 0/4
+
+     api-rate-limiting (0/5)
+     > Phase 1 — Basic rate limiter: 0/5
 
      **Focus → dark-mode-support**
 ```
@@ -121,17 +120,15 @@ Run `/tk:check` any time. You don't have to finish first. It shows per-phase pro
 
 ```
 You: /tk:check dark-mode-support
-AI:  Loading plan... Loading PRD... Running tests...
+AI:  Loading plan... Running tests...
 
      ## Verification: dark-mode-support
 
-     ### Status: in_progress
-
      ### Progress
-     Phase 1 — Theme visible end-to-end: 3/3
-     Phase 2 — User can toggle and persist preference: 0/2
-     Phase 3 — System preference auto-detected: 0/2
-     Total: 3/7
+       Phase 1 — Theme visible end-to-end: 3/3
+     > Phase 2 — User can toggle and persist preference: 0/2
+       Phase 3 — System preference auto-detected: 0/2
+       Total: 3/7
 
      ### BLOCKERS
      - None
@@ -163,13 +160,11 @@ You: # fix the media query listener, fix the failing tests...
 
 You: /tk:check dark-mode-support
 AI:  ...
-     ### Status: done
      Total: 7/7
      ### BLOCKERS
      - None
 
-     Marked complete — PRD and plan updated to status: done.
-     with completed: 2025-06-20T09:00:00Z timestamp.
+     All phases complete — implementation verified.
 ```
 
 </details>
@@ -181,10 +176,9 @@ Run `/tk:check` with no arguments to see all tracked features, then pick one to 
 
 ```
 You: /tk:check
-AI:  | Feature           | Status      | Progress |
-     |-------------------|-------------|----------|
-     | dark-mode-support | in_progress | 3/7      |
-     | api-rate-limiting | created     | -        |
+AI:  Available plans:
+     1. dark-mode-support (3/7)
+     2. api-rate-limiting (0/5)
 
      ┌ Which feature to check?
      │ ○ dark-mode-support

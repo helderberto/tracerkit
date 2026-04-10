@@ -1,13 +1,4 @@
----
-source_prd: .tracerkit/prds/build-skill.md
-slug: build-skill
-status: done
-completed: 2026-04-10T17:30:00Z
----
-
 # Plan: /tk:build Skill
-
-> Source PRD: `.tracerkit/prds/build-skill.md`
 
 ## Architectural Decisions
 
@@ -94,12 +85,3 @@ Update all user-facing docs: README workflow diagram, skills table, plugin descr
 ## Open Questions
 
 None.
-
----
-
-## Verdict
-
-- **Date**: 2026-04-10
-- **Checks**: 24/24
-- **BLOCKERS**: 0
-- **SUGGESTIONS**: 0
