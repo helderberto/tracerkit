@@ -1,3 +1,9 @@
+# [1.19.0](https://github.com/helderberto/tracerkit/compare/v1.18.3...v1.19.0) (2026-04-10)
+
+### Features
+
+- **build:** add /tk:build skill ([#11](https://github.com/helderberto/tracerkit/issues/11)) ([e04867c](https://github.com/helderberto/tracerkit/commit/e04867c978a15d8c3281c92736ee1b679e6aa401))
+
 ## [1.18.3](https://github.com/helderberto/tracerkit/compare/v1.18.2...v1.18.3) (2026-04-10)
 
 ## [1.18.2](https://github.com/helderberto/tracerkit/compare/v1.18.1...v1.18.2) (2026-04-10)
