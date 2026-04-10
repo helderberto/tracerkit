@@ -27,6 +27,7 @@ When the user asks to define, plan, or verify a feature, use the matching skill:
 | -------------------------------------- | ----------------------- |
 | Define a feature, write a PRD          | `skills/prd/SKILL.md`   |
 | Plan implementation phases             | `skills/plan/SKILL.md`  |
+| Implement next phase                   | `skills/build/SKILL.md` |
 | Verify implementation, check progress  | `skills/check/SKILL.md` |
 | Session briefing, show active features | `skills/brief/SKILL.md` |
 
@@ -39,6 +40,7 @@ The agent evaluates each request and maps it to the appropriate skill:
 
 - "Create a PRD for auth" → reads and follows `skills/prd/SKILL.md`
 - "Plan the auth feature" → reads and follows `skills/plan/SKILL.md`
+- "Implement the next phase of auth" → reads and follows `skills/build/SKILL.md`
 - "Check if auth is done" → reads and follows `skills/check/SKILL.md`
 - "What's in progress?" → reads and follows `skills/brief/SKILL.md`
 

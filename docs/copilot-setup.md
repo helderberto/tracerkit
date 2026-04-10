@@ -16,6 +16,7 @@ git clone https://github.com/helderberto/tracerkit.git
 mkdir -p .github/skills
 cp -r tracerkit/skills/prd .github/skills/tk-prd
 cp -r tracerkit/skills/plan .github/skills/tk-plan
+cp -r tracerkit/skills/build .github/skills/tk-build
 cp -r tracerkit/skills/check .github/skills/tk-check
 cp -r tracerkit/skills/brief .github/skills/tk-brief
 ```
@@ -59,6 +60,10 @@ Use the tk-prd skill to create a PRD for: add dark mode support
 
 ```
 Use the tk-plan skill to plan: dark-mode-support
+```
+
+```
+Use the tk-build skill to implement: dark-mode-support
 ```
 
 ```

@@ -88,7 +88,13 @@ describe('update', () => {
 
   it('outputs only warnings when all files are modified without force', () => {
     copyTemplates(tmp.get(), defaultConfig);
-    for (const name of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:build', 'tk:check']) {
+    for (const name of [
+      'tk:brief',
+      'tk:prd',
+      'tk:plan',
+      'tk:build',
+      'tk:check',
+    ]) {
       writeFileSync(
         join(tmp.get(), `.claude/skills/${name}/SKILL.md`),
         'modified',

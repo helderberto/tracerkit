@@ -85,7 +85,13 @@ describe('copyTemplates', () => {
   it('leaves no unresolved placeholders in any template', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:build', 'tk:check']) {
+    for (const skill of [
+      'tk:brief',
+      'tk:prd',
+      'tk:plan',
+      'tk:build',
+      'tk:check',
+    ]) {
       const content = readFileSync(
         join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
         'utf8',
@@ -134,7 +140,13 @@ describe('copyTemplates', () => {
   it('skills contain storage config preamble', () => {
     copyTemplates(tmp.get(), defaultConfig);
 
-    for (const skill of ['tk:brief', 'tk:prd', 'tk:plan', 'tk:build', 'tk:check']) {
+    for (const skill of [
+      'tk:brief',
+      'tk:prd',
+      'tk:plan',
+      'tk:build',
+      'tk:check',
+    ]) {
       const content = readFileSync(
         join(tmp.get(), `.claude/skills/${skill}/SKILL.md`),
         'utf8',

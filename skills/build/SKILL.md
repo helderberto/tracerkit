@@ -80,6 +80,7 @@ Phase N — <title> (M remaining)
 If on the default branch (main/master), ask:
 
 > Create branch `feat/<slug>`?
+>
 > 1. Yes, create branch (Recommended)
 > 2. No, stay on current branch
 
@@ -104,12 +105,12 @@ Work through each unchecked item in order. For each item:
 
 After implementing the phase, detect and run available project scripts. Check `package.json` for these scripts (run only what exists):
 
-| Script pattern | Purpose |
-| --- | --- |
-| `typecheck`, `tsc`, `type-check` | Type checking |
-| `test`, `vitest`, `jest` | Tests |
-| `lint`, `eslint` | Linting |
-| `format:check`, `prettier --check` | Formatting |
+| Script pattern                     | Purpose       |
+| ---------------------------------- | ------------- |
+| `typecheck`, `tsc`, `type-check`   | Type checking |
+| `test`, `vitest`, `jest`           | Tests         |
+| `lint`, `eslint`                   | Linting       |
+| `format:check`, `prettier --check` | Formatting    |
 
 Run each detected script. If any fails:
 
@@ -124,6 +125,7 @@ If a script still fails after 3 attempts, treat it as a **blocker** — pause an
 > Last error: `<error summary>`
 >
 > How to proceed?
+>
 > 1. I'll fix it — pause and wait
 > 2. Skip this check and continue
 > 3. Abort this phase
@@ -150,6 +152,7 @@ For each completed item, change `- [ ]` → `- [x]` in the plan issue body using
 Present the changes and ask:
 
 > Phase N complete — all checks pass. Commit?
+>
 > 1. Yes, commit
 > 2. No, I'll review first
 
@@ -170,6 +173,7 @@ If implementation requires something the agent cannot provide (API key, external
 > **Blocker**: <description of what's needed>
 >
 > How to proceed?
+>
 > 1. I've resolved it — continue
 > 2. Skip this item for now
 > 3. Abort this phase
