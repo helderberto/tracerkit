@@ -1,3 +1,9 @@
+# [1.18.0](https://github.com/helderberto/tracerkit/compare/v1.17.6...v1.18.0) (2026-04-10)
+
+### Features
+
+- add marketplace.json and skills path for Claude Code store ([7f5069e](https://github.com/helderberto/tracerkit/commit/7f5069e07bb1219ae7a7113546acc75946bf117c))
+
 ## [1.17.6](https://github.com/helderberto/tracerkit/compare/v1.17.5...v1.17.6) (2026-04-10)
 
 ## [1.17.5](https://github.com/helderberto/tracerkit/compare/v1.17.4...v1.17.5) (2026-04-09)
