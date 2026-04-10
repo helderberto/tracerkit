@@ -25,14 +25,24 @@ Three skills drive the workflow: **define** (`/tk:prd`), **plan** (`/tk:plan`), 
 
 ## Get Started
 
-### Install
+<details open>
+<summary><b>Claude Code (recommended)</b></summary>
+
+**Marketplace install:**
+
+```
+/plugin marketplace add helderberto/tracerkit
+/plugin install tk@tracerkit-marketplace
+```
+
+**CLI install:**
 
 ```bash
 npm install -g tracerkit
 tracerkit init
 ```
 
-Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run: adds missing skills without overwriting ones you've modified.
+Skills are installed to `~/.claude/skills/`, available in every project. Safe to re-run.
 
 <details>
 <summary>Per-project install (team members get skills via git)</summary>
@@ -45,17 +55,46 @@ tracerkit uninstall .         # remove project-scoped skills
 
 </details>
 
+</details>
+
 <details>
-<summary>Claude Code plugin (alternative)</summary>
+<summary><b>Cursor</b></summary>
 
-Inside Claude Code, run:
+Copy skills into `.cursor/rules/`, or use Notepads for on-demand context. See [docs/cursor-setup.md](docs/cursor-setup.md).
 
+</details>
+
+<details>
+<summary><b>Gemini CLI</b></summary>
+
+Install as native skills for auto-discovery:
+
+```bash
+gemini skills install https://github.com/helderberto/tracerkit.git --path skills
 ```
-/plugin marketplace add helderberto/tracerkit
-/plugin install tk@tracerkit-marketplace
-```
 
-Skills are available immediately, no build step, no config.
+Or add to `GEMINI.md` for persistent context. See [docs/gemini-cli-setup.md](docs/gemini-cli-setup.md).
+
+</details>
+
+<details>
+<summary><b>GitHub Copilot</b></summary>
+
+Copy skills to `.github/skills/` or add workflow rules to `.github/copilot-instructions.md`. See [docs/copilot-setup.md](docs/copilot-setup.md).
+
+</details>
+
+<details>
+<summary><b>OpenCode</b></summary>
+
+Uses agent-driven skill execution via `AGENTS.md`. See [docs/opencode-setup.md](docs/opencode-setup.md).
+
+</details>
+
+<details>
+<summary><b>Other agents</b></summary>
+
+Skills are plain Markdown with YAML frontmatter — they work with any agent that accepts instruction files. Clone the repo and point your agent at the `skills/` directory.
 
 </details>
 
@@ -131,6 +170,10 @@ Direction is inferred from the current `storage` config. All artifacts are migra
 | [Configuration](docs/configuration.md)           | Storage backends, GitHub options, custom paths             |
 | [Metadata Lifecycle](docs/metadata-lifecycle.md) | Understand YAML frontmatter states and transitions         |
 | [Comparison](docs/comparison.md)                 | Compare TracerKit to Spec Kit, Kiro, and OpenSpec          |
+| [Cursor Setup](docs/cursor-setup.md)             | Use TracerKit skills in Cursor                             |
+| [Gemini CLI Setup](docs/gemini-cli-setup.md)     | Use TracerKit skills in Gemini CLI                         |
+| [Copilot Setup](docs/copilot-setup.md)           | Use TracerKit skills in GitHub Copilot                     |
+| [OpenCode Setup](docs/opencode-setup.md)         | Use TracerKit skills in OpenCode                           |
 
 ## Contributing
 
