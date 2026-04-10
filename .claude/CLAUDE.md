@@ -15,6 +15,11 @@
 - Always use named exports — never default exports
 - Directories with many modules get a barrel file (`index.ts`) — watch for circular dependencies
 
+## Documentation
+
+- When implementation changes affect user-facing behavior, update the relevant docs (`README.md`, `docs/`, skill `SKILL.md` files)
+- Keep README quick start, skills table, and docs table in sync with actual capabilities
+
 ## Git
 
 - Always `git pull --rebase` before pushing — semantic-release adds automatic commits on every release.
