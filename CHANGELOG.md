@@ -1,3 +1,5 @@
+## [1.19.5](https://github.com/helderberto/tracerkit/compare/v1.19.4...v1.19.5) (2026-04-21)
+
 ## [1.19.4](https://github.com/helderberto/tracerkit/compare/v1.19.3...v1.19.4) (2026-04-10)
 
 ## [1.19.3](https://github.com/helderberto/tracerkit/compare/v1.19.2...v1.19.3) (2026-04-10)
