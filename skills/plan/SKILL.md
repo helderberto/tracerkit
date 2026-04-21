@@ -11,10 +11,6 @@ Break a PRD into phased vertical slices (tracer bullets).
 
 Output: `.tracerkit/plans/<slug>.md`.
 
-## Pre-loaded context
-
-- Available PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
-
 ## Input
 
 The argument (if provided) is: $ARGUMENTS

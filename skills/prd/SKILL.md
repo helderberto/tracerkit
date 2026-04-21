@@ -9,10 +9,6 @@ Skip satisfied steps. If argument provided, skip to Step 2.
 
 **Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
-## Pre-loaded context
-
-- Existing PRDs: !`ls .tracerkit/prds/*.md 2>/dev/null || echo "(none)"`
-
 ## Input
 
 The argument is: $ARGUMENTS

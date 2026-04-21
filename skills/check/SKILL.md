@@ -9,10 +9,6 @@ Verify plan checkboxes against the codebase. Unmark items that don't hold up (`[
 
 **Interactive prompts**: present options as a numbered list and wait for the user's choice.
 
-## Pre-loaded context
-
-- Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
-
 ## Input
 
 The argument (if provided) is: $ARGUMENTS

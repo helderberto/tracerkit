@@ -6,10 +6,6 @@ description: Session briefing — shows active features, progress, and suggested
 
 Overview of active features, progress, and suggested focus.
 
-## Pre-loaded context
-
-- Available plans: !`ls .tracerkit/plans/*.md 2>/dev/null || echo "(none)"`
-
 ## Algorithm
 
 ### 1. Discover plans
