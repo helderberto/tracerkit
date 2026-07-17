@@ -2,6 +2,10 @@
 
 <br />
 
+> **Archived.** This repository is no longer maintained. Use [agent-skills](https://github.com/helderberto/agent-skills) instead.
+
+<br />
+
 <div align="center">
 
 [![CI](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml/badge.svg)](https://github.com/helderberto/tracerkit/actions/workflows/ci.yml)
